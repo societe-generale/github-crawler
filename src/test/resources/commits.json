@@ -1,0 +1,362 @@
+[
+  {
+    "sha": "344ef5011187772d0662cabee37f881e7747e4db",
+    "commit": {
+      "author": {
+        "name": "userTwo",
+        "email": "userTwo@domain.com",
+        "date": "2018-03-06T10:34:16Z"
+      },
+      "committer": {
+        "name": "User One",
+        "email": "userOne@domain.com",
+        "date": "2018-03-06T10:46:26Z"
+      },
+      "message": "[ABC-1167] clean unused multipart properties",
+      "tree": {
+        "sha": "3b823ba8d477bcf706164541219db5c3fbf78ca3",
+        "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/git/trees/3b823ba8d477bcf706164541219db5c3fbf78ca3"
+      },
+      "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/git/commits/344ef5011187772d0662cabee37f881e7747e4db",
+      "comment_count": 0
+    },
+    "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/commits/344ef5011187772d0662cabee37f881e7747e4db",
+    "html_url": "https://github.com/MyOrganization/myRepo/commit/344ef5011187772d0662cabee37f881e7747e4db",
+    "comments_url": "https://github.com/api/v3/repos/MyOrganization/myRepo/commits/344ef5011187772d0662cabee37f881e7747e4db/comments",
+    "author": {
+      "login": "userTwo",
+      "id": 375,
+      "avatar_url": "https://github.com/avatars/u/375?",
+      "gravatar_id": "",
+      "url": "https://github.com/api/v3/users/userTwo",
+      "html_url": "https://github.com/userTwo",
+      "followers_url": "https://github.com/api/v3/users/userTwo/followers",
+      "following_url": "https://github.com/api/v3/users/userTwo/following{/other_user}",
+      "gists_url": "https://github.com/api/v3/users/userTwo/gists{/gist_id}",
+      "starred_url": "https://github.com/api/v3/users/userTwo/starred{/owner}{/repo}",
+      "subscriptions_url": "https://github.com/api/v3/users/userTwo/subscriptions",
+      "organizations_url": "https://github.com/api/v3/users/userTwo/orgs",
+      "repos_url": "https://github.com/api/v3/users/userTwo/repos",
+      "events_url": "https://github.com/api/v3/users/userTwo/events{/privacy}",
+      "received_events_url": "https://github.com/api/v3/users/userTwo/received_events",
+      "type": "User",
+      "site_admin": false,
+      "ldap_dn": "CN=userTwo,OU=Users,OU=Accounts,OU=FR,OU=QWERTY,DC=eur,DC=msd,DC=world,DC=socgen"
+    },
+    "committer": {
+      "login": "userOne",
+      "id": 1979,
+      "avatar_url": "https://github.com/avatars/u/1979?",
+      "gravatar_id": "",
+      "url": "https://github.com/api/v3/users/userOne",
+      "html_url": "https://github.com/userOne",
+      "followers_url": "https://github.com/api/v3/users/userOne/followers",
+      "following_url": "https://github.com/api/v3/users/userOne/following{/other_user}",
+      "gists_url": "https://github.com/api/v3/users/userOne/gists{/gist_id}",
+      "starred_url": "https://github.com/api/v3/users/userOne/starred{/owner}{/repo}",
+      "subscriptions_url": "https://github.com/api/v3/users/userOne/subscriptions",
+      "organizations_url": "https://github.com/api/v3/users/userOne/orgs",
+      "repos_url": "https://github.com/api/v3/users/userOne/repos",
+      "events_url": "https://github.com/api/v3/users/userOne/events{/privacy}",
+      "received_events_url": "https://github.com/api/v3/users/userOne/received_events",
+      "type": "User",
+      "site_admin": false,
+      "ldap_dn": "CN=userOne,OU=Users,OU=Accounts,OU=FR,OU=QWERTY,DC=eur,DC=msd,DC=world,DC=socgen"
+    },
+    "parents": [
+      {
+        "sha": "cba8d9b3bba6629ded177718d1e6e006939d0b45",
+        "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/commits/cba8d9b3bba6629ded177718d1e6e006939d0b45",
+        "html_url": "https://github.com/MyOrganization/myRepo/commit/cba8d9b3bba6629ded177718d1e6e006939d0b45"
+      }
+    ]
+  },
+  {
+    "sha": "cba8d9b3bba6629ded177718d1e6e006939d0b45",
+    "commit": {
+      "author": {
+        "name": "userTwo",
+        "email": "userTwo@domain.com",
+        "date": "2018-02-26T17:06:18Z"
+      },
+      "committer": {
+        "name": "User One",
+        "email": "userOne@domain.com",
+        "date": "2018-02-28T13:39:13Z"
+      },
+      "message": "[ABC-1167] Code review & Fix event naming : documentUploaded to documentArchived",
+      "tree": {
+        "sha": "60e78d3681607fc56d5871aadc072d4abc97e670",
+        "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/git/trees/60e78d3681607fc56d5871aadc072d4abc97e670"
+      },
+      "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/git/commits/cba8d9b3bba6629ded177718d1e6e006939d0b45",
+      "comment_count": 0
+    },
+    "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/commits/cba8d9b3bba6629ded177718d1e6e006939d0b45",
+    "html_url": "https://github.com/MyOrganization/myRepo/commit/cba8d9b3bba6629ded177718d1e6e006939d0b45",
+    "comments_url": "https://github.com/api/v3/repos/MyOrganization/myRepo/commits/cba8d9b3bba6629ded177718d1e6e006939d0b45/comments",
+    "author": {
+      "login": "userTwo",
+      "id": 375,
+      "avatar_url": "https://github.com/avatars/u/375?",
+      "gravatar_id": "",
+      "url": "https://github.com/api/v3/users/userTwo",
+      "html_url": "https://github.com/userTwo",
+      "followers_url": "https://github.com/api/v3/users/userTwo/followers",
+      "following_url": "https://github.com/api/v3/users/userTwo/following{/other_user}",
+      "gists_url": "https://github.com/api/v3/users/userTwo/gists{/gist_id}",
+      "starred_url": "https://github.com/api/v3/users/userTwo/starred{/owner}{/repo}",
+      "subscriptions_url": "https://github.com/api/v3/users/userTwo/subscriptions",
+      "organizations_url": "https://github.com/api/v3/users/userTwo/orgs",
+      "repos_url": "https://github.com/api/v3/users/userTwo/repos",
+      "events_url": "https://github.com/api/v3/users/userTwo/events{/privacy}",
+      "received_events_url": "https://github.com/api/v3/users/userTwo/received_events",
+      "type": "User",
+      "site_admin": false,
+      "ldap_dn": "CN=userTwo,OU=Users,OU=Accounts,OU=FR,OU=QWERTY,DC=eur,DC=msd,DC=world,DC=socgen"
+    },
+    "committer": {
+      "login": "userOne",
+      "id": 1979,
+      "avatar_url": "https://github.com/avatars/u/1979?",
+      "gravatar_id": "",
+      "url": "https://github.com/api/v3/users/userOne",
+      "html_url": "https://github.com/userOne",
+      "followers_url": "https://github.com/api/v3/users/userOne/followers",
+      "following_url": "https://github.com/api/v3/users/userOne/following{/other_user}",
+      "gists_url": "https://github.com/api/v3/users/userOne/gists{/gist_id}",
+      "starred_url": "https://github.com/api/v3/users/userOne/starred{/owner}{/repo}",
+      "subscriptions_url": "https://github.com/api/v3/users/userOne/subscriptions",
+      "organizations_url": "https://github.com/api/v3/users/userOne/orgs",
+      "repos_url": "https://github.com/api/v3/users/userOne/repos",
+      "events_url": "https://github.com/api/v3/users/userOne/events{/privacy}",
+      "received_events_url": "https://github.com/api/v3/users/userOne/received_events",
+      "type": "User",
+      "site_admin": false,
+      "ldap_dn": "CN=userOne,OU=Users,OU=Accounts,OU=FR,OU=QWERTY,DC=eur,DC=msd,DC=world,DC=socgen"
+    },
+    "parents": [
+      {
+        "sha": "8007c375eab035190a9a3f19b421938d8ed8a23f",
+        "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/commits/8007c375eab035190a9a3f19b421938d8ed8a23f",
+        "html_url": "https://github.com/MyOrganization/myRepo/commit/8007c375eab035190a9a3f19b421938d8ed8a23f"
+      }
+    ]
+  },
+  {
+    "sha": "8007c375eab035190a9a3f19b421938d8ed8a23f",
+    "commit": {
+      "author": {
+        "name": "userTwo",
+        "email": "userTwo@domain.com",
+        "date": "2018-02-26T13:01:43Z"
+      },
+      "committer": {
+        "name": "User One",
+        "email": "userOne@domain.com",
+        "date": "2018-02-28T13:39:13Z"
+      },
+      "message": "[ABC-1167] Clean REST document upload endpoint",
+      "tree": {
+        "sha": "a636e89555b49f97df319ad2afa6e7030708dd52",
+        "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/git/trees/a636e89555b49f97df319ad2afa6e7030708dd52"
+      },
+      "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/git/commits/8007c375eab035190a9a3f19b421938d8ed8a23f",
+      "comment_count": 0
+    },
+    "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/commits/8007c375eab035190a9a3f19b421938d8ed8a23f",
+    "html_url": "https://github.com/MyOrganization/myRepo/commit/8007c375eab035190a9a3f19b421938d8ed8a23f",
+    "comments_url": "https://github.com/api/v3/repos/MyOrganization/myRepo/commits/8007c375eab035190a9a3f19b421938d8ed8a23f/comments",
+    "author": {
+      "login": "userTwo",
+      "id": 375,
+      "avatar_url": "https://github.com/avatars/u/375?",
+      "gravatar_id": "",
+      "url": "https://github.com/api/v3/users/userTwo",
+      "html_url": "https://github.com/userTwo",
+      "followers_url": "https://github.com/api/v3/users/userTwo/followers",
+      "following_url": "https://github.com/api/v3/users/userTwo/following{/other_user}",
+      "gists_url": "https://github.com/api/v3/users/userTwo/gists{/gist_id}",
+      "starred_url": "https://github.com/api/v3/users/userTwo/starred{/owner}{/repo}",
+      "subscriptions_url": "https://github.com/api/v3/users/userTwo/subscriptions",
+      "organizations_url": "https://github.com/api/v3/users/userTwo/orgs",
+      "repos_url": "https://github.com/api/v3/users/userTwo/repos",
+      "events_url": "https://github.com/api/v3/users/userTwo/events{/privacy}",
+      "received_events_url": "https://github.com/api/v3/users/userTwo/received_events",
+      "type": "User",
+      "site_admin": false,
+      "ldap_dn": "CN=userTwo,OU=Users,OU=Accounts,OU=FR,OU=QWERTY,DC=eur,DC=msd,DC=world,DC=socgen"
+    },
+    "committer": {
+      "login": "userOne",
+      "id": 1979,
+      "avatar_url": "https://github.com/avatars/u/1979?",
+      "gravatar_id": "",
+      "url": "https://github.com/api/v3/users/userOne",
+      "html_url": "https://github.com/userOne",
+      "followers_url": "https://github.com/api/v3/users/userOne/followers",
+      "following_url": "https://github.com/api/v3/users/userOne/following{/other_user}",
+      "gists_url": "https://github.com/api/v3/users/userOne/gists{/gist_id}",
+      "starred_url": "https://github.com/api/v3/users/userOne/starred{/owner}{/repo}",
+      "subscriptions_url": "https://github.com/api/v3/users/userOne/subscriptions",
+      "organizations_url": "https://github.com/api/v3/users/userOne/orgs",
+      "repos_url": "https://github.com/api/v3/users/userOne/repos",
+      "events_url": "https://github.com/api/v3/users/userOne/events{/privacy}",
+      "received_events_url": "https://github.com/api/v3/users/userOne/received_events",
+      "type": "User",
+      "site_admin": false,
+      "ldap_dn": "CN=userOne,OU=Users,OU=Accounts,OU=FR,OU=QWERTY,DC=eur,DC=msd,DC=world,DC=socgen"
+    },
+    "parents": [
+      {
+        "sha": "0b27b71560756310f0292ebdb112d5825c36545a",
+        "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/commits/0b27b71560756310f0292ebdb112d5825c36545a",
+        "html_url": "https://github.com/MyOrganization/myRepo/commit/0b27b71560756310f0292ebdb112d5825c36545a"
+      }
+    ]
+  },
+  {
+    "sha": "0b27b71560756310f0292ebdb112d5825c36545a",
+    "commit": {
+      "author": {
+        "name": "userTwo",
+        "email": "userTwo@domain.com",
+        "date": "2018-02-23T16:18:08Z"
+      },
+      "committer": {
+        "name": "User One",
+        "email": "userOne@domain.com",
+        "date": "2018-02-28T13:39:13Z"
+      },
+      "message": "[ABC-1167] Listen to archive document uploads and handle them to update declarative processes",
+      "tree": {
+        "sha": "b88f8e920e6af2b0c18bd19114366dc3412bf49b",
+        "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/git/trees/b88f8e920e6af2b0c18bd19114366dc3412bf49b"
+      },
+      "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/git/commits/0b27b71560756310f0292ebdb112d5825c36545a",
+      "comment_count": 0
+    },
+    "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/commits/0b27b71560756310f0292ebdb112d5825c36545a",
+    "html_url": "https://github.com/MyOrganization/myRepo/commit/0b27b71560756310f0292ebdb112d5825c36545a",
+    "comments_url": "https://github.com/api/v3/repos/MyOrganization/myRepo/commits/0b27b71560756310f0292ebdb112d5825c36545a/comments",
+    "author": {
+      "login": "userTwo",
+      "id": 375,
+      "avatar_url": "https://github.com/avatars/u/375?",
+      "gravatar_id": "",
+      "url": "https://github.com/api/v3/users/userTwo",
+      "html_url": "https://github.com/userTwo",
+      "followers_url": "https://github.com/api/v3/users/userTwo/followers",
+      "following_url": "https://github.com/api/v3/users/userTwo/following{/other_user}",
+      "gists_url": "https://github.com/api/v3/users/userTwo/gists{/gist_id}",
+      "starred_url": "https://github.com/api/v3/users/userTwo/starred{/owner}{/repo}",
+      "subscriptions_url": "https://github.com/api/v3/users/userTwo/subscriptions",
+      "organizations_url": "https://github.com/api/v3/users/userTwo/orgs",
+      "repos_url": "https://github.com/api/v3/users/userTwo/repos",
+      "events_url": "https://github.com/api/v3/users/userTwo/events{/privacy}",
+      "received_events_url": "https://github.com/api/v3/users/userTwo/received_events",
+      "type": "User",
+      "site_admin": false,
+      "ldap_dn": "CN=userTwo,OU=Users,OU=Accounts,OU=FR,OU=QWERTY,DC=eur,DC=msd,DC=world,DC=socgen"
+    },
+    "committer": {
+      "login": "userOne",
+      "id": 1979,
+      "avatar_url": "https://github.com/avatars/u/1979?",
+      "gravatar_id": "",
+      "url": "https://github.com/api/v3/users/userOne",
+      "html_url": "https://github.com/userOne",
+      "followers_url": "https://github.com/api/v3/users/userOne/followers",
+      "following_url": "https://github.com/api/v3/users/userOne/following{/other_user}",
+      "gists_url": "https://github.com/api/v3/users/userOne/gists{/gist_id}",
+      "starred_url": "https://github.com/api/v3/users/userOne/starred{/owner}{/repo}",
+      "subscriptions_url": "https://github.com/api/v3/users/userOne/subscriptions",
+      "organizations_url": "https://github.com/api/v3/users/userOne/orgs",
+      "repos_url": "https://github.com/api/v3/users/userOne/repos",
+      "events_url": "https://github.com/api/v3/users/userOne/events{/privacy}",
+      "received_events_url": "https://github.com/api/v3/users/userOne/received_events",
+      "type": "User",
+      "site_admin": false,
+      "ldap_dn": "CN=userOne,OU=Users,OU=Accounts,OU=FR,OU=QWERTY,DC=eur,DC=msd,DC=world,DC=socgen"
+    },
+    "parents": [
+      {
+        "sha": "b373bfacd262bf126efe18174b7cc35e828fbe77",
+        "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/commits/b373bfacd262bf126efe18174b7cc35e828fbe77",
+        "html_url": "https://github.com/MyOrganization/myRepo/commit/b373bfacd262bf126efe18174b7cc35e828fbe77"
+      }
+    ]
+  },
+  {
+    "sha": "b373bfacd262bf126efe18174b7cc35e828fbe77",
+    "commit": {
+      "author": {
+        "name": "User One",
+        "email": "userOne@domain.com",
+        "date": "2018-02-23T16:06:38Z"
+      },
+      "committer": {
+        "name": "userTwo",
+        "email": "userTwo@domain.com",
+        "date": "2018-02-23T16:47:21Z"
+      },
+      "message": "ABC-1226: Make health endpoint sensitive (Status only)",
+      "tree": {
+        "sha": "9f2e4e7eb6c1b2dc98aa9459d7704338a892c49d",
+        "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/git/trees/9f2e4e7eb6c1b2dc98aa9459d7704338a892c49d"
+      },
+      "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/git/commits/b373bfacd262bf126efe18174b7cc35e828fbe77",
+      "comment_count": 0
+    },
+    "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/commits/b373bfacd262bf126efe18174b7cc35e828fbe77",
+    "html_url": "https://github.com/MyOrganization/myRepo/commit/b373bfacd262bf126efe18174b7cc35e828fbe77",
+    "comments_url": "https://github.com/api/v3/repos/MyOrganization/myRepo/commits/b373bfacd262bf126efe18174b7cc35e828fbe77/comments",
+    "author": {
+      "login": "userOne",
+      "id": 1979,
+      "avatar_url": "https://github.com/avatars/u/1979?",
+      "gravatar_id": "",
+      "url": "https://github.com/api/v3/users/userOne",
+      "html_url": "https://github.com/userOne",
+      "followers_url": "https://github.com/api/v3/users/userOne/followers",
+      "following_url": "https://github.com/api/v3/users/userOne/following{/other_user}",
+      "gists_url": "https://github.com/api/v3/users/userOne/gists{/gist_id}",
+      "starred_url": "https://github.com/api/v3/users/userOne/starred{/owner}{/repo}",
+      "subscriptions_url": "https://github.com/api/v3/users/userOne/subscriptions",
+      "organizations_url": "https://github.com/api/v3/users/userOne/orgs",
+      "repos_url": "https://github.com/api/v3/users/userOne/repos",
+      "events_url": "https://github.com/api/v3/users/userOne/events{/privacy}",
+      "received_events_url": "https://github.com/api/v3/users/userOne/received_events",
+      "type": "User",
+      "site_admin": false,
+      "ldap_dn": "CN=userOne,OU=Users,OU=Accounts,OU=FR,OU=QWERTY,DC=eur,DC=msd,DC=world,DC=socgen"
+    },
+    "committer": {
+      "login": "userTwo",
+      "id": 375,
+      "avatar_url": "https://github.com/avatars/u/375?",
+      "gravatar_id": "",
+      "url": "https://github.com/api/v3/users/userTwo",
+      "html_url": "https://github.com/userTwo",
+      "followers_url": "https://github.com/api/v3/users/userTwo/followers",
+      "following_url": "https://github.com/api/v3/users/userTwo/following{/other_user}",
+      "gists_url": "https://github.com/api/v3/users/userTwo/gists{/gist_id}",
+      "starred_url": "https://github.com/api/v3/users/userTwo/starred{/owner}{/repo}",
+      "subscriptions_url": "https://github.com/api/v3/users/userTwo/subscriptions",
+      "organizations_url": "https://github.com/api/v3/users/userTwo/orgs",
+      "repos_url": "https://github.com/api/v3/users/userTwo/repos",
+      "events_url": "https://github.com/api/v3/users/userTwo/events{/privacy}",
+      "received_events_url": "https://github.com/api/v3/users/userTwo/received_events",
+      "type": "User",
+      "site_admin": false,
+      "ldap_dn": "CN=userTwo,OU=Users,OU=Accounts,OU=FR,OU=QWERTY,DC=eur,DC=msd,DC=world,DC=socgen"
+    },
+    "parents": [
+      {
+        "sha": "0283bfecbee41881ab55b478592b0b7815167bcd",
+        "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/commits/0283bfecbee41881ab55b478592b0b7815167bcd",
+        "html_url": "https://github.com/MyOrganization/myRepo/commit/0283bfecbee41881ab55b478592b0b7815167bcd"
+      }
+    ]
+  }
+]

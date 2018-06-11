@@ -1,0 +1,42 @@
+[
+  {
+    "login": "userTen",
+    "id": 13,
+    "avatar_url": "https://github.com/avatars/u/13?",
+    "gravatar_id": "",
+    "url": "https://github.com/api/v3/users/userTen",
+    "html_url": "https://github.com/userTen",
+    "followers_url": "https://github.com/api/v3/users/userTen/followers",
+    "following_url": "https://github.com/api/v3/users/userTen/following{/other_user}",
+    "gists_url": "https://github.com/api/v3/users/userTen/gists{/gist_id}",
+    "starred_url": "https://github.com/api/v3/users/userTen/starred{/owner}{/repo}",
+    "subscriptions_url": "https://github.com/api/v3/users/userTen/subscriptions",
+    "organizations_url": "https://github.com/api/v3/users/userTen/orgs",
+    "repos_url": "https://github.com/api/v3/users/userTen/repos",
+    "events_url": "https://github.com/api/v3/users/userTen/events{/privacy}",
+    "received_events_url": "https://github.com/api/v3/users/userTen/received_events",
+    "type": "User",
+    "site_admin": false,
+    "ldap_dn": "CN=userTen,OU=Users,OU=Accounts,OU=FR,OU=QWERTY,DC=eur,DC=msd,DC=world,DC=socgen"
+  },
+  {
+    "login": "userEleven",
+    "id": 658,
+    "avatar_url": "https://github.com/avatars/u/658?",
+    "gravatar_id": "",
+    "url": "https://github.com/api/v3/users/userEleven",
+    "html_url": "https://github.com/userEleven",
+    "followers_url": "https://github.com/api/v3/users/userEleven/followers",
+    "following_url": "https://github.com/api/v3/users/userEleven/following{/other_user}",
+    "gists_url": "https://github.com/api/v3/users/userEleven/gists{/gist_id}",
+    "starred_url": "https://github.com/api/v3/users/userEleven/starred{/owner}{/repo}",
+    "subscriptions_url": "https://github.com/api/v3/users/userEleven/subscriptions",
+    "organizations_url": "https://github.com/api/v3/users/userEleven/orgs",
+    "repos_url": "https://github.com/api/v3/users/userEleven/repos",
+    "events_url": "https://github.com/api/v3/users/userEleven/events{/privacy}",
+    "received_events_url": "https://github.com/api/v3/users/userEleven/received_events",
+    "type": "User",
+    "site_admin": false,
+    "ldap_dn": "CN=userEleven,OU=Users,OU=Accounts,OU=FR,OU=QWERTY,DC=eur,DC=msd,DC=world,DC=socgen"
+  }
+]

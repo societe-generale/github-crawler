@@ -1,0 +1,17 @@
+package com.societegenerale.githubcrawler.ownership
+
+import org.slf4j.LoggerFactory
+
+
+class NoOpOwnershipParser : OwnershipParser {
+
+    private val log = LoggerFactory.getLogger(NoOpOwnershipParser::class.java)!!
+
+    constructor(){
+      log.info("Using "+NoOpOwnershipParser::class+" as a repository Ownership parser")
+    }
+
+    override fun computeOwnershipFor(repositoryFullName: String, lastCommitNumber: Int): String {
+        return "N/A"
+    }
+}

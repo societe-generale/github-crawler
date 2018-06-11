@@ -1,0 +1,22 @@
+@Library('infra-as-code-library')
+import static com.a.given.package.BuildHelpers.*
+
+configureJob(this, "deal-integration", "${BRANCH_NAME}")
+
+dockerNode(image: "myDtr.com/someOrg/maven:${MAVEN_BUILDER_TAG}") {
+
+    stage("GitClone...") {
+        checkout scm
+    }
+
+    def version = buildVersion(this)
+
+    stage("Maven build") {
+        maven(this, "deal-integration", "${BRANCH_NAME}", version)
+    }
+
+    stage("Docker build") {
+        dockerComposeAndDeploy(this, "financing-platform-deal-integration", "${BRANCH_NAME}", version)
+    }
+
+}

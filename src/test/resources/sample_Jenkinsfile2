@@ -1,0 +1,22 @@
+dockerNode(image:'myDtr.com/someOrg/someImageName:1.0') {
+    properties properties: [[$class: 'ParametersDefinitionProperty', 
+                            parameterDefinitions: 
+                                [
+                                    [$class: 'StringParameterDefinition', defaultValue: 'DEFAULT', name : 'IMAGE_TAG', description: 'The tag of the image you want to run']
+                                ]
+                            ]]
+
+
+    stage("Git clone"){
+        checkout scm
+    }
+
+    stage("Docker stack deploy"){
+         dockerStackDeploy ([
+                DOCKER_BUNDLE_ID : "docker-dev-bundle",
+                ENVNAME : BRANCH_NAME,
+                DOMAIN_NAME : "someDomainName",
+                IMAGE_TAG : IMAGE_TAG
+            ])
+    }
+}

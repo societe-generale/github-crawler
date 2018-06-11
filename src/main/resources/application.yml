@@ -1,0 +1,56 @@
+gitHub.url: https://github.com
+
+# your GitHub organization, for example myOrga in https://github.com/myOrga
+organizationName: myOrga
+
+publishExcludedRepositories: false
+
+crawlAllBranches: false
+
+
+output:
+  file:
+   filenamePrefix: "githubCrawler_output"
+ #for http output, any endpoint accepting POST request witha Json payload would work, for instance ElasticSearch
+  http:
+    targetUrl: "http://myElasticSearchServer:9201/githubcrawler-test/MyOrganization"
+
+#repositories matching the configured regexp will be excluded
+repositoriesToExclude:
+  - "^my-platform-.*-run$"
+  - "^fmy-platform-.*-web$"
+  - "^(?!my-platform-.*$).*"
+
+indicatorsToFetchByFile:
+#syntax with "[....]" is required to escape the dot in the key name
+  "[pom.xml]":
+      - name: spring_boot_starter_parent_version
+        method: findDependencyVersionInXml
+        params:
+          artifactId: spring-boot-starter-parent
+      - name: spring_boot_starter_version
+        method: findDependencyVersionInXml
+        params:
+          artifactId: spring-boot-starter
+      - name: spring_boot_dependencies_version
+        method: findDependencyVersionInXml
+        params:
+          artifactId: spring-boot-dependencies
+      - name: spring_cloud_dependencies_version
+        method: findDependencyVersionInXml
+        params:
+          artifactId: spring-cloud-dependencies
+  Jenkinsfile:
+      - name: tlsverify_or_not
+        method: findFirstValueWithRegexpCapture
+        params:
+          pattern: "(?s).*(--tlsverify).*"
+  Dockerfile:
+      - name: docker_image_used
+        method: findFirstValueWithRegexpCapture
+        params:
+          pattern: ".*\\/(.*)\\s?"
+
+
+
+

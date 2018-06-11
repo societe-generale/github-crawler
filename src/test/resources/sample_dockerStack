@@ -1,0 +1,36 @@
+version: "3.1"
+networks:
+  fpl-overlay-network:
+    external: true
+
+services:
+  consistency-check:
+    image: "myDtr.com/someOrg/someImageName/consistency-check:${IMAGE_TAG}"
+    deploy:
+      replicas: 2
+      labels:
+        com.docker.ucp.access.label: "fpl-prd-label"
+        com.docker.ucp.access.owner: "${DOCKER_OWNER}"
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+        window: 1800s
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--insecure", "https://localhost:8443/health"]
+      interval: 60s
+      timeout: 3s
+      retries: 3
+    networks:
+      - fpl-overlay-network
+    ports:
+      - 8443
+    environment:
+      - ENVNAME=$ENVNAME
+      - VAULT_ENVTYPE=prod
+      - DOCKER_HOST=$DOCKER_HOST
+      - DOCKER_TLS_VERIFY=$DOCKER_TLS_VERIFY
+      - spring_boot_application=consistency-service
+      - spring_cloud_consul_discovery_enabled=false
+      - spring_cloud_consul_host=deprecated
+      - version=${IMAGE_TAG}
+      - ZIPKIN_BASE_URL=http://someZipkinUrl.com

@@ -1,0 +1,8 @@
+excluded: false
+filesToParse:
+  - name: "Dockerfile"
+    redirectTo: "moduleWhereDockerFileIs/Dockerfile"
+
+tags:
+  - "lso-rw"
+  - "someOtherTag"

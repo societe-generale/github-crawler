@@ -1,0 +1,286 @@
+package com.societegenerale.githubcrawler.mocks;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import net.codestory.http.WebServer;
+import net.codestory.http.errors.NotFoundException;
+import net.codestory.http.payload.Payload;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StreamUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.*;
+
+import static com.societegenerale.githubcrawler.TestUtils.readFromInputStream;
+
+@Component
+@Slf4j
+public class GitHubMock implements RemoteServiceMock {
+
+    private String organisationResponse = "organisation.json";
+
+    public final static String REPO_EXCLUDED_CONFIG = "excluded: true";
+    private Map<String, String> repoConfigPerRepo = new HashMap<>();
+
+    private static boolean hasStarted = false;
+    private Map<String, String> existingResources = new HashMap<>();
+
+    @Getter
+    private List<String> repoConfigHits = new ArrayList<>();
+
+    @Getter
+    private List<String> pomXmlHits = new ArrayList<>();
+
+    @Setter
+    @Getter
+    private int nbPages = 1;
+
+    private int currentPage = 1;
+
+    @Getter
+    private boolean hasCalledNextPage = false;
+
+
+    private List<String> reposWithNoConfig= new ArrayList<>();
+
+    private List<String> reposWithPomXml = new ArrayList<>();
+
+    @Getter
+    private int repoConfigHitsCount = 0;
+
+    @Getter
+    private int searchHitsCount = 0;
+
+    public static boolean hasStarted() {
+        return hasStarted;
+    }
+
+    @Override
+    public boolean start() {
+
+        WebServer gitHubWebServer = new WebServer();
+        gitHubWebServer.configure(
+                routes -> {
+                    routes.get("/api/v3/orgs/MyOrganization/repos", context -> getOrganisationContent());
+                    routes.get("/api/v3/organizations/1114/repos", context -> getOrganisationContentForNextPage());
+                    routes.get("/raw/MyOrganization/:repo/master/.githubCrawler", (context, repo) -> getRepoConfig(repo));
+                    routes.get("/raw/MyOrganization/:repo/:branchName/pom.xml", (context, repo, branchName) -> getPomXML(repo, branchName));
+                    //for other resources than pom.xml..
+                    //hack for resources that are not at the root of the repository, so that we don't have to hardcode too many things
+                    routes.get("/raw/MyOrganization/:repo/:branchName/:aSubDirectory/:resource", (context, repo, branchName, aSubDirectory, resource) -> getResource(repo, branchName, aSubDirectory, resource));
+                    routes.get("/raw/MyOrganization/:repo/:branchName/:resource", (context, repo, branchName, resource) -> getResource(repo, branchName, null, resource));
+
+                    routes.get("/api/v3/repos/MyOrganization/:repo/branches", (context, repo) -> getBranches(repo));
+
+                    routes.get("/api/v3/search/code?q=:searchQuery", (context, searchQuery) -> getSearchResult(searchQuery));
+
+                    routes.get("/api/v3/orgs/MyOrganization/teams", this::getTeams);
+                    routes.get("/api/v3/teams/:team/members", (context, team) -> getTeamsMembers(team));
+
+                    routes.get("/api/v3/repos/MyOrganization/:repo/commits?per_page=150", (context, repo) -> getCommits(repo));
+                    routes.get("/api/v3/repos/MyOrganization/:repo/commits/:commit", (context, repo, commit) -> getCommit(repo, commit));
+
+
+                }
+        ).start(GITHUB_MOCK_PORT);
+
+        hasStarted = true;
+
+        return true;
+    }
+
+    private Object getCommit(String repo, String commit) throws IOException {
+        log.debug("Getting Github commits...");
+        return new Payload("application/json", readFromInputStream(getClass().getClassLoader().getResourceAsStream("commit.json")));
+    }
+
+    private Payload getCommits(String repo) throws IOException {
+        log.debug("Getting Github commits...");
+        return new Payload("application/json", readFromInputStream(getClass().getClassLoader().getResourceAsStream("commits.json")));
+    }
+
+    private Payload getTeamsMembers(String team) throws IOException {
+        log.debug("Getting Github team members...");
+        return new Payload("application/json", readFromInputStream(getClass().getClassLoader().getResourceAsStream(String.format("team_members_%s.json", team.hashCode()%2 == 0 ? "A" : "B"))));
+    }
+
+    private Payload getTeams() throws IOException {
+        log.debug("Getting Github teams...");
+        return new Payload("application/json", readFromInputStream(getClass().getClassLoader().getResourceAsStream("teams.json")));
+    }
+
+    private Payload getSearchResult(String searchQuery) throws IOException {
+
+        log.debug("received a search query {}", searchQuery);
+
+        searchHitsCount++;
+
+        return new Payload("application/json", readFromInputStream(getClass().getClassLoader().getResourceAsStream("searchResult.json")));
+
+    }
+
+    private Object getResource(String repo, String branchName, String aSubDirectory, String resource) throws IOException {
+
+        String pathToResource = aSubDirectory != null ? aSubDirectory + "/" + resource : resource;
+
+        log.debug("retrieving file {} from repo {} on branch {}", pathToResource, repo, branchName);
+
+        String fileToReturn = existingResources.get(buildResourceKey(repo, pathToResource));
+
+        log.debug("actual file to return : {}", fileToReturn);
+
+        if (fileToReturn != null) {
+
+            log.info("\t {} found on repo {} and branch {}", pathToResource, repo, branchName);
+
+            InputStream is = getClass().getClassLoader().getResourceAsStream(fileToReturn);
+
+            if(is==null){
+                log.error("input stream for {} on repo {} and branch {} should not be null. check the test config",pathToResource,repo,branchName);
+
+                log.error("logging all resources available :");
+                PathMatchingResourcePatternResolver resourceResolver=new PathMatchingResourcePatternResolver();
+                Resource[] allResources = resourceResolver.getResources("classpath:**/*");
+                Arrays.asList(allResources).stream().forEach(r -> {
+                    try {
+                        log.error("\t- canonical path : {}, filename : {}, description : {}", r.getFile().getCanonicalPath(), r.getFilename(),
+                                r.getDescription());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+
+                assert false : "failing the test immediately - we should be able to return "+fileToReturn+", but we can't get it as an InputStream";
+            }
+
+            return readFromInputStream(is);
+
+        } else {
+            log.info("\t {} NOT found on repo {} and branch {}", pathToResource, repo, branchName);
+            throw new NotFoundException();
+        }
+    }
+
+    private String getPomXML(String repo, String branchName) throws IOException {
+
+        log.info("received a request to get pom.xml for rep {} on branch {} ..", repo, branchName);
+
+        pomXmlHits.add(repo);
+
+        if (reposWithPomXml.contains(repo)) {
+            log.info("\t returning something..");
+            InputStream samplePomXmlInputStream = getClass().getResourceAsStream("/sample_pom.xml");
+            return readFromInputStream(samplePomXmlInputStream);
+        } else {
+            log.info("\t pom.xml NOT FOUND");
+            throw new NotFoundException();
+        }
+    }
+
+    @NotNull
+    private String buildResourceKey(String repo, String pathToResource) {
+        return repo + "-" + pathToResource;
+    }
+
+    private Payload getBranches(String repoName) throws IOException {
+
+        log.debug("received a branches request for repo {}..", repoName);
+
+        InputStream is = getClass().getClassLoader().getResourceAsStream("branches.json");
+        String jsonString = StreamUtils.copyToString(is, Charset.forName("UTF-8"));
+
+        return new Payload("application/json", jsonString);
+    }
+
+    private Payload getOrganisationContentForNextPage() throws IOException {
+
+        hasCalledNextPage = true;
+
+        return getOrganisationContent();
+    }
+
+    private String getRepoConfig(String repoName) {
+
+        log.debug("received a repoConfig request for repo {}..", repoName);
+
+        repoConfigHits.add(repoName);
+        repoConfigHitsCount++;
+
+        if(reposWithNoConfig.contains(repoName)){
+            log.debug("\t repoConfig NOT FOUND");
+            throw new NotFoundException();
+        }
+
+        if (repoConfigPerRepo.keySet().contains(repoName)) {
+            log.debug("\t repoConfig found and not empty");
+            return repoConfigPerRepo.get(repoName);
+        } else {
+            log.debug("\t repoConfig found and empty");
+            return "";
+        }
+
+    }
+
+
+
+
+    private Payload getOrganisationContent() throws IOException {
+
+        log.info("fetching content of organisation...");
+
+        InputStream is = getClass().getClassLoader().getResourceAsStream(organisationResponse);
+        String jsonString = StreamUtils.copyToString(is, Charset.forName("UTF-8"));
+
+        Payload response = new Payload("application/json", jsonString);
+
+        if (currentPage < nbPages) {
+            Map headers = response.headers();
+            headers.put("link", "<http://localhost:" + GITHUB_MOCK_PORT + "/api/v3/organizations/1114/repos?page=" + currentPage + 1 +
+                    ">; rel=\"next\", <http://localhost:" + GITHUB_MOCK_PORT + "/api/v3/organizations/1114/repos?page=8>; rel=\"last\"");
+
+            currentPage++;
+        }
+
+        return response;
+    }
+
+    @Override
+    public void reset() {
+        repoConfigHits.clear();
+        reposWithNoConfig.clear();
+        repoConfigPerRepo.clear();
+        pomXmlHits.clear();
+        reposWithPomXml.clear();
+        currentPage = 1;
+        nbPages = 1;
+        hasCalledNextPage = false;
+        repoConfigHitsCount = 0;
+        existingResources.clear();
+        searchHitsCount=0;
+    }
+
+
+    public void addRepoSideConfig(String repoName, String config) {
+        repoConfigPerRepo.put(repoName, config);
+    }
+
+    public void addReposWithNoConfig(List<String> reposWithNoConfig) {
+        this.reposWithNoConfig.addAll(reposWithNoConfig);
+    }
+
+    public void addExistingResource(String repoName, String pathToResource, String fileNameWithContent) {
+        this.existingResources.put(buildResourceKey(repoName, pathToResource), fileNameWithContent);
+    }
+
+    public void addReposWithPomXMl(List<String> reposWithPomXMl) {
+        this.reposWithPomXml.addAll(reposWithPomXMl);
+    }
+
+
+}
