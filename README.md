@@ -1,5 +1,7 @@
 # GitHub crawler
 
+[![Build Status](https://travis-ci.org/societe-generale/github-crawler.svg?branch=master)](https://travis-ci.org/societe-generale/github-crawler)
+
 ## Why can it be useful ?
 
 With the current move to microservices, it's not rare that a team who previously had a couple of repositories, now has several dozens. 
