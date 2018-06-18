@@ -134,7 +134,14 @@ public class GitHubMock implements RemoteServiceMock {
         pomXmlHits.add(repo);
 
         if (reposWithPomXml.contains(repo)) {
-            String pomXMlTemplate = readFromInputStream(getClass().getClassLoader().getResourceAsStream("pomXmlFileOnrepo.json"));
+
+            InputStream is=getClass().getClassLoader().getResourceAsStream("pomXmlFileOnrepo.json");
+
+            if(is==null){
+                log.error("WHY IS THIS NULL ??");
+            }
+
+            String pomXMlTemplate = readFromInputStream(is);
 
             return new Payload("application/json", pomXMlTemplate.replaceFirst("\\$\\{REPO}", repo));
         } else {
