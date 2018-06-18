@@ -26,9 +26,11 @@ public class GitHubMock implements RemoteServiceMock {
     private String organisationResponse = "organisation.json";
 
     public final static String REPO_EXCLUDED_CONFIG = "excluded: true";
+
     private Map<String, String> repoConfigPerRepo = new HashMap<>();
 
     private static boolean hasStarted = false;
+
     private Map<String, String> existingResources = new HashMap<>();
 
     @Getter
@@ -46,8 +48,7 @@ public class GitHubMock implements RemoteServiceMock {
     @Getter
     private boolean hasCalledNextPage = false;
 
-
-    private List<String> reposWithNoConfig= new ArrayList<>();
+    private List<String> reposWithNoConfig = new ArrayList<>();
 
     private List<String> reposWithPomXml = new ArrayList<>();
 
@@ -65,19 +66,26 @@ public class GitHubMock implements RemoteServiceMock {
         gitHubWebServer.configure(
                 routes -> {
 
-                    routes.get("/api/v3/repos/MyOrganization/:repo/contents/.githubCrawler", (context,repo) -> getRepoConfigFileOnRepo(repo));
+                    routes.get("/api/v3/repos/MyOrganization/:repo/contents/.githubCrawler", (context, repo) -> getRepoConfigFileOnRepo(repo));
                     routes.get("/raw/MyOrganization/:repo/master/.githubCrawler", (context, repo) -> getActualRepoConfig(repo));
 
                     routes.get("/api/v3/orgs/MyOrganization/repos", context -> getOrganisationContent());
                     routes.get("/api/v3/organizations/1114/repos", context -> getOrganisationContentForNextPage());
 
-                    routes.get("/api/v3/repos/MyOrganization/:repo/contents/pom.xml?ref=master", (context,repo) -> getPomXmlFileOnRepo(repo));
+                    routes.get("/api/v3/repos/MyOrganization/:repo/contents/pom.xml?ref=master", (context, repo) -> getPomXmlFileOnRepo(repo));
                     routes.get("/raw/MyOrganization/:repo/:branchName/pom.xml", (context, repo, branchName) -> getActualPomXML(repo, branchName));
 
                     //for other resources than pom.xml..
                     //hack for resources that are not at the root of the repository, so that we don't have to hardcode too many things
-                    routes.get("/raw/MyOrganization/:repo/:branchName/:aSubDirectory/:resource", (context, repo, branchName, aSubDirectory, resource) -> getResource(repo, branchName, aSubDirectory, resource));
-                    routes.get("/raw/MyOrganization/:repo/:branchName/:resource", (context, repo, branchName, resource) -> getResource(repo, branchName, null, resource));
+                    routes.get("/api/v3/repos/MyOrganization/:repo/contents/:aSubDirectory/:resource?ref=:branchName",
+                            (context, repo, aSubDirectory, resource, branchName) -> getResourceFileOnRepo(repo, resource, aSubDirectory, branchName));
+                    routes.get("/raw/MyOrganization/:repo/:branchName/:aSubDirectory/:resource",
+                            (context, repo, branchName, aSubDirectory, resource) -> getResource(repo, branchName, aSubDirectory, resource));
+
+                    routes.get("/api/v3/repos/MyOrganization/:repo/contents/:resource?ref=:branchName",
+                            (context, repo, resource, branchName) -> getResourceFileOnRepo(repo, resource, null, branchName));
+                    routes.get("/raw/MyOrganization/:repo/:branchName/:resource",
+                            (context, repo, branchName, resource) -> getResource(repo, branchName, null, resource));
 
                     routes.get("/api/v3/repos/MyOrganization/:repo/branches", (context, repo) -> getBranches(repo));
 
@@ -89,7 +97,6 @@ public class GitHubMock implements RemoteServiceMock {
                     routes.get("/api/v3/repos/MyOrganization/:repo/commits?per_page=150", (context, repo) -> getCommits(repo));
                     routes.get("/api/v3/repos/MyOrganization/:repo/commits/:commit", (context, repo, commit) -> getCommit(repo, commit));
 
-
                 }
         ).start(GITHUB_MOCK_PORT);
 
@@ -98,23 +105,43 @@ public class GitHubMock implements RemoteServiceMock {
         return true;
     }
 
+    private Object getResourceFileOnRepo(String repo, String resource, String aSubDirectory, String branchName) throws IOException {
+
+        String fileOnRepoTemplate;
+
+        if (aSubDirectory != null) {
+            fileOnRepoTemplate = readFromInputStream(getClass().getClassLoader().getResourceAsStream("template_FileOnRepo_withSubDir.json"));
+            fileOnRepoTemplate = fileOnRepoTemplate.replaceFirst("\\$\\{SUB_DIRECTORY}", aSubDirectory);
+        }
+        else{
+            fileOnRepoTemplate = readFromInputStream(getClass().getClassLoader().getResourceAsStream("template_FileOnRepo.json"));
+        }
+
+        fileOnRepoTemplate = fileOnRepoTemplate.replaceFirst("\\$\\{REPO}", repo);
+        fileOnRepoTemplate = fileOnRepoTemplate.replaceFirst("\\$\\{BRANCH}", branchName);
+        fileOnRepoTemplate = fileOnRepoTemplate.replaceFirst("\\$\\{RESOURCE}", resource);
+
+
+
+        return new Payload("application/json", fileOnRepoTemplate);
+
+    }
+
     private Object getPomXmlFileOnRepo(String repo) throws IOException {
 
         log.debug("Getting pomXMl on repo...");
 
         pomXmlHits.add(repo);
 
-        if(reposWithPomXml.contains(repo)){
-            String pomXMlTemplate=readFromInputStream(getClass().getClassLoader().getResourceAsStream("pomXmlFileOnrepo.json"));
+        if (reposWithPomXml.contains(repo)) {
+            String pomXMlTemplate = readFromInputStream(getClass().getClassLoader().getResourceAsStream("pomXmlFileOnrepo.json"));
 
-            return new Payload("application/json",pomXMlTemplate.replaceFirst("\\$\\{REPO}",repo));
-        }
-        else{
+            return new Payload("application/json", pomXMlTemplate.replaceFirst("\\$\\{REPO}", repo));
+        } else {
             log.debug("... not found");
 
             throw new NotFoundException();
         }
-
 
     }
 
@@ -127,19 +154,14 @@ public class GitHubMock implements RemoteServiceMock {
         if (repoConfigPerRepo.containsKey(repo)) {
             log.info("\t returning something..");
 
-            String repoConfigTemplate=readFromInputStream(getClass().getClassLoader().getResourceAsStream("dummyFileOnrepo.json"));
+            String repoConfigTemplate = readFromInputStream(getClass().getClassLoader().getResourceAsStream("dummyFileOnrepo.json"));
 
-            return new Payload("application/json",repoConfigTemplate.replaceFirst("\\$\\{REPO}",repo));
-
-
+            return new Payload("application/json", repoConfigTemplate.replaceFirst("\\$\\{REPO}", repo));
 
         } else {
             log.info("\t .githubCrawler NOT FOUND");
             throw new NotFoundException();
         }
-
-
-
 
     }
 
@@ -155,7 +177,8 @@ public class GitHubMock implements RemoteServiceMock {
 
     private Payload getTeamsMembers(String team) throws IOException {
         log.debug("Getting Github team members...");
-        return new Payload("application/json", readFromInputStream(getClass().getClassLoader().getResourceAsStream(String.format("team_members_%s.json", team.hashCode()%2 == 0 ? "A" : "B"))));
+        return new Payload("application/json", readFromInputStream(
+                getClass().getClassLoader().getResourceAsStream(String.format("team_members_%s.json", team.hashCode() % 2 == 0 ? "A" : "B"))));
     }
 
     private Payload getTeams() throws IOException {
@@ -189,11 +212,11 @@ public class GitHubMock implements RemoteServiceMock {
 
             InputStream is = getClass().getClassLoader().getResourceAsStream(fileToReturn);
 
-            if(is==null){
-                log.error("input stream for {} on repo {} and branch {} should not be null. check the test config",pathToResource,repo,branchName);
+            if (is == null) {
+                log.error("input stream for {} on repo {} and branch {} should not be null. check the test config", pathToResource, repo, branchName);
 
                 log.error("logging all resources available :");
-                PathMatchingResourcePatternResolver resourceResolver=new PathMatchingResourcePatternResolver();
+                PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
                 Resource[] allResources = resourceResolver.getResources("classpath:**/*");
                 Arrays.asList(allResources).stream().forEach(r -> {
                     try {
@@ -204,7 +227,8 @@ public class GitHubMock implements RemoteServiceMock {
                     }
                 });
 
-                assert false : "failing the test immediately - we should be able to return "+fileToReturn+", but we can't get it as an InputStream";
+                assert false :
+                        "failing the test immediately - we should be able to return " + fileToReturn + ", but we can't get it as an InputStream";
             }
 
             return readFromInputStream(is);
@@ -218,7 +242,6 @@ public class GitHubMock implements RemoteServiceMock {
     private String getActualPomXML(String repo, String branchName) throws IOException {
 
         log.info("received a request to get pom.xml for rep {} on branch {} ..", repo, branchName);
-
 
         if (reposWithPomXml.contains(repo)) {
             log.info("\t returning something..");
@@ -258,7 +281,7 @@ public class GitHubMock implements RemoteServiceMock {
 
         repoConfigHits.add(repoName);
 
-        if(reposWithNoConfig.contains(repoName)){
+        if (reposWithNoConfig.contains(repoName)) {
             log.debug("\t repoConfig NOT FOUND");
             throw new NotFoundException();
         }
@@ -272,9 +295,6 @@ public class GitHubMock implements RemoteServiceMock {
         }
 
     }
-
-
-
 
     private Payload getOrganisationContent() throws IOException {
 
@@ -307,9 +327,8 @@ public class GitHubMock implements RemoteServiceMock {
         nbPages = 1;
         hasCalledNextPage = false;
         existingResources.clear();
-        searchHitsCount=0;
+        searchHitsCount = 0;
     }
-
 
     public void addRepoSideConfig(String repoName, String config) {
         repoConfigPerRepo.put(repoName, config);
@@ -326,6 +345,5 @@ public class GitHubMock implements RemoteServiceMock {
     public void addReposWithPomXMl(List<String> reposWithPomXMl) {
         this.reposWithPomXml.addAll(reposWithPomXMl);
     }
-
 
 }

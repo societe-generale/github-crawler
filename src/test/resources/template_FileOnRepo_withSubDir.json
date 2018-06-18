@@ -1,0 +1,9 @@
+{
+
+  "name": "dummyFileNameForTemplate",
+
+  "content": "dummy content for template",
+
+  "download_url": "http://localhost:9900/raw/MyOrganization/${REPO}/${BRANCH}/${SUB_DIRECTORY}/${RESOURCE}"
+
+}
