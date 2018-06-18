@@ -12,9 +12,14 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static com.societegenerale.githubcrawler.TestUtils.readFromInputStream;
@@ -135,7 +140,25 @@ public class GitHubMock implements RemoteServiceMock {
 
         if (reposWithPomXml.contains(repo)) {
 
-            String pomXMlTemplate = readFromInputStream(getClass().getClassLoader().getResourceAsStream("pomXmlFileOnRepo.json"));
+            InputStream is =getClass().getClassLoader().getResourceAsStream("pomXmlFileOnRepo.json");
+
+            if(is==null){
+                log.error("THIS SHOULDNT BE NULL");
+
+                File initialFile = new File("src/main/test/pomXmlFileOnRepo.json");
+                is = new FileInputStream(initialFile);
+
+                if(is==null) {
+                    log.error("THIS SHOULD REALLY NOT BE NULL - content of src/test/resources directory :");
+
+                    Path resourceDirectory = Paths.get("src","test","resources");
+
+                    Files.list(Paths.get("src","test","resources"))
+                            .forEach(System.out::println);
+                }
+            }
+
+            String pomXMlTemplate = readFromInputStream(is);
 
             return new Payload("application/json", pomXMlTemplate.replaceFirst("\\$\\{REPO}", repo));
         } else {
