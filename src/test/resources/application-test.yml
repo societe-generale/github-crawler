@@ -32,8 +32,8 @@ searchesPerRepo:
 
 debug: true
 
-logging.level:
-  com.societegenerale.githubcrawler: DEBUG
+#logging.level:
+#  com.societegenerale.githubcrawler: DEBUG
 
 
 
