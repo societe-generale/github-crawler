@@ -102,6 +102,8 @@ public class GitHubMock implements RemoteServiceMock {
 
         log.debug("Getting pomXMl on repo...");
 
+        pomXmlHits.add(repo);
+
         if(reposWithPomXml.contains(repo)){
             String pomXMlTemplate=readFromInputStream(getClass().getClassLoader().getResourceAsStream("pomXmlFileOnrepo.json"));
 
@@ -217,7 +219,6 @@ public class GitHubMock implements RemoteServiceMock {
 
         log.info("received a request to get pom.xml for rep {} on branch {} ..", repo, branchName);
 
-        pomXmlHits.add(repo);
 
         if (reposWithPomXml.contains(repo)) {
             log.info("\t returning something..");
