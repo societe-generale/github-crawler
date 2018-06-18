@@ -14,30 +14,30 @@
     "message": "[ABC-1167] clean unused multipart properties",
     "tree": {
       "sha": "3b823ba8d477bcf706164541219db5c3fbf78ca3",
-      "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/git/trees/3b823ba8d477bcf706164541219db5c3fbf78ca3"
+      "url": "http://localhost:9900/api/v3/repos/MyOrganization/myRepo/git/trees/3b823ba8d477bcf706164541219db5c3fbf78ca3"
     },
-    "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/git/commits/344ef5011187772d0662cabee37f881e7747e4db",
+    "url": "http://localhost:9900/api/v3/repos/MyOrganization/myRepo/git/commits/344ef5011187772d0662cabee37f881e7747e4db",
     "comment_count": 0
   },
-  "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/commits/344ef5011187772d0662cabee37f881e7747e4db",
-  "html_url": "https://github.com/MyOrganization/myRepo/commit/344ef5011187772d0662cabee37f881e7747e4db",
-  "comments_url": "https://github.com/api/v3/repos/MyOrganization/myRepo/commits/344ef5011187772d0662cabee37f881e7747e4db/comments",
+  "url": "http://localhost:9900/api/v3/repos/MyOrganization/myRepo/commits/344ef5011187772d0662cabee37f881e7747e4db",
+  "html_url": "http://localhost:9900/MyOrganization/myRepo/commit/344ef5011187772d0662cabee37f881e7747e4db",
+  "comments_url": "http://localhost:9900/api/v3/repos/MyOrganization/myRepo/commits/344ef5011187772d0662cabee37f881e7747e4db/comments",
   "author": {
     "login": "userTwo",
     "id": 375,
-    "avatar_url": "https://github.com/avatars/u/375?",
+    "avatar_url": "http://localhost:9900/avatars/u/375?",
     "gravatar_id": "",
-    "url": "https://github.com/api/v3/users/userTwo",
-    "html_url": "https://github.com/userTwo",
-    "followers_url": "https://github.com/api/v3/users/userTwo/followers",
-    "following_url": "https://github.com/api/v3/users/userTwo/following{/other_user}",
-    "gists_url": "https://github.com/api/v3/users/userTwo/gists{/gist_id}",
-    "starred_url": "https://github.com/api/v3/users/userTwo/starred{/owner}{/repo}",
-    "subscriptions_url": "https://github.com/api/v3/users/userTwo/subscriptions",
-    "organizations_url": "https://github.com/api/v3/users/userTwo/orgs",
-    "repos_url": "https://github.com/api/v3/users/userTwo/repos",
-    "events_url": "https://github.com/api/v3/users/userTwo/events{/privacy}",
-    "received_events_url": "https://github.com/api/v3/users/userTwo/received_events",
+    "url": "http://localhost:9900/api/v3/users/userTwo",
+    "html_url": "http://localhost:9900/userTwo",
+    "followers_url": "http://localhost:9900/api/v3/users/userTwo/followers",
+    "following_url": "http://localhost:9900/api/v3/users/userTwo/following{/other_user}",
+    "gists_url": "http://localhost:9900/api/v3/users/userTwo/gists{/gist_id}",
+    "starred_url": "http://localhost:9900/api/v3/users/userTwo/starred{/owner}{/repo}",
+    "subscriptions_url": "http://localhost:9900/api/v3/users/userTwo/subscriptions",
+    "organizations_url": "http://localhost:9900/api/v3/users/userTwo/orgs",
+    "repos_url": "http://localhost:9900/api/v3/users/userTwo/repos",
+    "events_url": "http://localhost:9900/api/v3/users/userTwo/events{/privacy}",
+    "received_events_url": "http://localhost:9900/api/v3/users/userTwo/received_events",
     "type": "User",
     "site_admin": false,
     "ldap_dn": "CN=userTwo,OU=Users,OU=Accounts,OU=FR,OU=QWERTY,DC=eur,DC=msd,DC=world,DC=socgen"
@@ -45,19 +45,19 @@
   "committer": {
     "login": "userOne",
     "id": 1979,
-    "avatar_url": "https://github.com/avatars/u/1979?",
+    "avatar_url": "http://localhost:9900/avatars/u/1979?",
     "gravatar_id": "",
-    "url": "https://github.com/api/v3/users/userOne",
-    "html_url": "https://github.com/userOne",
-    "followers_url": "https://github.com/api/v3/users/userOne/followers",
-    "following_url": "https://github.com/api/v3/users/userOne/following{/other_user}",
-    "gists_url": "https://github.com/api/v3/users/userOne/gists{/gist_id}",
-    "starred_url": "https://github.com/api/v3/users/userOne/starred{/owner}{/repo}",
-    "subscriptions_url": "https://github.com/api/v3/users/userOne/subscriptions",
-    "organizations_url": "https://github.com/api/v3/users/userOne/orgs",
-    "repos_url": "https://github.com/api/v3/users/userOne/repos",
-    "events_url": "https://github.com/api/v3/users/userOne/events{/privacy}",
-    "received_events_url": "https://github.com/api/v3/users/userOne/received_events",
+    "url": "http://localhost:9900/api/v3/users/userOne",
+    "html_url": "http://localhost:9900/userOne",
+    "followers_url": "http://localhost:9900/api/v3/users/userOne/followers",
+    "following_url": "http://localhost:9900/api/v3/users/userOne/following{/other_user}",
+    "gists_url": "http://localhost:9900/api/v3/users/userOne/gists{/gist_id}",
+    "starred_url": "http://localhost:9900/api/v3/users/userOne/starred{/owner}{/repo}",
+    "subscriptions_url": "http://localhost:9900/api/v3/users/userOne/subscriptions",
+    "organizations_url": "http://localhost:9900/api/v3/users/userOne/orgs",
+    "repos_url": "http://localhost:9900/api/v3/users/userOne/repos",
+    "events_url": "http://localhost:9900/api/v3/users/userOne/events{/privacy}",
+    "received_events_url": "http://localhost:9900/api/v3/users/userOne/received_events",
     "type": "User",
     "site_admin": false,
     "ldap_dn": "CN=userOne,OU=Users,OU=Accounts,OU=FR,OU=QWERTY,DC=eur,DC=msd,DC=world,DC=socgen"
@@ -65,8 +65,8 @@
   "parents": [
     {
       "sha": "cba8d9b3bba6629ded177718d1e6e006939d0b45",
-      "url": "https://github.com/api/v3/repos/MyOrganization/myRepo/commits/cba8d9b3bba6629ded177718d1e6e006939d0b45",
-      "html_url": "https://github.com/MyOrganization/myRepo/commit/cba8d9b3bba6629ded177718d1e6e006939d0b45"
+      "url": "http://localhost:9900/api/v3/repos/MyOrganization/myRepo/commits/cba8d9b3bba6629ded177718d1e6e006939d0b45",
+      "html_url": "http://localhost:9900/MyOrganization/myRepo/commit/cba8d9b3bba6629ded177718d1e6e006939d0b45"
     }
   ],
   "stats": {
@@ -82,9 +82,9 @@
       "additions": 0,
       "deletions": 3,
       "changes": 3,
-      "blob_url": "https://github.com/MyOrganization/myRepo/blob/344ef5011187772d0662cabee37f881e7747e4db/bootstrap/src/main/resources/application.yml",
-      "raw_url": "https://github.com/MyOrganization/myRepo/raw/344ef5011187772d0662cabee37f881e7747e4db/bootstrap/src/main/resources/application.yml",
-      "contents_url": "https://github.com/api/v3/repos/MyOrganization/myRepo/contents/bootstrap/src/main/resources/application.yml?ref=344ef5011187772d0662cabee37f881e7747e4db",
+      "blob_url": "http://localhost:9900/MyOrganization/myRepo/blob/344ef5011187772d0662cabee37f881e7747e4db/bootstrap/src/main/resources/application.yml",
+      "raw_url": "http://localhost:9900/MyOrganization/myRepo/raw/344ef5011187772d0662cabee37f881e7747e4db/bootstrap/src/main/resources/application.yml",
+      "contents_url": "http://localhost:9900/api/v3/repos/MyOrganization/myRepo/contents/bootstrap/src/main/resources/application.yml?ref=344ef5011187772d0662cabee37f881e7747e4db",
       "patch": "@@ -51,9 +51,6 @@ endpoints:\n     enabled: true\n     sensitive: false\n management.security.enabled: true\n-multipart:\n-  maxFileSize: 50MB\n-  maxRequestSize: 100MB\n \n spring:\n   application.name: declarative-process"
     },
     {
@@ -94,9 +94,9 @@
       "additions": 0,
       "deletions": 3,
       "changes": 3,
-      "blob_url": "https://github.com/MyOrganization/myRepo/blob/344ef5011187772d0662cabee37f881e7747e4db/bootstrap/src/main/resources/properties/public/declarative-process-bootstrap-public.yml",
-      "raw_url": "https://github.com/MyOrganization/myRepo/raw/344ef5011187772d0662cabee37f881e7747e4db/bootstrap/src/main/resources/properties/public/declarative-process-bootstrap-public.yml",
-      "contents_url": "https://github.com/api/v3/repos/MyOrganization/myRepo/contents/bootstrap/src/main/resources/properties/public/declarative-process-bootstrap-public.yml?ref=344ef5011187772d0662cabee37f881e7747e4db",
+      "blob_url": "http://localhost:9900/MyOrganization/myRepo/blob/344ef5011187772d0662cabee37f881e7747e4db/bootstrap/src/main/resources/properties/public/declarative-process-bootstrap-public.yml",
+      "raw_url": "http://localhost:9900/MyOrganization/myRepo/raw/344ef5011187772d0662cabee37f881e7747e4db/bootstrap/src/main/resources/properties/public/declarative-process-bootstrap-public.yml",
+      "contents_url": "http://localhost:9900/api/v3/repos/MyOrganization/myRepo/contents/bootstrap/src/main/resources/properties/public/declarative-process-bootstrap-public.yml?ref=344ef5011187772d0662cabee37f881e7747e4db",
       "patch": "@@ -29,9 +29,6 @@ metrics:\n   node: {{ogn.metrics.cluster.node}}\n   clusterName: {{ogn.metrics.cluster.name}}\n \n-multipart:\n-  maxFileSize: {{ogn.spring.http.multipart.max-file-size}}\n-  maxRequestSize: {{ogn.spring.http.multipart.max-request-size}}\n spring:\n   zipkin:\n     base-url: {{ogn.zipkin}}"
     }
   ]

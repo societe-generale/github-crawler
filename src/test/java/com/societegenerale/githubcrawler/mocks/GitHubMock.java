@@ -67,10 +67,19 @@ public class GitHubMock implements RemoteServiceMock {
         WebServer gitHubWebServer = new WebServer();
         gitHubWebServer.configure(
                 routes -> {
+
+                    routes.get("/api/v3/repos/MyOrganization/:repo/contents/.githubCrawler", (context,repo) -> getRepoConfigFileOnRepo(repo));
+                    routes.get("/raw/MyOrganization/:repo/master/.githubCrawler", (context, repo) -> getActualRepoConfig(repo));
+
                     routes.get("/api/v3/orgs/MyOrganization/repos", context -> getOrganisationContent());
                     routes.get("/api/v3/organizations/1114/repos", context -> getOrganisationContentForNextPage());
-                    routes.get("/raw/MyOrganization/:repo/master/.githubCrawler", (context, repo) -> getRepoConfig(repo));
-                    routes.get("/raw/MyOrganization/:repo/:branchName/pom.xml", (context, repo, branchName) -> getPomXML(repo, branchName));
+
+
+                    //           api/v3/repos/MyOrganization/welcome-pack/contents/pom.xml?ref=master
+                    routes.get("/api/v3/repos/MyOrganization/:repo/contents/pom.xml?ref=master", (context,repo) -> getPomXmlFileOnRepo(repo));
+                    http://localhost:9900/raw/MyOrganization/welcome-pack/master/pom.xml
+                    routes.get("/raw/MyOrganization/:repo/:branchName/pom.xml", (context, repo, branchName) -> getActualPomXML(repo, branchName));
+
                     //for other resources than pom.xml..
                     //hack for resources that are not at the root of the repository, so that we don't have to hardcode too many things
                     routes.get("/raw/MyOrganization/:repo/:branchName/:aSubDirectory/:resource", (context, repo, branchName, aSubDirectory, resource) -> getResource(repo, branchName, aSubDirectory, resource));
@@ -93,6 +102,32 @@ public class GitHubMock implements RemoteServiceMock {
         hasStarted = true;
 
         return true;
+    }
+
+    private Object getPomXmlFileOnRepo(String repo) throws IOException {
+
+        log.debug("Getting pomXMl on repo...");
+
+        if(reposWithPomXml.contains(repo)){
+            String pomXMlTemplate=readFromInputStream(getClass().getClassLoader().getResourceAsStream("pomXmlFileOnrepo.json"));
+
+            return new Payload("application/json",pomXMlTemplate.replaceFirst("\\$\\{REPO}",repo));
+        }
+        else{
+            log.debug("... not found");
+
+            throw new NotFoundException();
+        }
+
+
+    }
+
+    private Object getRepoConfigFileOnRepo(String repo) throws IOException {
+
+        log.debug("Getting file on repo...");
+
+        return new Payload("application/json", readFromInputStream(getClass().getClassLoader().getResourceAsStream("dummyFileOnrepo.json")));
+
     }
 
     private Object getCommit(String repo, String commit) throws IOException {
@@ -167,7 +202,7 @@ public class GitHubMock implements RemoteServiceMock {
         }
     }
 
-    private String getPomXML(String repo, String branchName) throws IOException {
+    private String getActualPomXML(String repo, String branchName) throws IOException {
 
         log.info("received a request to get pom.xml for rep {} on branch {} ..", repo, branchName);
 
@@ -205,7 +240,7 @@ public class GitHubMock implements RemoteServiceMock {
         return getOrganisationContent();
     }
 
-    private String getRepoConfig(String repoName) {
+    private String getActualRepoConfig(String repoName) {
 
         log.debug("received a repoConfig request for repo {}..", repoName);
 

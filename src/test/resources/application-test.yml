@@ -1,4 +1,4 @@
-gitHub.url: http://localhost:9900
+gitHub.url: http://localhost:9900/api/v3
 
 organizationName: MyOrganization
 securityToken: FAKE_TOKEN
@@ -31,5 +31,9 @@ searchesPerRepo:
       method: count
 
 debug: true
+
+logging.level:
+  com.societegenerale.githubcrawler: DEBUG
+
 
 
