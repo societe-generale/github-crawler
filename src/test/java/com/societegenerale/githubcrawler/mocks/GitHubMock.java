@@ -52,9 +52,6 @@ public class GitHubMock implements RemoteServiceMock {
     private List<String> reposWithPomXml = new ArrayList<>();
 
     @Getter
-    private int repoConfigHitsCount = 0;
-
-    @Getter
     private int searchHitsCount = 0;
 
     public static boolean hasStarted() {
@@ -74,10 +71,7 @@ public class GitHubMock implements RemoteServiceMock {
                     routes.get("/api/v3/orgs/MyOrganization/repos", context -> getOrganisationContent());
                     routes.get("/api/v3/organizations/1114/repos", context -> getOrganisationContentForNextPage());
 
-
-                    //           api/v3/repos/MyOrganization/welcome-pack/contents/pom.xml?ref=master
                     routes.get("/api/v3/repos/MyOrganization/:repo/contents/pom.xml?ref=master", (context,repo) -> getPomXmlFileOnRepo(repo));
-                    http://localhost:9900/raw/MyOrganization/welcome-pack/master/pom.xml
                     routes.get("/raw/MyOrganization/:repo/:branchName/pom.xml", (context, repo, branchName) -> getActualPomXML(repo, branchName));
 
                     //for other resources than pom.xml..
@@ -124,9 +118,26 @@ public class GitHubMock implements RemoteServiceMock {
 
     private Object getRepoConfigFileOnRepo(String repo) throws IOException {
 
-        log.debug("Getting file on repo...");
+        repoConfigHits.add(repo);
 
-        return new Payload("application/json", readFromInputStream(getClass().getClassLoader().getResourceAsStream("dummyFileOnrepo.json")));
+        log.debug("Getting config file on repo...");
+
+        if (repoConfigPerRepo.containsKey(repo)) {
+            log.info("\t returning something..");
+
+            String repoConfigTemplate=readFromInputStream(getClass().getClassLoader().getResourceAsStream("dummyFileOnrepo.json"));
+
+            return new Payload("application/json",repoConfigTemplate.replaceFirst("\\$\\{REPO}",repo));
+
+
+
+        } else {
+            log.info("\t .githubCrawler NOT FOUND");
+            throw new NotFoundException();
+        }
+
+
+
 
     }
 
@@ -245,7 +256,6 @@ public class GitHubMock implements RemoteServiceMock {
         log.debug("received a repoConfig request for repo {}..", repoName);
 
         repoConfigHits.add(repoName);
-        repoConfigHitsCount++;
 
         if(reposWithNoConfig.contains(repoName)){
             log.debug("\t repoConfig NOT FOUND");
@@ -295,7 +305,6 @@ public class GitHubMock implements RemoteServiceMock {
         currentPage = 1;
         nbPages = 1;
         hasCalledNextPage = false;
-        repoConfigHitsCount = 0;
         existingResources.clear();
         searchHitsCount=0;
     }

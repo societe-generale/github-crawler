@@ -9,7 +9,7 @@
   "url": "http://localhost:9900/api/v3/repos/octokit/octokit.rb/contents/README.md",
   "git_url": "http://localhost:9900/api/v3/repos/octokit/octokit.rb/git/blobs/3d21ec53a331a6f037a91c368710b99387d012c1",
   "html_url": "https://github.com/octokit/octokit.rb/blob/master/README.md",
-  "download_url": "http://localhost:9900/raw/MyOrganization/octokit/master/.githubCrawler",
+  "download_url": "http://localhost:9900/raw/MyOrganization/${REPO}/master/.githubCrawler",
 
   "_links": {
     "git": "http://localhost:9900/api/v3/repos/octokit/octokit.rb/git/blobs/3d21ec53a331a6f037a91c368710b99387d012c1",

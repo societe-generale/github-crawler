@@ -100,7 +100,7 @@ public class GitHubCrawlerTest {
 
 		assertThat(githubMockServer.isHasCalledNextPage()).as("next page wasn't called").isTrue();
 
-		assertThat(githubMockServer.getRepoConfigHitsCount()).isGreaterThanOrEqualTo(nbRepositoriesInOrga);
+		assertThat(githubMockServer.getRepoConfigHits().size()).isGreaterThanOrEqualTo(nbRepositoriesInOrga);
 		assertThat(githubMockServer.getNbPages()).isEqualTo(2);
 
 	}
