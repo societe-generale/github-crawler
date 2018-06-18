@@ -108,6 +108,7 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
 
     private fun extractRepositories(response: Response): Set<Repository> {
 
+        //TODO if issue in URL, we'll have a cproblem here - should catch it and log nicely what the issue is
         val body = response.body()
 
         if (body != null) {
