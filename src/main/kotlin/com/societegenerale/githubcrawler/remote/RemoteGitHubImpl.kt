@@ -239,25 +239,9 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
 @Headers("Accept: application/json")
 private interface InternalGitHubClient {
 
-//    companion object {
-//        const val REPO_LEVEL_CONFIG_FILE = ".githubCrawler"
-//    }
-
     @RequestLine("GET /repos/{organizationName}/{repositoryName}/branches")
     fun fetchRepoBranches(@Param("organizationName") organizationName: String,
                           @Param("repositoryName") repositoryName: String): List<Branch>
-
-
-//    @RequestLine("GET /raw/{repoFullName}/{defaultBranch}/" + REPO_LEVEL_CONFIG_FILE)
-//    fun fetchRepoConfig(@Param("repoFullName") repoFullName: String,
-//                        @Param("defaultBranch") defaultBranch: String): RepositoryConfig
-
-
-//    @RequestLine("GET /raw/{repositoryFullName}/{branchName}/{fileToFetch}")
-//    fun fetchFileContent(@Param("repositoryFullName") repositoryFullName: String,
-//                         @Param("branchName") branchName: String,
-//                         @Param("fileToFetch") fileToFetch: String): String
-
 
     @RequestLine("GET /repos/{repositoryFullName}/contents/{fileToFetch}?ref={branchName}")
     fun fetchFileOnRepo(@Param("repositoryFullName") repositoryFullName: String,
@@ -316,11 +300,7 @@ internal class GitHubResponseDecoder : Decoder {
                 throw NoFileFoundFeignException("no file found on repository")
             }
 
-            //TODO check if still required
-            if (type.typeName == RepositoryConfig::class.java.name) {
-                throw NoRepoConfigFileFoundException("no repository level config found")
-            }
-
+            //TODO check if this can actually happen.. probably not
             log.info("no file found ")
             throw Repository.RepoConfigException("problem while fetching")
 
@@ -334,16 +314,6 @@ internal class GitHubResponseDecoder : Decoder {
 
                 return response.body().toString()
             }
-
-//            else if (type.typeName == RepositoryConfig::class.java.name) {
-//
-//                log.debug("\t ... as a specific " + RepositoryConfig::class.java.name)
-//
-//                val responseAsString = extractResponseBodyAsString(response)
-//
-//                return parseRepositoryConfigResponse(responseAsString, response)
-//
-//            }
 
             log.debug("\t ... as a " + type.typeName)
 

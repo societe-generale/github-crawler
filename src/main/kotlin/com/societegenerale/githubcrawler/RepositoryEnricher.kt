@@ -10,11 +10,6 @@ import org.slf4j.LoggerFactory
 
 class RepositoryEnricher(val remoteGitHub: RemoteGitHub){
 
-    companion object {
-        const val REPO_LEVEL_CONFIG_FILE = ".githubCrawler"
-    }
-
-
     val log = LoggerFactory.getLogger(this.javaClass)
 
     fun identifyBranchesToParse(repository: Repository, crawlAllBranches: Boolean, orgaName: String): Repository {
