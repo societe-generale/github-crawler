@@ -2,10 +2,13 @@ package com.societegenerale.githubcrawler.remote
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.societegenerale.githubcrawler.RepositoryConfig
 import com.societegenerale.githubcrawler.model.Branch
+import com.societegenerale.githubcrawler.model.FileOnRepository
 import com.societegenerale.githubcrawler.model.Repository
 import com.societegenerale.githubcrawler.model.SearchResult
 import com.societegenerale.githubcrawler.model.commit.Commit
@@ -13,13 +16,24 @@ import com.societegenerale.githubcrawler.model.commit.DetailedCommit
 import com.societegenerale.githubcrawler.model.team.Team
 import com.societegenerale.githubcrawler.model.team.TeamMember
 import feign.*
+import feign.codec.Decoder
 import feign.gson.GsonEncoder
 import feign.httpclient.ApacheHttpClient
 import feign.slf4j.Slf4jLogger
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Response
+import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.web.HttpMessageConverters
+import org.springframework.cloud.netflix.feign.support.ResponseEntityDecoder
+import org.springframework.cloud.netflix.feign.support.SpringDecoder
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import java.io.IOException
+import java.io.StringWriter
+import java.lang.reflect.Type
 
 
 /**
@@ -28,6 +42,11 @@ import org.slf4j.LoggerFactory
  */
 @Suppress("TooManyFunctions") // most of methods are one liners, implementing the methods declared in interface
 class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
+
+
+    companion object {
+        const val REPO_LEVEL_CONFIG_FILE = ".githubCrawler"
+    }
 
     private val internalGitHubClient: InternalGitHubClient = Feign.builder()
             .client(ApacheHttpClient())
@@ -49,7 +68,7 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
         val repositoriesFromOrga = HashSet<Repository>()
 
         val request = okhttp3.Request.Builder()
-                .url(gitHubUrl + "/api/v3/orgs/$organizationName/repos")
+                .url(gitHubUrl + "/orgs/$organizationName/repos")
                 .header("Accept", "application/json")
                 .build()
 
@@ -89,6 +108,7 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
 
     private fun extractRepositories(response: Response): Set<Repository> {
 
+        //TODO if issue in URL (like trailing slash), we'll have a problem here - should catch it and log nicely what the issue is
         val body = response.body()
 
         if (body != null) {
@@ -131,7 +151,7 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
      */
     override fun fetchCodeSearchResult(repositoryFullName: String, query: String): SearchResult {
 
-        val urlBuilder = HttpUrl.parse(gitHubUrl + "/api/v3/search/code")!!.newBuilder()
+        val urlBuilder = HttpUrl.parse(gitHubUrl + "/search/code")!!.newBuilder()
         urlBuilder.addQueryParameter("query", query)
 
         val searchCodeUrl = urlBuilder.build().toString()
@@ -148,7 +168,27 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
     }
 
     override fun fetchFileContent(repositoryFullName: String, branchName: String, fileToFetch: String): String {
-        return internalGitHubClient.fetchFileContent(repositoryFullName, branchName, fileToFetch)
+
+        val fileOnRepository: FileOnRepository
+
+        try {
+            fileOnRepository = internalGitHubClient.fetchFileOnRepo(repositoryFullName, branchName, fileToFetch)
+        } catch (e: GitHubResponseDecoder.NoFileFoundFeignException) {
+            //translating exception to a non Feign specific one
+            throw NoFileFoundException("can't find $fileToFetch in repo $repositoryFullName, in branch $branchName")
+        }
+
+
+        val request = okhttp3.Request.Builder()
+                .url(fileOnRepository.downloadUrl)
+                .header("Accept", "application/json")
+                .build()
+
+        val response = httpClient.newCall(request).execute()
+
+
+        return response.body()?.string() ?: ""
+
     }
 
     override fun fetchCommits(organizationName: String, repositoryFullName: String, perPage: Int): Set<Commit> {
@@ -168,7 +208,25 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
     }
 
     override fun fetchRepoConfig(repoFullName: String, defaultBranch: String): RepositoryConfig {
-        return internalGitHubClient.fetchRepoConfig(repoFullName, defaultBranch)
+
+        val configFileOnRepository: FileOnRepository
+
+        try {
+            configFileOnRepository = internalGitHubClient.fetchFileOnRepo(repoFullName, defaultBranch, REPO_LEVEL_CONFIG_FILE)
+        } catch (e: GitHubResponseDecoder.NoFileFoundFeignException) {
+            return RepositoryConfig()
+        }
+
+        val request = okhttp3.Request.Builder()
+                .url(configFileOnRepository.downloadUrl)
+                .header("Accept", "application/json")
+                .build()
+
+        val response = httpClient.newCall(request).execute()
+
+        val decoder = GitHubResponseDecoder()
+
+        return decoder.decodeRepoConfig(response)
     }
 
 }
@@ -177,46 +235,103 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
 @Headers("Accept: application/json")
 private interface InternalGitHubClient {
 
-    companion object {
-        const val REPO_LEVEL_CONFIG_FILE = ".githubCrawler"
-    }
-
-    @RequestLine("GET /api/v3/repos/{organizationName}/{repositoryName}/branches")
+    @RequestLine("GET /repos/{organizationName}/{repositoryName}/branches")
     fun fetchRepoBranches(@Param("organizationName") organizationName: String,
                           @Param("repositoryName") repositoryName: String): List<Branch>
 
+    @RequestLine("GET /repos/{repositoryFullName}/contents/{fileToFetch}?ref={branchName}")
+    fun fetchFileOnRepo(@Param("repositoryFullName") repositoryFullName: String,
+                        @Param("branchName") branchName: String,
+                        @Param("fileToFetch") fileToFetch: String): FileOnRepository
 
-    @RequestLine("GET /raw/{repoFullName}/{defaultBranch}/" + REPO_LEVEL_CONFIG_FILE)
-    fun fetchRepoConfig(@Param("repoFullName") repoFullName: String,
-                        @Param("defaultBranch") defaultBranch: String): RepositoryConfig
-
-
-    @RequestLine("GET /raw/{repositoryFullName}/{branchName}/{fileToFetch}")
-    fun fetchFileContent(@Param("repositoryFullName") repositoryFullName: String,
-                         @Param("branchName") branchName: String,
-                         @Param("fileToFetch") fileToFetch: String): String
-
-
-    @RequestLine("GET /api/v3/repos/{organizationName}/{repositoryFullName}/commits")
+    @RequestLine("GET /repos/{organizationName}/{repositoryFullName}/commits")
     fun fetchCommits(@Param("organizationName") organizationName: String,
                      @Param("repositoryFullName") repositoryFullName: String,
                      @Param("per_page") perPage: Int): Set<Commit>
 
 
-    @RequestLine("GET /api/v3/repos/{organizationName}/{repositoryFullName}/commits/{commitSha}")
+    @RequestLine("GET /repos/{organizationName}/{repositoryFullName}/commits/{commitSha}")
     fun fetchCommit(@Param("organizationName") organizationName: String,
                     @Param("repositoryFullName") repositoryFullName: String,
                     @Param("commitSha") commitSha: String): DetailedCommit
 
-    @RequestLine("GET /api/v3/orgs/{organizationName}/teams")
+    @RequestLine("GET /orgs/{organizationName}/teams")
     @Headers("Authorization: {access_token}")
     fun fetchTeams(@Param("access_token") token: String,
                    @Param("organizationName") organizationName: String): Set<Team>
 
-    @RequestLine("GET /api/v3/teams/{team}/members")
+    @RequestLine("GET /teams/{team}/members")
     @Headers("Authorization: {access_token}")
     fun fetchTeamsMembers(@Param("access_token") token: String,
                           @Param("team") teamId: String): Set<TeamMember>
+
+
+}
+
+internal class GitHubResponseDecoder : Decoder {
+    val log = LoggerFactory.getLogger(this.javaClass)
+
+    val mapper = ObjectMapper(YAMLFactory())
+
+    init {
+        mapper.registerModule(KotlinModule())
+    }
+
+    fun decodeRepoConfig(response: okhttp3.Response): RepositoryConfig {
+
+        val writer = StringWriter()
+        IOUtils.copy(response.body()?.byteStream(), writer, "UTF-8")
+        val responseAsString = writer.toString()
+
+        return parseRepositoryConfigResponse(responseAsString, response)
+    }
+
+
+    @Throws(IOException::class)
+    override fun decode(response: feign.Response, type: Type): Any {
+
+        if (response.status() == HttpStatus.NOT_FOUND.value()) {
+
+            if (type.typeName == FileOnRepository::class.java.name) {
+                throw NoFileFoundFeignException("no file found on repository")
+            }
+            else{
+                throw NoFileFoundFeignException("problem while fetching content, of unknown type")
+            }
+
+        } else {
+
+            log.debug("Decoding a successful response...")
+
+            if (type.typeName == MediaType.TEXT_PLAIN_VALUE) {
+
+                log.debug("\t ... as a String")
+
+                return response.body().toString()
+            }
+
+            log.debug("\t ... as a " + type.typeName)
+
+            val jacksonConverter = MappingJackson2HttpMessageConverter(ObjectMapper().registerModule(KotlinModule()))
+            val objectFactory = { HttpMessageConverters(jacksonConverter) }
+            return ResponseEntityDecoder(SpringDecoder(objectFactory)).decode(response, type)
+
+        }
+    }
+
+    private fun parseRepositoryConfigResponse(responseAsString: String, response: okhttp3.Response): RepositoryConfig {
+        if (responseAsString.isEmpty()) {
+            return RepositoryConfig()
+        }
+
+        try {
+            return mapper.readValue(responseAsString, RepositoryConfig::class.java)
+        } catch (e: IOException) {
+            throw Repository.RepoConfigException("unable to parse config for repo - content : \"" + response.body() + "\"", e)
+        }
+    }
+
+    class NoFileFoundFeignException(message: String) : FeignException(message)
 
 
 }

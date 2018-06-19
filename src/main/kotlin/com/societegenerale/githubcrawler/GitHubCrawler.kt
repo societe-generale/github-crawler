@@ -153,7 +153,7 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
 
         val restTemplate = RestTemplate()
 
-        val responseEntity = restTemplate.exchange("$gitHubUrl/api/v3/search/code?" + buildQueryString(queryString, repo),
+        val responseEntity = restTemplate.exchange("$gitHubUrl/search/code?" + buildQueryString(queryString, repo),
                 HttpMethod.GET, null, object : ParameterizedTypeReference<SearchResult>() {
 
         })

@@ -5,9 +5,9 @@
     "slug": "developers",
     "description": null,
     "privacy": "secret",
-    "url": "https://github.com/api/v3/teams/284",
-    "members_url": "https://github.com/api/v3/teams/284/members{/member}",
-    "repositories_url": "https://github.com/api/v3/teams/284/repos",
+    "url": "http://localhost:9900/api/v3/teams/284",
+    "members_url": "http://localhost:9900/api/v3/teams/284/members{/member}",
+    "repositories_url": "http://localhost:9900/api/v3/teams/284/repos",
     "permission": "pull"
   },
   {
@@ -16,9 +16,9 @@
     "slug": "production",
     "description": "OPS Team",
     "privacy": "closed",
-    "url": "https://github.com/api/v3/teams/1253",
-    "members_url": "https://github.com/api/v3/teams/1253/members{/member}",
-    "repositories_url": "https://github.com/api/v3/teams/1253/repos",
+    "url": "http://localhost:9900/api/v3/teams/1253",
+    "members_url": "http://localhost:9900/api/v3/teams/1253/members{/member}",
+    "repositories_url": "http://localhost:9900/api/v3/teams/1253/repos",
     "permission": "pull"
   },
   {
@@ -27,9 +27,9 @@
     "slug": "contributors",
     "description": "People can write in the repo as committer, contributors",
     "privacy": "closed",
-    "url": "https://github.com/api/v3/teams/1254",
-    "members_url": "https://github.com/api/v3/teams/1254/members{/member}",
-    "repositories_url": "https://github.com/api/v3/teams/1254/repos",
+    "url": "http://localhost:9900/api/v3/teams/1254",
+    "members_url": "http://localhost:9900/api/v3/teams/1254/members{/member}",
+    "repositories_url": "http://localhost:9900/api/v3/teams/1254/repos",
     "permission": "pull"
   },
   {
@@ -38,9 +38,9 @@
     "slug": "techleads",
     "description": "",
     "privacy": "closed",
-    "url": "https://github.com/api/v3/teams/1403",
-    "members_url": "https://github.com/api/v3/teams/1403/members{/member}",
-    "repositories_url": "https://github.com/api/v3/teams/1403/repos",
+    "url": "http://localhost:9900/api/v3/teams/1403",
+    "members_url": "http://localhost:9900/api/v3/teams/1403/members{/member}",
+    "repositories_url": "http://localhost:9900/api/v3/teams/1403/repos",
     "permission": "pull"
   },
   {
@@ -49,9 +49,9 @@
     "slug": "testers",
     "description": "",
     "privacy": "closed",
-    "url": "https://github.com/api/v3/teams/1444",
-    "members_url": "https://github.com/api/v3/teams/1444/members{/member}",
-    "repositories_url": "https://github.com/api/v3/teams/1444/repos",
+    "url": "http://localhost:9900/api/v3/teams/1444",
+    "members_url": "http://localhost:9900/api/v3/teams/1444/members{/member}",
+    "repositories_url": "http://localhost:9900/api/v3/teams/1444/repos",
     "permission": "pull"
   },
   {
@@ -59,9 +59,9 @@
     "id": 1644,
     "slug": "white-walkers",
     "privacy": "closed",
-    "url": "https://github.com/api/v3/teams/1644",
-    "members_url": "https://github.com/api/v3/teams/1644/members{/member}",
-    "repositories_url": "https://github.com/api/v3/teams/1644/repos",
+    "url": "http://localhost:9900/api/v3/teams/1644",
+    "members_url": "http://localhost:9900/api/v3/teams/1644/members{/member}",
+    "repositories_url": "http://localhost:9900/api/v3/teams/1644/repos",
     "permission": "pull"
   },
   {
@@ -69,9 +69,9 @@
     "id": 1645,
     "slug": "stark",
     "privacy": "closed",
-    "url": "https://github.com/api/v3/teams/1645",
-    "members_url": "https://github.com/api/v3/teams/1645/members{/member}",
-    "repositories_url": "https://github.com/api/v3/teams/1645/repos",
+    "url": "http://localhost:9900/api/v3/teams/1645",
+    "members_url": "http://localhost:9900/api/v3/teams/1645/members{/member}",
+    "repositories_url": "http://localhost:9900/api/v3/teams/1645/repos",
     "permission": "pull"
   },
   {
@@ -79,9 +79,9 @@
     "id": 1646,
     "slug": "facelessman",
     "privacy": "closed",
-    "url": "https://github.com/api/v3/teams/1646",
-    "members_url": "https://github.com/api/v3/teams/1646/members{/member}",
-    "repositories_url": "https://github.com/api/v3/teams/1646/repos",
+    "url": "http://localhost:9900/api/v3/teams/1646",
+    "members_url": "http://localhost:9900/api/v3/teams/1646/members{/member}",
+    "repositories_url": "http://localhost:9900/api/v3/teams/1646/repos",
     "permission": "pull"
   },
   {
@@ -89,9 +89,9 @@
     "id": 1672,
     "slug": "tyrell-light-deal",
     "privacy": "closed",
-    "url": "https://github.com/api/v3/teams/1672",
-    "members_url": "https://github.com/api/v3/teams/1672/members{/member}",
-    "repositories_url": "https://github.com/api/v3/teams/1672/repos",
+    "url": "http://localhost:9900/api/v3/teams/1672",
+    "members_url": "http://localhost:9900/api/v3/teams/1672/members{/member}",
+    "repositories_url": "http://localhost:9900/api/v3/teams/1672/repos",
     "permission": "pull"
   },
   {
@@ -100,9 +100,9 @@
     "slug": "support",
     "description": "",
     "privacy": "closed",
-    "url": "https://github.com/api/v3/teams/1691",
-    "members_url": "https://github.com/api/v3/teams/1691/members{/member}",
-    "repositories_url": "https://github.com/api/v3/teams/1691/repos",
+    "url": "http://localhost:9900/api/v3/teams/1691",
+    "members_url": "http://localhost:9900/api/v3/teams/1691/members{/member}",
+    "repositories_url": "http://localhost:9900/api/v3/teams/1691/repos",
     "permission": "pull"
   },
   {
@@ -110,9 +110,9 @@
     "id": 1719,
     "slug": "night-s-watch",
     "privacy": "closed",
-    "url": "https://github.com/api/v3/teams/1719",
-    "members_url": "https://github.com/api/v3/teams/1719/members{/member}",
-    "repositories_url": "https://github.com/api/v3/teams/1719/repos",
+    "url": "http://localhost:9900/api/v3/teams/1719",
+    "members_url": "http://localhost:9900/api/v3/teams/1719/members{/member}",
+    "repositories_url": "http://localhost:9900/api/v3/teams/1719/repos",
     "permission": "pull"
   },
 
@@ -122,9 +122,9 @@
     "slug": "devops",
     "description": "",
     "privacy": "closed",
-    "url": "https://github.com/api/v3/teams/1742",
-    "members_url": "https://github.com/api/v3/teams/1742/members{/member}",
-    "repositories_url": "https://github.com/api/v3/teams/1742/repos",
+    "url": "http://localhost:9900/api/v3/teams/1742",
+    "members_url": "http://localhost:9900/api/v3/teams/1742/members{/member}",
+    "repositories_url": "http://localhost:9900/api/v3/teams/1742/repos",
     "permission": "pull"
   },
   {
@@ -133,9 +133,9 @@
     "slug": "closing-team",
     "description": "",
     "privacy": "closed",
-    "url": "https://github.com/api/v3/teams/1819",
-    "members_url": "https://github.com/api/v3/teams/1819/members{/member}",
-    "repositories_url": "https://github.com/api/v3/teams/1819/repos",
+    "url": "http://localhost:9900/api/v3/teams/1819",
+    "members_url": "http://localhost:9900/api/v3/teams/1819/members{/member}",
+    "repositories_url": "http://localhost:9900/api/v3/teams/1819/repos",
     "permission": "pull"
   },
   {
@@ -144,9 +144,9 @@
     "slug": "ogn",
     "description": "",
     "privacy": "closed",
-    "url": "https://github.com/api/v3/teams/2002",
-    "members_url": "https://github.com/api/v3/teams/2002/members{/member}",
-    "repositories_url": "https://github.com/api/v3/teams/2002/repos",
+    "url": "http://localhost:9900/api/v3/teams/2002",
+    "members_url": "http://localhost:9900/api/v3/teams/2002/members{/member}",
+    "repositories_url": "http://localhost:9900/api/v3/teams/2002/repos",
     "permission": "pull"
   },
 
@@ -156,9 +156,9 @@
     "slug": "lanisters",
     "description": "",
     "privacy": "closed",
-    "url": "https://github.com/api/v3/teams/2068",
-    "members_url": "https://github.com/api/v3/teams/2068/members{/member}",
-    "repositories_url": "https://github.com/api/v3/teams/2068/repos",
+    "url": "http://localhost:9900/api/v3/teams/2068",
+    "members_url": "http://localhost:9900/api/v3/teams/2068/members{/member}",
+    "repositories_url": "http://localhost:9900/api/v3/teams/2068/repos",
     "permission": "pull"
   },
 
@@ -168,9 +168,9 @@
     "slug": "liquidity-team",
     "description": "LIQUIDITY TEAM",
     "privacy": "closed",
-    "url": "https://github.com/api/v3/teams/2416",
-    "members_url": "https://github.com/api/v3/teams/2416/members{/member}",
-    "repositories_url": "https://github.com/api/v3/teams/2416/repos",
+    "url": "http://localhost:9900/api/v3/teams/2416",
+    "members_url": "http://localhost:9900/api/v3/teams/2416/members{/member}",
+    "repositories_url": "http://localhost:9900/api/v3/teams/2416/repos",
     "permission": "pull"
   },
   {
@@ -179,9 +179,9 @@
     "slug": "dashboard-tech",
     "description": "",
     "privacy": "closed",
-    "url": "https://github.com/api/v3/teams/2464",
-    "members_url": "https://github.com/api/v3/teams/2464/members{/member}",
-    "repositories_url": "https://github.com/api/v3/teams/2464/repos",
+    "url": "http://localhost:9900/api/v3/teams/2464",
+    "members_url": "http://localhost:9900/api/v3/teams/2464/members{/member}",
+    "repositories_url": "http://localhost:9900/api/v3/teams/2464/repos",
     "permission": "pull"
   },
   {
@@ -190,9 +190,9 @@
     "slug": "dashboard-functional",
     "description": "",
     "privacy": "closed",
-    "url": "https://github.com/api/v3/teams/2465",
-    "members_url": "https://github.com/api/v3/teams/2465/members{/member}",
-    "repositories_url": "https://github.com/api/v3/teams/2465/repos",
+    "url": "http://localhost:9900/api/v3/teams/2465",
+    "members_url": "http://localhost:9900/api/v3/teams/2465/members{/member}",
+    "repositories_url": "http://localhost:9900/api/v3/teams/2465/repos",
     "permission": "pull"
   },
   {
@@ -201,9 +201,9 @@
     "slug": "architects",
     "description": "",
     "privacy": "closed",
-    "url": "https://github.com/api/v3/teams/2532",
-    "members_url": "https://github.com/api/v3/teams/2532/members{/member}",
-    "repositories_url": "https://github.com/api/v3/teams/2532/repos",
+    "url": "http://localhost:9900/api/v3/teams/2532",
+    "members_url": "http://localhost:9900/api/v3/teams/2532/members{/member}",
+    "repositories_url": "http://localhost:9900/api/v3/teams/2532/repos",
     "permission": "pull"
   },
   {
@@ -212,9 +212,9 @@
     "slug": "lfu",
     "description": "",
     "privacy": "closed",
-    "url": "https://github.com/api/v3/teams/2974",
-    "members_url": "https://github.com/api/v3/teams/2974/members{/member}",
-    "repositories_url": "https://github.com/api/v3/teams/2974/repos",
+    "url": "http://localhost:9900/api/v3/teams/2974",
+    "members_url": "http://localhost:9900/api/v3/teams/2974/members{/member}",
+    "repositories_url": "http://localhost:9900/api/v3/teams/2974/repos",
     "permission": "pull"
   }
 ]

@@ -3,7 +3,7 @@ package com.societegenerale.githubcrawler
 
 import com.societegenerale.githubcrawler.model.Branch
 import com.societegenerale.githubcrawler.model.Repository
-import com.societegenerale.githubcrawler.remote.NoRepoConfigFileFoundException
+import com.societegenerale.githubcrawler.remote.NoFileFoundException
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
 import org.slf4j.LoggerFactory
 
@@ -36,11 +36,14 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub){
 
         try {
             log.debug("loading repo config for $repository.fullName")
-            repositoryConfig = remoteGitHub.fetchRepoConfig(repository.fullName, repository.defaultBranch)
+
+            repositoryConfig = remoteGitHub.fetchRepoConfig(repository.fullName,repository.defaultBranch)
+
             log.debug("..repo config found ${repositoryConfig.toString()}")
-        } catch (e: NoRepoConfigFileFoundException) {
+        } catch (e: NoFileFoundException) {
 
             return repository
+
         } catch (e: Repository.RepoConfigException) {
 
             log.warn("problem while parsing repo config for $repository.fullName --> skipping", e)
@@ -50,6 +53,8 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub){
 
         return repository.copy(config = repositoryConfig)
     }
+
+
 
     fun fetchIndicatorsValues(repository: Repository,gitHubCrawlerPropertiesByFile: GitHubCrawlerProperties): Repository {
 
@@ -93,7 +98,7 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub){
         val fileContent: String?
         try {
             fileContent = fetchFileWithIndicatorsToFind(repository.fullName,branch, pathToFileToGetIndicatorsFrom)
-        } catch (e: FileToFetchException) {
+        } catch (e: NoFileFoundException) {
             return emptyMap()
         }
 
@@ -102,52 +107,16 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub){
 
 
     private fun fetchFileWithIndicatorsToFind(repoFullName : String, branch: Branch, fileToFetchAndProcess: String): String {
-
-        try {
             return remoteGitHub.fetchFileContent(repoFullName, branch.name, fileToFetchAndProcess)
-        } catch (e: Repository.RepoConfigException) {
-            throw FileToFetchException("problem while fetching file ", e)
-        }
     }
 
 
     private fun parseIndicatorsFromFileContent(fileContent: String, pathToFileToGetIndicatorsFrom:String, indicatorsToFetch: List<IndicatorDefinition>): Map<String, String> {
-
 
         return indicatorsToFetch.asSequence()
                 .map { GitHubCrawler.availableFileContentParsers.get(it.method)!!.parseFileContentForIndicator(fileContent, pathToFileToGetIndicatorsFrom, it) }
                 .reduce { acc, item -> acc + item }
 
     }
-
-
-
-    private inner class FileToFetchException : Exception {
-
-        constructor(message: String, cause: Throwable) : super(message, cause)
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

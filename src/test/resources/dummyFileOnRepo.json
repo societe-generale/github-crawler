@@ -1,0 +1,11 @@
+{
+  "type": "file",
+  "encoding": "base64",
+  "size": 5362,
+  "name": ".githubCrawler",
+  "path": ".githubCrawler",
+  "content": "encoded content ...",
+
+  "download_url": "http://localhost:9900/raw/MyOrganization/${REPO}/master/.githubCrawler"
+
+}
