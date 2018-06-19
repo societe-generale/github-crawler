@@ -41,14 +41,7 @@ interface RemoteGitHub {
 
     fun fetchRepositories(organizationName: String): Set<Repository>
 
-    fun fetchFileOnRepo(repositoryFullName: String,
-                        branchName: String,
-                        fileToFetch: String): FileOnRepository?
-
 }
-
-
-
 
 class NoFileFoundException : Exception {
 

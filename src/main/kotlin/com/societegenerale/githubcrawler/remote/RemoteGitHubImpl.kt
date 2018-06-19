@@ -229,10 +229,6 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
         return decoder.decodeRepoConfig(response)
     }
 
-    override fun fetchFileOnRepo(repositoryFullName: String, branchName: String, fileToFetch: String): FileOnRepository? {
-        return internalGitHubClient.fetchFileOnRepo(repositoryFullName, branchName, fileToFetch)
-    }
-
 }
 
 
@@ -299,10 +295,9 @@ internal class GitHubResponseDecoder : Decoder {
             if (type.typeName == FileOnRepository::class.java.name) {
                 throw NoFileFoundFeignException("no file found on repository")
             }
-
-            //TODO check if this can actually happen.. probably not
-            log.info("no file found ")
-            throw Repository.RepoConfigException("problem while fetching")
+            else{
+                throw NoFileFoundFeignException("problem while fetching content, of unknown type")
+            }
 
         } else {
 
@@ -335,9 +330,6 @@ internal class GitHubResponseDecoder : Decoder {
             throw Repository.RepoConfigException("unable to parse config for repo - content : \"" + response.body() + "\"", e)
         }
     }
-
-
-    class NoRepoConfigFileFoundException(message: String) : FeignException(message)
 
     class NoFileFoundFeignException(message: String) : FeignException(message)
 
