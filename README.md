@@ -39,6 +39,9 @@ Several output types are available in [this package](./src/main/kotlin/com/socie
     # the base GitHub URL for your Github enterprise instance to crawl
     gitHub.url: https://my.githubEnterprise
     
+    # or if it's github.com...
+    # gitHub.url: https://api.github.com
+    
     # the name of the GitHub organization to crawl. To fetch the repositories, the crawler will hit 
     # https://${gitHub.url}/api/v3/orgs/${organizationName}/repos
     organizationName: MyOrganization
