@@ -16,8 +16,8 @@ output:
   file:
    filenamePrefix: "githubCrawler_output"
  #for http output, any endpoint accepting POST request witha Json payload would work, for instance ElasticSearch
-  http:
-    targetUrl: "http://myElasticSearchServer:9201/githubcrawler-test/MyOrganization"
+#  http:
+#    targetUrl: "http://myElasticSearchServer:9201/githubcrawler-test/MyOrganization"
 
 #repositories matching the configured regexp will be excluded
 repositoriesToExclude:
