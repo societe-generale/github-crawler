@@ -161,7 +161,9 @@ when running the crawler with above config and using HTTP output to push indicat
 
 ![](/docs/images/kibanaOutput_severalBranches.png)
 
-Once you have this data, you can quickly do any dashboard you want ! 
+Once you have this data, you can quickly do any dashboard you want, like here, with the split of ```spring-boot-starter-parent``` version across our services : 
+
+![](/docs/images/kibana_visualization.png) 
 
 ## Packaging
 
