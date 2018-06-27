@@ -4,7 +4,4 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class SearchResult (
         @JsonProperty("total_count")
-        val totalCount: Int){
-
-
-}
+        val totalCount: Int)

@@ -7,5 +7,4 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class FileOnRepository(val name: String,
                             val content: String,
                             @JsonProperty("download_url")
-                            val downloadUrl: String) {
-}
+                            val downloadUrl: String)
