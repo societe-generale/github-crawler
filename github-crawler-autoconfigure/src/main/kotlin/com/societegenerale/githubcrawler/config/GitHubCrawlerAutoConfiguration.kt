@@ -1,6 +1,7 @@
 package com.societegenerale.githubcrawler
 
 
+import com.societegenerale.githubcrawler.config.GitHubCrawlerParserConfig
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput
 import com.societegenerale.githubcrawler.ownership.NoOpOwnershipParser
 import com.societegenerale.githubcrawler.ownership.OwnershipParser
@@ -11,15 +12,15 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Import
 import org.springframework.core.convert.ConversionService
 import org.springframework.core.env.Environment
 
 @Configuration
+@Import(GitHubCrawlerParserConfig::class)
 @EnableConfigurationProperties(GitHubCrawlerProperties::class)
-@ComponentScan("com.societegenerale.githubcrawler.parsers")
-open class GitHubCrawlerConfig {
+open class GitHubCrawlerAutoConfiguration {
 
     val log = LoggerFactory.getLogger(this.javaClass)
 

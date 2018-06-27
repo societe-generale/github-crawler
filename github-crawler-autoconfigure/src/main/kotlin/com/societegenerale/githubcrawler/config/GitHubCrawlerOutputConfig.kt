@@ -13,7 +13,7 @@ import java.io.IOException
 
 @Configuration
 @EnableConfigurationProperties(GitHubCrawlerProperties::class)
-open class GitHubCrawlerOutputAutoConfiguration {
+open class GitHubCrawlerOutputConfig {
 
     val log = LoggerFactory.getLogger(this.javaClass)
 

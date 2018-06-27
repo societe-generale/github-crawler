@@ -4,7 +4,6 @@ import com.societegenerale.githubcrawler.config.TestConfig;
 import com.societegenerale.githubcrawler.mocks.GitHubMock;
 import com.societegenerale.githubcrawler.model.Repository;
 import lombok.val;
-import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +23,7 @@ import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = { TestConfig.class, GitHubCrawlerConfig.class })
+@SpringBootTest(classes = { TestConfig.class })
 @ActiveProfiles(profiles={"test","profilesAreAWayOfGrouping"})
 public class GitHubCrawlerTest {
 
