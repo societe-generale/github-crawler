@@ -5,7 +5,10 @@ import org.slf4j.LoggerFactory
 
 class NoOpOwnershipParser : OwnershipParser {
 
-    private val log = LoggerFactory.getLogger(NoOpOwnershipParser::class.java)!!
+    companion object {
+        private val log = LoggerFactory.getLogger(NoOpOwnershipParser::class.java)
+    }
+
 
     constructor(){
       log.info("Using "+NoOpOwnershipParser::class+" as a repository Ownership parser")

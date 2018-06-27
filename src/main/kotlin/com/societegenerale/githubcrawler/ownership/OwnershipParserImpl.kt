@@ -10,7 +10,10 @@ import org.slf4j.LoggerFactory
  */
 class OwnershipParserImpl(private val githubClient: RemoteGitHub, private val membershipParser: MembershipParser, private val organizationName: String) : OwnershipParser {
 
-    private val log = LoggerFactory.getLogger(OwnershipParserImpl::class.java)!!
+    companion object {
+        private val log = LoggerFactory.getLogger(OwnershipParserImpl::class.java)
+    }
+
     private val UNDEFINED = "Undefined"
 
     private var memberIdToTeamName: Membership = Membership()

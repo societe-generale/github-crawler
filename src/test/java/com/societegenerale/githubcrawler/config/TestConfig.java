@@ -33,7 +33,7 @@ public class TestConfig {
     public class InMemoryGitHubCrawlerOutput implements GitHubCrawlerOutput {
 
         @Getter
-        Map<String,Repository> analyzedRepositories=new HashMap<>();
+        private Map<String,Repository> analyzedRepositories=new HashMap<>();
 
 
 
@@ -47,7 +47,7 @@ public class TestConfig {
         }
 
         @Override
-        public void finalize() throws IOException {
+        public void finalizeOutput() throws IOException {
             //do nothing
         }
     }
