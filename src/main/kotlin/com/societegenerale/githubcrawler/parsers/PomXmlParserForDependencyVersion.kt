@@ -20,6 +20,7 @@ class PomXmlParserForDependencyVersion : FileContentParser {
         const val ARTIFACT_ID = "artifactId"
         const val VERSION = "version"
         const val PROPERTIES = "properties"
+        const val  NOT_FOUND= "not found"
     }
 
     val log = LoggerFactory.getLogger(this.javaClass)
@@ -58,7 +59,8 @@ class PomXmlParserForDependencyVersion : FileContentParser {
         }
 
         if (indicator.isEmpty()) {
-            indicator.put(kpi.name, "not found")
+
+            indicator.put(kpi.name, NOT_FOUND)
         }
 
         return indicator
@@ -104,7 +106,7 @@ class PomXmlParserForDependencyVersion : FileContentParser {
                 inAnyArtifactElement = false
 
                 if (!hasSeenExpectedArtifactElement) {
-                    indicator.put(kpi.name, "not found")
+                    indicator.put(kpi.name, NOT_FOUND)
                 }
                 else if (!versionHasBeenFound) {
                     indicator.put(kpi.name, "artifact found, but not the version")
@@ -192,7 +194,7 @@ class PomXmlParserForDependencyVersion : FileContentParser {
 
         val log = LoggerFactory.getLogger(this.javaClass)
 
-        var versionValuesFromProperties:String ="not found"
+        var versionValuesFromProperties:String = NOT_FOUND
 
         @Throws(SAXException::class)
         override fun startElement(uri: String?, localName: String?, qName: String, attributes: Attributes?) {
