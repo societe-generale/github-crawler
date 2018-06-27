@@ -31,17 +31,17 @@ public class GitHubCrawlerTest {
 	private final int MAX_TIMEOUT_FOR_CRAWLER=10;
 
 	@Autowired
-	GitHubCrawler crawler;
+	private GitHubCrawler crawler;
 
 	@Autowired
-	GitHubMock githubMockServer;
+	private GitHubMock githubMockServer;
 
 	@Autowired
-	TestConfig.InMemoryGitHubCrawlerOutput output;
+	private TestConfig.InMemoryGitHubCrawlerOutput output;
 
-	static boolean hasGitHubMockServerStarted=false;
+	private static boolean hasGitHubMockServerStarted=false;
 
-	int nbRepositoriesInOrga=7;
+	private int nbRepositoriesInOrga=7;
 
 	@Before
 	public void mockSetUp(){
@@ -275,7 +275,7 @@ public class GitHubCrawlerTest {
 		crawler.crawl();
 
 		await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
-				.until(() -> Assertions.assertThat(output.getAnalyzedRepositories().values()).hasSize(nbRepositoriesInOrga));
+				.until(() -> assertThat(output.getAnalyzedRepositories().values()).hasSize(nbRepositoriesInOrga));
 
 		Collection<Repository> processedRepositories = output.getAnalyzedRepositories().values();
 

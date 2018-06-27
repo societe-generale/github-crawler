@@ -97,10 +97,6 @@ class YamlParserForPropertyValue : FileContentParser {
 
 }
 
-class PrefixNotFoundInDocumentException(message: String) : Throwable() {
+class PrefixNotFoundInDocumentException(message: String) : Throwable()
 
-}
-
-class ParsingException(message: String) : Throwable() {
-
-}
+class ParsingException(message: String) : Throwable()

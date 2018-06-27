@@ -46,6 +46,8 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
 
     companion object {
         const val REPO_LEVEL_CONFIG_FILE = ".githubCrawler"
+        const val APPLICATION_JSON = "application/json"
+        const val ACCEPT = "accept"
     }
 
     private val internalGitHubClient: InternalGitHubClient = Feign.builder()
@@ -59,6 +61,8 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
 
     private val httpClient = OkHttpClient()
 
+
+
     val log = LoggerFactory.getLogger(this.javaClass)
 
     private val objectMapper = jacksonObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -67,9 +71,10 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
 
         val repositoriesFromOrga = HashSet<Repository>()
 
+
         val request = okhttp3.Request.Builder()
-                .url(gitHubUrl + "/orgs/$organizationName/repos")
-                .header("Accept", "application/json")
+                .url("$gitHubUrl/orgs/$organizationName/repos")
+                .header(ACCEPT, APPLICATION_JSON)
                 .build()
 
         val response = httpClient.newCall(request).execute()
@@ -87,7 +92,7 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
 
             val nextPageRequest = okhttp3.Request.Builder()
                     .url(nextPageLink)
-                    .header("Accept", "application/json")
+                    .header(ACCEPT, APPLICATION_JSON)
                     .build()
 
             val nextPageResponse = httpClient.newCall(nextPageRequest).execute()

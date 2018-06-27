@@ -167,12 +167,12 @@ public class GitHubMock implements RemoteServiceMock {
     }
 
     private Object getCommit(String repo, String commit) throws IOException {
-        log.debug("Getting Github commits...");
+        log.debug("Getting Github commit {} on repo {}...",commit,repo);
         return new Payload("application/json", readFromInputStream(getClass().getClassLoader().getResourceAsStream("commit.json")));
     }
 
     private Payload getCommits(String repo) throws IOException {
-        log.debug("Getting Github commits...");
+        log.debug("Getting Github commits on repo {}...",repo);
         return new Payload("application/json", readFromInputStream(getClass().getClassLoader().getResourceAsStream("commits.json")));
     }
 
