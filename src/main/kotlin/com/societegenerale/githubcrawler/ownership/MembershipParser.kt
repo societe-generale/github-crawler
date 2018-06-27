@@ -7,7 +7,10 @@ import java.util.function.Consumer
 
 class MembershipParser(private val githubClient: RemoteGitHub, private val token: String, private val organizationName: String) {
 
-    private val log = LoggerFactory.getLogger(MembershipParser::class.java)!!
+    companion object {
+        private val log = LoggerFactory.getLogger(MembershipParser::class.java)
+    }
+
     private val EXCLUDED_TEAMS = setOf("Developers", "Tech Leads", "Architects")
 
     fun computeMembership(): Membership {
