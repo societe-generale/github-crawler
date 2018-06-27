@@ -164,7 +164,7 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
 
         val request = okhttp3.Request.Builder()
                 .url(searchCodeInRepoUrl)
-                .header("Accept", "application/json")
+                .header(ACCEPT, APPLICATION_JSON)
                 .build()
 
         val response = httpClient.newCall(request).execute()
@@ -186,7 +186,7 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
 
         val request = okhttp3.Request.Builder()
                 .url(fileOnRepository.downloadUrl)
-                .header("Accept", "application/json")
+                .header(ACCEPT, APPLICATION_JSON)
                 .build()
 
         val response = httpClient.newCall(request).execute()
@@ -224,7 +224,7 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
 
         val request = okhttp3.Request.Builder()
                 .url(configFileOnRepository.downloadUrl)
-                .header("Accept", "application/json")
+                .header(ACCEPT, APPLICATION_JSON)
                 .build()
 
         val response = httpClient.newCall(request).execute()
