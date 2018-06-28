@@ -1,5 +1,6 @@
-package com.societegenerale.githubcrawler
+package com.societegenerale.githubcrawler.config
 
+import com.societegenerale.githubcrawler.GitHubCrawlerProperties
 import com.societegenerale.githubcrawler.output.*
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value

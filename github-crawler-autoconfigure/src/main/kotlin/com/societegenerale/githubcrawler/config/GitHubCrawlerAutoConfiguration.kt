@@ -1,7 +1,9 @@
-package com.societegenerale.githubcrawler
+package com.societegenerale.githubcrawler.config
 
 
-import com.societegenerale.githubcrawler.config.GitHubCrawlerParserConfig
+import com.societegenerale.githubcrawler.GitHubCrawler
+import com.societegenerale.githubcrawler.GitHubCrawlerProperties
+import com.societegenerale.githubcrawler.RepositoryEnricher
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput
 import com.societegenerale.githubcrawler.ownership.NoOpOwnershipParser
 import com.societegenerale.githubcrawler.ownership.OwnershipParser
