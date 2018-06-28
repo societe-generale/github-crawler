@@ -25,7 +25,7 @@ Following a simple configuration, it will use Github API starting from a given o
 
 You can easily exclude repositories from the analysis, configure the files and patterns you're interested in. If you have several types of repositories (front-end, back-end, config repositories for instance), you can have separate configuration files so that the information retrieved is relevant to each scope of analysis.
 
-Several output types are available in [this package](./src/main/kotlin/com/societegenerale/githubcrawler/output/) :
+Several output types are available in [this package](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/output/) :
 - console is the default and will be used if no output is configured
 - a simple "raw" file output
 - a CI-droid ready CSV file output, to run locally and copy/paste in CI-droid bulk update UI (UI implementation is in progress)
@@ -76,7 +76,6 @@ Several output types are available in [this package](./src/main/kotlin/com/socie
      
     # list the files to crawl for, and the patterns to look for in each file         
     indicatorsToFetchByFile:
-    # filename - crawler will do a GET https://${gitHub.url}/raw/${organizationName}/${repositoryName}/${branchName}/${filename}
     # use syntax with "[....]" to escape the dot in the file name (configuration can't be parsed otherwise, as "." is a meaningful character in yaml files)
       "[pom.xml]":
           # name of the indicator that will be reported for that repository in the output
@@ -99,6 +98,7 @@ Several output types are available in [this package](./src/main/kotlin/com/socie
               # findFirstValueWithRegexpCapture needs a pattern as a parameter. The pattern needs to contain a group capture (see https://regexone.com/lesson/capturing_groups) 
               # the first match will be returned as the value for this indicator
               pattern: ".*com\\.a\\.given\\.package\\.([a-z]*)\\.BuildHelpers.*"
+```
 
 ## Configuration on repository side 
 
@@ -107,7 +107,7 @@ Repository level config is stored in a **.githubCrawler** file, at the root of t
 
 - **Exclusion** 
 
-if a repository should be excluded, we can define it in the repository itself. if .githubCrawler contains : 
+if a repository should be excluded, we can define it in the repository itself. if ```.githubCrawler``` contains :
 
 ```yaml
     excluded: true  
@@ -117,9 +117,9 @@ Then the crawler will consider the repository as excluded, even if it doesn't ma
 
 - **Redirecting to a specific file to parse**
 
-Sometimes, the file we're interested in parsing is not in a standard location like the root of the repository - this is typically the case for Dockerfile.
+Sometimes, the file we're interested in parsing is not in a standard location like the root of the repository.
 
-What we can do in this case is define the file in the crawler config, and override the path in the repository config, with the redirectTo attribute : 
+What we can do in this case is define the file in the crawler config, and override the path in the repository config, with the redirectTo attribute, here for a DockerFile :
 
 ```yaml
     filesToParse: 
