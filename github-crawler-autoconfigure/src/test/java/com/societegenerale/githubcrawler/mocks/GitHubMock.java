@@ -6,18 +6,20 @@ import lombok.extern.slf4j.Slf4j;
 import net.codestory.http.WebServer;
 import net.codestory.http.errors.NotFoundException;
 import net.codestory.http.payload.Payload;
+import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ResourceUtils;
 import org.springframework.util.StreamUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.*;
 
-import static com.societegenerale.githubcrawler.TestUtils.readFromInputStream;
 
 @Component
 @Slf4j
@@ -109,19 +111,19 @@ public class GitHubMock implements RemoteServiceMock {
 
         String fileOnRepoTemplate;
 
+
         if (aSubDirectory != null) {
-            fileOnRepoTemplate = readFromInputStream(getClass().getClassLoader().getResourceAsStream("template_FileOnRepo_withSubDir.json"));
+
+            fileOnRepoTemplate = FileUtils.readFileToString(ResourceUtils.getFile("classpath:template_FileOnRepo_withSubDir.json"),"UTF-8");
             fileOnRepoTemplate = fileOnRepoTemplate.replaceFirst("\\$\\{SUB_DIRECTORY}", aSubDirectory);
         }
         else{
-            fileOnRepoTemplate = readFromInputStream(getClass().getClassLoader().getResourceAsStream("template_FileOnRepo.json"));
+            fileOnRepoTemplate = FileUtils.readFileToString(ResourceUtils.getFile("classpath:template_FileOnRepo.json"),"UTF-8");
         }
 
         fileOnRepoTemplate = fileOnRepoTemplate.replaceFirst("\\$\\{REPO}", repo);
         fileOnRepoTemplate = fileOnRepoTemplate.replaceFirst("\\$\\{BRANCH}", branchName);
         fileOnRepoTemplate = fileOnRepoTemplate.replaceFirst("\\$\\{RESOURCE}", resource);
-
-
 
         return new Payload("application/json", fileOnRepoTemplate);
 
@@ -135,7 +137,8 @@ public class GitHubMock implements RemoteServiceMock {
 
         if (reposWithPomXml.contains(repo)) {
 
-            String pomXMlTemplate = readFromInputStream(getClass().getClassLoader().getResourceAsStream("pomXmlFileOnRepo.json"));
+            String pomXMlTemplate = FileUtils.readFileToString(ResourceUtils.getFile("classpath:pomXmlFileOnRepo.json"),"UTF-8");
+
 
             return new Payload("application/json", pomXMlTemplate.replaceFirst("\\$\\{REPO}", repo));
         } else {
@@ -155,7 +158,9 @@ public class GitHubMock implements RemoteServiceMock {
         if (repoConfigPerRepo.containsKey(repo)) {
             log.info("\t returning something..");
 
-            String repoConfigTemplate = readFromInputStream(getClass().getClassLoader().getResourceAsStream("dummyFileOnRepo.json"));
+            String repoConfigTemplate =FileUtils.readFileToString(ResourceUtils.getFile("classpath:dummyFileOnRepo.json"),"UTF-8");
+
+
 
             return new Payload("application/json", repoConfigTemplate.replaceFirst("\\$\\{REPO}", repo));
 
@@ -168,23 +173,27 @@ public class GitHubMock implements RemoteServiceMock {
 
     private Object getCommit(String repo, String commit) throws IOException {
         log.debug("Getting Github commit {} on repo {}...",commit,repo);
-        return new Payload("application/json", readFromInputStream(getClass().getClassLoader().getResourceAsStream("commit.json")));
+        return new Payload("application/json", FileUtils.readFileToString(ResourceUtils.getFile("classpath:commit.json"),"UTF-8"));
+
     }
 
     private Payload getCommits(String repo) throws IOException {
         log.debug("Getting Github commits on repo {}...",repo);
-        return new Payload("application/json", readFromInputStream(getClass().getClassLoader().getResourceAsStream("commits.json")));
+        return new Payload("application/json", FileUtils.readFileToString(ResourceUtils.getFile("classpath:commits.json"),"UTF-8"));
     }
 
     private Payload getTeamsMembers(String team) throws IOException {
         log.debug("Getting Github team members...");
-        return new Payload("application/json", readFromInputStream(
-                getClass().getClassLoader().getResourceAsStream(String.format("team_members_%s.json", team.hashCode() % 2 == 0 ? "A" : "B"))));
+
+        String teamFileName=String.format("team_members_%s.json", team.hashCode() % 2 == 0 ? "A" : "B");
+
+        return new Payload("application/json", FileUtils.readFileToString(ResourceUtils.getFile("classpath:"+teamFileName),"UTF-8"));
+
     }
 
     private Payload getTeams() throws IOException {
         log.debug("Getting Github teams...");
-        return new Payload("application/json", readFromInputStream(getClass().getClassLoader().getResourceAsStream("teams.json")));
+        return new Payload("application/json", FileUtils.readFileToString(ResourceUtils.getFile("classpath:teams.json"),"UTF-8"));
     }
 
     private Payload getSearchResult(String searchQuery) throws IOException {
@@ -193,7 +202,7 @@ public class GitHubMock implements RemoteServiceMock {
 
         searchHitsCount++;
 
-        return new Payload("application/json", readFromInputStream(getClass().getClassLoader().getResourceAsStream("searchResult.json")));
+        return new Payload("application/json", FileUtils.readFileToString(ResourceUtils.getFile("classpath:searchResult.json"),"UTF-8"));
 
     }
 
@@ -203,18 +212,18 @@ public class GitHubMock implements RemoteServiceMock {
 
         log.debug("retrieving file {} from repo {} on branch {}", pathToResource, repo, branchName);
 
-        String fileToReturn = existingResources.get(buildResourceKey(repo, pathToResource));
+        String fileNameToReturn= existingResources.get(buildResourceKey(repo, pathToResource));
 
-        log.debug("actual file to return : {}", fileToReturn);
+        log.debug("actual file to return : {}", fileNameToReturn);
 
-        if (fileToReturn != null) {
+        if (fileNameToReturn != null) {
 
             log.info("\t {} found on repo {} and branch {}", pathToResource, repo, branchName);
 
-            InputStream is = getClass().getClassLoader().getResourceAsStream(fileToReturn);
+            File fileToReturn=ResourceUtils.getFile("classpath:"+fileNameToReturn);
 
-            if (is == null) {
-                log.error("input stream for {} on repo {} and branch {} should not be null. check the test config", pathToResource, repo, branchName);
+            if (!fileToReturn.exists()) {
+                log.error("file {} on repo {} and branch {} should be found. check the test config", pathToResource, repo, branchName);
 
                 log.error("logging all resources available :");
                 PathMatchingResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
@@ -232,7 +241,7 @@ public class GitHubMock implements RemoteServiceMock {
                         "failing the test immediately - we should be able to return " + fileToReturn + ", but we can't get it as an InputStream";
             }
 
-            return readFromInputStream(is);
+            return FileUtils.readFileToString(fileToReturn,"UTF-8");
 
         } else {
             log.info("\t {} NOT found on repo {} and branch {}", pathToResource, repo, branchName);
@@ -246,8 +255,7 @@ public class GitHubMock implements RemoteServiceMock {
 
         if (reposWithPomXml.contains(repo)) {
             log.info("\t returning something..");
-            InputStream samplePomXmlInputStream = getClass().getResourceAsStream("/sample_pom.xml");
-            return readFromInputStream(samplePomXmlInputStream);
+            return FileUtils.readFileToString(ResourceUtils.getFile("classpath:sample_pom.xml"),"UTF-8");
         } else {
             log.info("\t pom.xml NOT FOUND");
             throw new NotFoundException();
