@@ -9,7 +9,6 @@ import com.societegenerale.githubcrawler.ownership.NoOpOwnershipParser
 import com.societegenerale.githubcrawler.ownership.OwnershipParser
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
 import com.societegenerale.githubcrawler.remote.RemoteGitHubImpl
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -20,11 +19,9 @@ import org.springframework.core.convert.ConversionService
 import org.springframework.core.env.Environment
 
 @Configuration
-@Import(GitHubCrawlerParserConfig::class)
+@Import(GitHubCrawlerParserConfig::class,GitHubCrawlerOutputConfig::class)
 @EnableConfigurationProperties(GitHubCrawlerProperties::class)
 open class GitHubCrawlerAutoConfiguration {
-
-    val log = LoggerFactory.getLogger(this.javaClass)
 
     @Bean
     open fun conversionService(): ConversionService {
