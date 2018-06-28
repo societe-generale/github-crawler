@@ -23,7 +23,7 @@ import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = { TestConfig.class })
+@SpringBootTest(classes = { TestConfig.class, GitHubCrawlerAutoConfiguration.class })
 @ActiveProfiles(profiles={"test","profilesAreAWayOfGrouping"})
 public class GitHubCrawlerTest {
 

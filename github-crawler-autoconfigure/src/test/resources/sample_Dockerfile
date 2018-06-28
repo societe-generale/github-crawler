@@ -1,0 +1,1 @@
+FROM myDtr.com/someOrg/someImageName:20171206-162536-e136a81
