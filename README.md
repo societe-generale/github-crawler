@@ -37,7 +37,7 @@ Several output types are available in [this package](./src/main/kotlin/com/socie
 
 ```yaml
     # the base GitHub URL for your Github enterprise instance to crawl
-    gitHub.url: https://my.githubEnterprise
+    gitHub.url: https://my.githubEnterprise/api/v3
     
     # or if it's github.com...
     # gitHub.url: https://api.github.com
@@ -165,20 +165,11 @@ Once you have this data, you can quickly do any dashboard you want, like here, w
 
 ![](/docs/images/kibana_visualization.png) 
 
-## Packaging
-
-At build time, we produce 2 jars :
-
-- an -exec jar, bigger because self-contained. If you don't need to extend it, just run it, that's what you need
-- a much smaller _regular_ jar, that contains just the compiled code : this the jar you need to declare as a dependency if you want to extend Github crawler on your side. 
-
-## Running the crawler 
+## Running the crawler from your IDE
 
 We leverage on Spring Boot profiles to manage several configurations. Since we consider that each profile will represent a logical grouping of repositories, the Spring profile(s) will be copied on a "groups" attribute for each repository in output. 
 
-Assuming you have a property file as defined above
-
-- from the source code, in your IDE :
+Assuming you have a property file as defined above, all you need to do in your IDE is :
 
 1. check out this repository
 2. create your own property file in src/main/resources, and name it _application-myOwn.yml_ : myOwn is the Spring Boot profile you'll use
@@ -187,35 +178,15 @@ Assuming you have a property file as defined above
 ![](/docs/images/runningFromIDE.png)
 
 
-- from the packaged -exec jar, from the command line :
-
-Github crawler is available in [Maven Central](http://repo1.maven.org/maven2/com/societegenerale/github-crawler/), so all you have to do is to fetch it and execute it with the property file(s) that you need. 
-
-Have a look at below very simple script :
-1. get the jar from Maven central (or place the jar you've built locally)
-2. place your yml config files along with the jar
-3. run the jar with your config files (--spring.config.location parameter) and the proper profile (--spring.profiles.active)
-
---> it should work and ouput will be available according to your configuration
-
-```bash
-#!/usr/bin/env bash
-crawlerVersion="1.0.0"
-wget -P github-crawler-exec.jar http://repo1.maven.org/maven2/com/societegenerale/github-crawler/${crawlerVersion}/github-crawler-${crawlerVersion}-exec.jar --no-check-certificate
-$JAVA_HOME/bin/java -jar github-crawler-exec.jar --spring.config.location=./ --spring.profiles.active=myOwn
-```
-
-Above script assumes that you have property file(s) in same directory as the script itself (_--spring.config.location=./_) and that one of them is declaring a _myOwn_ Spring Boot profile
-
 ## Extending the crawler (and contributing to it ?)
 
-A starter project is available, allowing you to create your own GitHub crawler application, leveraging on everything that exists in the package. 
+A starter project is available, allowing you to create your own GitHub crawler application, leveraging on everything that exists in the library.
 This is the perfect way to test your own output or parser class on your side.. before maybe contributing it back to the project ? ;-) 
 
 A simple example is available here : https://github.com/vincent-fuchs/my-custom-github-crawler/  
 
-- import the gitHubCrawler starter as a [dependency](https://github.com/vincent-fuchs/my-custom-github-crawler/blob/ec7ed9a74f91b31794b8a0afb1196553434b1567/pom.xml#L20) in your project 
-- create a Spring Boot starter class, using the annotation : 
+- import the gitHubCrawler starter as a [dependency](https://github.com/vincent-fuchs/my-custom-github-crawler/blob/0e48dd7961b6b625802a2e1eb6b2fc4f8c4d5cdb/pom.xml#L19-L23) in your project
+- create a Spring Boot starter class, and inject the GitHubCrawler instantiated by the starter's autoconfig :
 
 ```java
 @SpringBootApplication
@@ -237,7 +208,7 @@ public class PersonalGitHubCrawlerApplication implements CommandLineRunner {
 ```
 
 - add your own config or classes, the Spring Boot way : if you add your own, implementing the recognized interfaces for output or parsing, then Spring Boot will use them ! 
-see [here](https://github.com/vincent-fuchs/my-custom-github-crawler/blob/ec7ed9a74f91b31794b8a0afb1196553434b1567/src/main/java/com/github/vincent_fuchs/output/CustomOutput.java) or [here](https://github.com/vincent-fuchs/my-custom-github-crawler/blob/ec7ed9a74f91b31794b8a0afb1196553434b1567/src/main/java/com/github/vincent_fuchs/parsers/MyOwnParser.java) for examples 
+see [here](https://github.com/vincent-fuchs/my-custom-github-crawler/blob/0e48dd7961b6b625802a2e1eb6b2fc4f8c4d5cdb/src/main/java/com/github/vincent_fuchs/output/CustomOutput.java) or [here](https://github.com/vincent-fuchs/my-custom-github-crawler/blob/ec7ed9a74f91b31794b8a0afb1196553434b1567/src/main/java/com/github/vincent_fuchs/parsers/MyOwnParser.java) for examples
 
 
 
