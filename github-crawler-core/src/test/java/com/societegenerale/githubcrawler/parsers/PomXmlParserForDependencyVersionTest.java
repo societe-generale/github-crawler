@@ -1,15 +1,17 @@
 package com.societegenerale.githubcrawler.parsers;
 
 import com.societegenerale.githubcrawler.IndicatorDefinition;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.societegenerale.githubcrawler.TestUtils.readFromInputStream;
+
 import static com.societegenerale.githubcrawler.parsers.PomXmlParserForDependencyVersion.ARTIFACT_ID;
 import static com.societegenerale.githubcrawler.parsers.PomXmlParserForDependencyVersion.FIND_DEPENDENCY_VERSION_IN_XML_METHOD;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,7 +27,8 @@ public class PomXmlParserForDependencyVersionTest {
     @Before
     public void setup() throws IOException {
 
-        pomXmlSnippet = readFromInputStream(getClass().getResourceAsStream("/sample_pom.xml"));
+        pomXmlSnippet =  FileUtils.readFileToString(ResourceUtils.getFile("classpath:sample_pom.xml"),"UTF-8");
+
 
         pomXmlDependencyVersion.setName(indicatorName);
         pomXmlDependencyVersion.setMethod(FIND_DEPENDENCY_VERSION_IN_XML_METHOD);

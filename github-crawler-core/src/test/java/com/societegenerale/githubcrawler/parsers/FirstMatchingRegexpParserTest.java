@@ -1,15 +1,16 @@
 package com.societegenerale.githubcrawler.parsers;
 
 import com.societegenerale.githubcrawler.IndicatorDefinition;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.societegenerale.githubcrawler.TestUtils.readFromInputStream;
 import static com.societegenerale.githubcrawler.parsers.FirstMatchingRegexpParser.FIND_FIRST_VALUE_WITH_REGEXP_CAPTURE_METHOD;
 import static com.societegenerale.githubcrawler.parsers.FirstMatchingRegexpParser.PATTERN;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,10 +18,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FirstMatchingRegexpParserTest {
 
     final String indicatorName = "someIndicatorName";
+
     //TODO pattern can probably be improved to match even if there are extra blank characters after the image name, but match only the image name
     private final String regexForDockerImage = "FROM\\s.*\\/(.*)\\s?.*";
+
     FirstMatchingRegexpParser fileContentParser = new FirstMatchingRegexpParser();
+
     IndicatorDefinition firstMatchingRegexpToFind = new IndicatorDefinition();
+
     Map<String, String> params = new HashMap<>();
 
     @Before
@@ -39,7 +44,8 @@ public class FirstMatchingRegexpParserTest {
 
         String fileContent = "test\nimport static com.sgcib.fcc.osd.cap.build.BuildHelpers.*";
 
-        Map<String, String> indicatorsFound = fileContentParser.parseFileContentForIndicator(fileContent,StringUtils.EMPTY, firstMatchingRegexpToFind);
+        Map<String, String> indicatorsFound = fileContentParser
+                .parseFileContentForIndicator(fileContent, StringUtils.EMPTY, firstMatchingRegexpToFind);
 
         assertThat(indicatorsFound.get(indicatorName)).isEqualTo("cap");
     }
@@ -50,9 +56,10 @@ public class FirstMatchingRegexpParserTest {
         params.put(PATTERN, "(?s).*dockerNode\\(image:'(.+?(?=')).*");
         firstMatchingRegexpToFind.setParams(params);
 
-        String fileContent = readFromInputStream(getClass().getResourceAsStream("/sample_Jenkinsfile2"));
+        String fileContent = FileUtils.readFileToString(ResourceUtils.getFile("classpath:sample_Jenkinsfile2"), "UTF-8");
 
-        Map<String, String> indicatorsFound = fileContentParser.parseFileContentForIndicator(fileContent,StringUtils.EMPTY, firstMatchingRegexpToFind);
+        Map<String, String> indicatorsFound = fileContentParser
+                .parseFileContentForIndicator(fileContent, StringUtils.EMPTY, firstMatchingRegexpToFind);
 
         assertThat(indicatorsFound.get(indicatorName)).isEqualTo("myDtr.com/someOrg/someImageName:1.0");
     }
@@ -60,7 +67,7 @@ public class FirstMatchingRegexpParserTest {
     @Test
     public void canFindDockerImageInDockerFile() throws Exception {
 
-        Map<String, String> indicatorsFound = findDockerImageIndicatorIn("/sample_Dockerfile");
+        Map<String, String> indicatorsFound = findDockerImageIndicatorIn("sample_Dockerfile");
 
         assertThat(indicatorsFound.get(indicatorName)).isEqualTo("someImageName:20171206-162536-e136a81");
     }
@@ -68,7 +75,7 @@ public class FirstMatchingRegexpParserTest {
     @Test
     public void canFindDockerImageInMultilineDockerFile() throws Exception {
 
-        Map<String, String> indicatorsFound = findDockerImageIndicatorIn("/sample_multilineDockerfile");
+        Map<String, String> indicatorsFound = findDockerImageIndicatorIn("sample_multilineDockerfile");
 
         assertThat(indicatorsFound.get(indicatorName)).isEqualTo("someImageName:7.2");
     }
@@ -76,12 +83,13 @@ public class FirstMatchingRegexpParserTest {
     @Test
     public void canFindValueInDockerStackFile() throws Exception {
 
-        String sampleDockerStackFile= readFromInputStream(getClass().getResourceAsStream("/sample_dockerStack"));
+        String sampleDockerStackFile = FileUtils.readFileToString(ResourceUtils.getFile("classpath:sample_dockerStack"), "UTF-8");
 
         params.put(PATTERN, "(?m).*ZIPKIN_BASE_URL=(.*)$");
         firstMatchingRegexpToFind.setParams(params);
 
-        Map<String, String> indicatorsFound =fileContentParser.parseFileContentForIndicator(sampleDockerStackFile,StringUtils.EMPTY,firstMatchingRegexpToFind);
+        Map<String, String> indicatorsFound = fileContentParser
+                .parseFileContentForIndicator(sampleDockerStackFile, StringUtils.EMPTY, firstMatchingRegexpToFind);
 
         assertThat(indicatorsFound.get(indicatorName)).isEqualTo("http://someZipkinUrl.com");
     }
@@ -89,23 +97,25 @@ public class FirstMatchingRegexpParserTest {
     @Test
     public void shouldDefaultIfNotConfiguredProperly_noCapturingGroup() throws Exception {
 
-        String sampleDockerStackFile= readFromInputStream(getClass().getResourceAsStream("/sample_dockerStack"));
+        String sampleDockerStackFile = FileUtils.readFileToString(ResourceUtils.getFile("classpath:sample_dockerStack"), "UTF-8");
 
         params.put(PATTERN, "(?m).*ZIPKIN_BASE_URL=.*$");
         firstMatchingRegexpToFind.setParams(params);
 
-        Map<String, String> indicatorsFound =fileContentParser.parseFileContentForIndicator(sampleDockerStackFile,StringUtils.EMPTY, firstMatchingRegexpToFind);
+        Map<String, String> indicatorsFound = fileContentParser
+                .parseFileContentForIndicator(sampleDockerStackFile, StringUtils.EMPTY, firstMatchingRegexpToFind);
 
         assertThat(indicatorsFound.get(indicatorName)).isEqualTo("issue in config, check logs");
     }
 
     private Map<String, String> findDockerImageIndicatorIn(String fileName) throws IOException {
 
-        String sampleJenkinsFile = readFromInputStream(getClass().getResourceAsStream(fileName));
+        String sampleJenkinsFile = FileUtils.readFileToString(ResourceUtils.getFile("classpath:"+fileName), "UTF-8");
+
 
         params.put(PATTERN, regexForDockerImage);
         firstMatchingRegexpToFind.setParams(params);
 
-        return fileContentParser.parseFileContentForIndicator(sampleJenkinsFile, StringUtils.EMPTY,firstMatchingRegexpToFind);
+        return fileContentParser.parseFileContentForIndicator(sampleJenkinsFile, StringUtils.EMPTY, firstMatchingRegexpToFind);
     }
 }

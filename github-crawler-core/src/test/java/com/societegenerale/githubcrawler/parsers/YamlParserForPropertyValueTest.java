@@ -1,15 +1,16 @@
 package com.societegenerale.githubcrawler.parsers;
 
 import com.societegenerale.githubcrawler.IndicatorDefinition;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.societegenerale.githubcrawler.TestUtils.readFromInputStream;
 import static com.societegenerale.githubcrawler.parsers.YamlParserForPropertyValue.FIND_PROPERTY_VALUE_IN_YAML;
 import static com.societegenerale.githubcrawler.parsers.YamlParserForPropertyValue.PROPERTY_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,7 +27,8 @@ public class YamlParserForPropertyValueTest {
     @Before
     public void setup() throws IOException {
 
-        yamlFileSnippet= readFromInputStream(getClass().getResourceAsStream("/sample_yamlfile.yml"));
+        yamlFileSnippet=
+                FileUtils.readFileToString(ResourceUtils.getFile("classpath:sample_yamlfile.yml"), "UTF-8");
 
         pomXmlDependencyVersion.setName(indicatorName);
         pomXmlDependencyVersion.setMethod(FIND_PROPERTY_VALUE_IN_YAML);
