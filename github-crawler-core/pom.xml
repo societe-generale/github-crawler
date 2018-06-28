@@ -111,34 +111,4 @@
 
     </dependencies>
 
-    <build>
-
-
-        <plugins>
-
-
-
-
-            <plugin>
-
-                <!-- This is required so that we have more flexibility :
-
-                - the -exec jar can be used directly from command line
-                - the regular jar can be used as a dependency in projects that need it
-
-                https://stackoverflow.com/questions/48435800/using-kotlin-classes-from-jar-built-with-kotlin-maven-plugin
-
-                -->
-
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <classifier>exec</classifier>
-                </configuration>
-            </plugin>
-
-        </plugins>
-    </build>
-
-
 </project>
