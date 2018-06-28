@@ -1,5 +1,6 @@
 package com.societegenerale.githubcrawler;
 
+import com.societegenerale.githubcrawler.config.GitHubCrawlerAutoConfiguration;
 import com.societegenerale.githubcrawler.config.TestConfig;
 import com.societegenerale.githubcrawler.mocks.GitHubMock;
 import com.societegenerale.githubcrawler.model.Repository;
