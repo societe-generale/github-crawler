@@ -14,8 +14,6 @@ import com.societegenerale.githubcrawler.remote.RemoteGitHubImpl;
 import lombok.Getter;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 @Configuration
-//@EnableAutoConfiguration
 @EnableConfigurationProperties(GitHubCrawlerProperties.class)
 public class TestConfig {
 
