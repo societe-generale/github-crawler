@@ -209,16 +209,15 @@ Above script assumes that you have property file(s) in same directory as the scr
 
 ## Extending the crawler (and contributing to it ?)
 
-An `@EnableGitHubCrawler` annotation is available, allowing you to create your own GitHub crawler application, leveraging on everything that exists in the package. 
+A starter project is available, allowing you to create your own GitHub crawler application, leveraging on everything that exists in the package. 
 This is the perfect way to test your own output or parser class on your side.. before maybe contributing it back to the project ? ;-) 
 
 A simple example is available here : https://github.com/vincent-fuchs/my-custom-github-crawler/  
 
-- import the gitHubCrawler as a [dependency](https://github.com/vincent-fuchs/my-custom-github-crawler/blob/ec7ed9a74f91b31794b8a0afb1196553434b1567/pom.xml#L20) in your project 
+- import the gitHubCrawler starter as a [dependency](https://github.com/vincent-fuchs/my-custom-github-crawler/blob/ec7ed9a74f91b31794b8a0afb1196553434b1567/pom.xml#L20) in your project 
 - create a Spring Boot starter class, using the annotation : 
 
 ```java
-@EnableGitHubCrawler
 @SpringBootApplication
 public class PersonalGitHubCrawlerApplication implements CommandLineRunner {
 
@@ -237,7 +236,7 @@ public class PersonalGitHubCrawlerApplication implements CommandLineRunner {
 }
 ```
 
-- add your own config or classes. All Spring Boot @Component classes will be loaded : if you add your own, implementing the recognized interfaces for output or parsing, then Spring Boot will use them ! 
+- add your own config or classes, the Spring Boot way : if you add your own, implementing the recognized interfaces for output or parsing, then Spring Boot will use them ! 
 see [here](https://github.com/vincent-fuchs/my-custom-github-crawler/blob/ec7ed9a74f91b31794b8a0afb1196553434b1567/src/main/java/com/github/vincent_fuchs/output/CustomOutput.java) or [here](https://github.com/vincent-fuchs/my-custom-github-crawler/blob/ec7ed9a74f91b31794b8a0afb1196553434b1567/src/main/java/com/github/vincent_fuchs/parsers/MyOwnParser.java) for examples 
 
 
