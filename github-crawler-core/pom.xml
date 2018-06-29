@@ -10,7 +10,7 @@
     <name>github-crawler-core</name>
 
     <parent>
-        <groupId>com.societegenerale</groupId>
+        <groupId>com.societegenerale.github-crawler</groupId>
         <artifactId>github-crawler-parent</artifactId>
         <version>1.0.3-SNAPSHOT</version>
     </parent>
