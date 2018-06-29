@@ -17,6 +17,8 @@
 ### Changed
 - re-enabling the build of a -exec jar that was removed in v1.0.2
 
+### Fixed
+- issue #14 - now it won't fail if we don't provide indicatorsToFetchByFile in the config
 
 ## [1.0.2] - 2018-06-28
 
