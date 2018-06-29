@@ -68,7 +68,7 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub){
 
             val foundIndicatorsForBranch =
                     gitHubCrawlerPropertiesByFile.indicatorsToFetchByFile.map { (fileToParse, indicatorsToFetch) -> fetchFileAndParseIndicatorsFromIt(repository,branch, fileToParse, indicatorsToFetch) }
-                            .reduce { acc, map -> acc + map }
+                            .fold(mapOf<String,String>()){ acc, map -> acc + map }
 
             foundIndicators.put(branch, foundIndicatorsForBranch)
 
