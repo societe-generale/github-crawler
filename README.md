@@ -165,6 +165,15 @@ Once you have this data, you can quickly do any dashboard you want, like here, w
 
 ![](/docs/images/kibana_visualization.png) 
 
+
+## Packaging
+
+At build time, we produce several jars :
+
+- a _starter-exec_ jar, bigger because self-contained. If you don't need to extend it, just take this jar and run it from command line with your config
+- much smaller _regular_ jars (following [Spring Boot recommendations](https://github.com/spring-projects/spring-boot/wiki/Building-On-Spring-Boot), that contains just the compiled code : these are the jar you need to declare as a dependency if you want to extend Github crawler on your side. 
+
+
 ## Running the crawler from your IDE
 
 We leverage on Spring Boot profiles to manage several configurations. Since we consider that each profile will represent a logical grouping of repositories, the Spring profile(s) will be copied on a "groups" attribute for each repository in output. 
@@ -176,6 +185,27 @@ Assuming you have a property file as defined above, all you need to do in your I
 3. run GitHubCrawlerApplication, passing _myOwn_ as profile 
 
 ![](/docs/images/runningFromIDE.png)
+
+
+## Running the crawler from the packaged -exec jar, from the command line :
+
+As mentioned above, we also package the starter as a standalone -exec jar (from v1.0.3 onward), available in [Maven Central](http://repo1.maven.org/maven2/com/societegenerale/github-crawler-starter/), so all you have to do is to fetch it and execute it with the property file(s) that you need. 
+
+Have a look at below very simple script :
+1. get the jar from Maven central (or place the jar you've built locally)
+2. place your yml config files along with the jar
+3. run the jar with your config files (--spring.config.location parameter) and the proper profile (--spring.profiles.active)
+
+--> it should work and ouput will be available according to your configuration
+
+```bash
+#!/usr/bin/env bash
+crawlerVersion="1.0.3"
+wget -P github-crawler-exec.jar http://repo1.maven.org/maven2/com/societegenerale/github-crawler-starter/${crawlerVersion}/github-crawler-starter-${crawlerVersion}-exec.jar --no-check-certificate
+$JAVA_HOME/bin/java -jar github-crawler-exec.jar --spring.config.location=./ --spring.profiles.active=myOwn
+```
+
+Above script assumes that you have property file(s) in same directory as the script itself (_--spring.config.location=./_) and that one of them is declaring a _myOwn_ Spring Boot profile
 
 
 ## Extending the crawler (and contributing to it ?)
