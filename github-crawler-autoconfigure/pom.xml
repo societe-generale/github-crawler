@@ -10,7 +10,7 @@
     <name>github-crawler-autoconfigure</name>
 
     <parent>
-        <groupId>com.societegenerale</groupId>
+        <groupId>com.societegenerale.github-crawler</groupId>
         <artifactId>github-crawler-parent</artifactId>
         <version>1.0.3-SNAPSHOT</version>
     </parent>
@@ -18,7 +18,7 @@
     <dependencies>
 
         <dependency>
-            <groupId>com.societegenerale</groupId>
+            <groupId>com.societegenerale.github-crawler</groupId>
             <artifactId>github-crawler-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
