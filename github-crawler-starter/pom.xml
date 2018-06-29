@@ -25,5 +25,25 @@
 
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+
+                <!-- This is required so that we have more flexibility :
+
+                - the -exec jar can be used directly from command line
+                - the regular jar can be used as a dependency in projects that need it
+
+                -->
+
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.societegenerale.githubcrawler.GitHubCrawlerApplication</mainClass>
+                    <classifier>exec</classifier>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
