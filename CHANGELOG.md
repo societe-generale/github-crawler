@@ -16,6 +16,7 @@
 
 ### Changed
 - re-enabling the build of a -exec jar that was removed in v1.0.2
+- upgraded to Kotlin 1.2.50
 
 ### Fixed
 - issue #14 - now it won't fail if we don't provide indicatorsToFetchByFile in the config
