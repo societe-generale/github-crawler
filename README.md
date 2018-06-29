@@ -201,7 +201,7 @@ Have a look at below very simple script :
 ```bash
 #!/usr/bin/env bash
 crawlerVersion="1.0.3"
-wget -P github-crawler-exec.jar http://repo1.maven.org/maven2/com/societegenerale/github-crawler-starter/${crawlerVersion}/github-crawler-starter-${crawlerVersion}-exec.jar --no-check-certificate
+wget -P github-crawler-exec.jar http://repo1.maven.org/maven2/com/societegenerale/github-crawler/github-crawler-starter/${crawlerVersion}/github-crawler-starter-${crawlerVersion}-exec.jar --no-check-certificate
 $JAVA_HOME/bin/java -jar github-crawler-exec.jar --spring.config.location=./ --spring.profiles.active=myOwn
 ```
 
