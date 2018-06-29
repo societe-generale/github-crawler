@@ -12,6 +12,12 @@
 
 ### Fixed
 
+## [1.0.3] - 2018-06-29
+
+### Changed
+- re-enabling the build of a -exec jar that was removed in v1.0.2
+
+
 ## [1.0.2] - 2018-06-28
 
 ### Changed
