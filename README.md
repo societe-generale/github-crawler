@@ -189,7 +189,7 @@ Assuming you have a property file as defined above, all you need to do in your I
 
 ## Running the crawler from the packaged -exec jar, from the command line :
 
-As mentioned above, we also package the starter as a standalone -exec jar (from v1.0.3 onward), available in [Maven Central](http://repo1.maven.org/maven2/com/societegenerale/github-crawler-starter/), so all you have to do is to fetch it and execute it with the property file(s) that you need. 
+As mentioned above, we also package the starter as a standalone -exec jar (from v1.0.3 onward), available in [Maven Central](http://repo1.maven.org/maven2/com/societegenerale/github-crawler/github-crawler-starter/), so all you have to do is to fetch it and execute it with the property file(s) that you need. 
 
 Have a look at below very simple script :
 1. get the jar from Maven central (or place the jar you've built locally)
