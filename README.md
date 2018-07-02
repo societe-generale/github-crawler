@@ -142,8 +142,16 @@ It may happen that you want to "tag" some repos, to be able to filter easily on 
 
 in output, this information will be attached to all the repositories for which it has been configured. 
 
+## Parsers
 
-## Output
+Some parsers are provided [here](https://github.com/societe-generale/github-crawler/tree/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers). There are 2 types of parsers and you can 
+easily add your own implementation by implementing one of the 2 interfaces (see javadoc for details) :
+
+- [FileContentParser](https://github.com/societe-generale/github-crawler/blob/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers/FileContentParser.kt)
+- [SearchResultParser](https://github.com/societe-generale/github-crawler/blob/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers/SearchResultParser.kt)
+
+
+## Outputs
 
 when running the crawler with above config and using HTTP output to push indicators in ElasticSearch, this is the kind of data you'll get 
 

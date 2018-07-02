@@ -3,10 +3,24 @@ package com.societegenerale.githubcrawler.parsers
 import com.societegenerale.githubcrawler.IndicatorDefinition
 
 
+/**
+ * A parser that takes a given file content as a parameter, and returns the values that we're looking for. Implementation will typically define a
+ * couple of configuration parameter that are required to perform its duty. See how [PomXmlParserForDependencyVersion] defines and uses [PomXmlParserForDependencyVersion.ARTIFACT_ID] for instance
+ */
 interface FileContentParser {
 
+    /**
+     * @return the parser's ID that we need to use in config to refer to it. Typically, a String describing the parser type.
+     * At application startup, beans implementing the interface will be instantiated and stored in a Map as a value, with getNameInConfig value as the key.
+     */
     fun getNameInConfig(): String
 
+    /**
+     * @param fileContent the file content that needs to be parsed
+     * @param pathToFileToGetIndicatorsFrom the path to the file. Rarely used, but sometimes useful, like in [SimpleFilePathParser]
+     * @param kpi the indicator we need to find in the file
+     * @return a Map with the indicator name as key, and the value found as the value. Most of the time, the map will have a single entry.
+     */
     fun parseFileContentForIndicator(fileContent: String, pathToFileToGetIndicatorsFrom:String, kpi: IndicatorDefinition): Map<String, String>
 
 
