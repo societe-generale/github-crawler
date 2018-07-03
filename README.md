@@ -28,12 +28,15 @@ You can easily exclude repositories from the analysis, configure the files and p
 Several output types are available in [this package](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/output/) :
 - console is the default and will be used if no output is configured
 - a simple "raw" file output
-- a CI-droid ready CSV file output, to run locally and copy/paste in CI-droid bulk update UI (UI implementation is in progress)
+- a CI-droid ready CSV (or Json) file output, to run locally and copy/paste in CI-droid bulk update UI (UI implementation is in progress)
 - HTTP output, which enables you to POST the results to an endpoint like ElasticSearch, for easy analysis in Kibana
 
 
-
 ## Configuration on crawler side 
+
+Several outputs can be configured at the same time. You can define as many indicators to fetch as required. 
+
+Below configuration shows how parsers are invoked for each indicator, thanks to the ```method``` attribute.
 
 ```yaml
     # the base GitHub URL for your Github enterprise instance to crawl
@@ -70,35 +73,58 @@ Several output types are available in [this package](./github-crawler-core/src/m
       http:
         # we'll POST one repository branch individually to ${targetUrl}
         targetUrl: "http://someElasticSearchServer:9201/technologymap/MyOrganization"
-      ciDroidReadyFile:
-        # this should be an indicator defined in indicatorsToFetchByFile section. can be a comma separated list if several to output
-        indicatorsToOutput: "dockerFilePath"  
      
     # list the files to crawl for, and the patterns to look for in each file         
     indicatorsToFetchByFile:
     # use syntax with "[....]" to escape the dot in the file name (configuration can't be parsed otherwise, as "." is a meaningful character in yaml files)
       "[pom.xml]":
-          # name of the indicator that will be reported for that repository in the output
-          - name: spring_boot_starter_parent_version
-            # name of the method to find the value in the file, pointing to one of the implementation classes of FileContentParser
-            method: findDependencyVersionInXml
-            # the parameters to the method, specific to each method type
-            params:
-              # findDependencyVersionInXml needs an artifactId as a parameter : it will find the version for that Maven artifact by doing a SAX parsing, even if the version is a ${variable} defined in <properties> section
-              artifactId: spring-boot-starter-parent
-          - name: spring_boot_dependencies_version
-            method: findDependencyVersionInXml
-            params:
-              artifactId: spring-boot-dependencies
+        # name of the indicator that will be reported for that repository in the output
+        - name: spring_boot_starter_parent_version
+          # name of the method to find the value in the file, pointing to one of the implementation classes of FileContentParser
+          method: findDependencyVersionInXml
+          # the parameters to the method, specific to each method type
+          params:
+            # findDependencyVersionInXml needs an artifactId as a parameter : it will find the version for that Maven artifact by doing a SAX parsing, even if the version is a ${variable} defined in <properties> section
+            artifactId: spring-boot-starter-parent
+        - name: spring_boot_dependencies_version
+          method: findDependencyVersionInXml
+          params:
+            artifactId: spring-boot-dependencies
       #another file to parse..
-      Jenkinsfile:
-          - name: build_helper_package
-            method: findFirstValueWithRegexpCapture
+      Dockerfile:
+        - name: docker_image_used
+            # findFirstValueWithRegexpCapture needs a pattern as a parameter. The pattern needs to contain a group capture (see https://regexone.com/lesson/capturing_groups) 
+            # the first match will be returned as the value for this indicator             
+          method: findFirstValueWithRegexpCapture
+          params:
+            pattern: ".*\\/(.*)\\s?"
+    
+      "[src/main/resources/application.yml]":
+          - name: spring_application_name
+            method: findPropertyValueInYamlFile
             params:
-              # findFirstValueWithRegexpCapture needs a pattern as a parameter. The pattern needs to contain a group capture (see https://regexone.com/lesson/capturing_groups) 
-              # the first match will be returned as the value for this indicator
-              pattern: ".*com\\.a\\.given\\.package\\.([a-z]*)\\.BuildHelpers.*"
+              propertyName: "spring.application.name"
 ```
+
+## Link with [CI-droid](https://github.com/societe-generale/ci-droid)
+
+[CI-droid](https://github.com/societe-generale/ci-droid) is another of our tools, that can help you perform the same actions (modifying a pom.xml, replacing a string by another) in N resources, in X repositories. When there are dozens of resources to update, it can be cumbersome to prepare the message. GitHub crawler can help here, with below config :
+
+```yaml
+    output:
+      ciDroidJsonReadyFile:
+        # this should be an indicator defined in indicatorsToFetchByFile section
+        indicatorsToOutput: "pomFilePath" 
+
+    indicatorsToFetchByFile:
+      "[pom.xml]":
+          - name: "pomFilePath"
+            method: findFilePath
+```
+
+this will generate a file containing all the pom.xml found in the repositories (and in the branches also if ```crawlAllBranches``` is set to true), in the format that CI-droid expect. 
+
+All you need to do is then to copy/paste the records you want into the CI-droid bulk action Json message.
 
 ## Configuration on repository side 
 
