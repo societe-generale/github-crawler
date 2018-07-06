@@ -207,7 +207,7 @@
                     <stagingRepository>https://oss.sonatype.org/service/local/staging/deploy/maven2</stagingRepository>
                     <tagNameFormat>github_crawler_@{project.version}</tagNameFormat>
                     <localCheckout>true</localCheckout>
-                    <pushChanges>false</pushChanges>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
                     <useReleaseProfile>false</useReleaseProfile>
                     <releaseProfiles>makeRelease</releaseProfiles>
                     <mavenExecutorId>forked-path</mavenExecutorId>

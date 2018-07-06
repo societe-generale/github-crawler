@@ -1,7 +1,21 @@
 language: java
+
+env:
+  global:
+    - secure: "the base64 string from when you encrypted OSSRH_JIRA_USERNAME"
+    - # ^^ OSSRH_JIRA_USERNAME
+    - secure: "the base64 string from when you encrypted OSSRH_JIRA_PASSWORD"
+    - # ^^ OSSRH_JIRA_PASSWORD
+    - secure: "the base64 string from when you encrypted GPG_KEY_NAME"
+    - # ^^ GPG_KEY_NAME
+    - secure: "the base64 string from when you encrypted GPG_PASSPHRASE"
+    - # ^^ GPG_PASSPHRASE
+
+
 jdk:
   - oraclejdk8
 script:
   - mvn verify
 after_success:
   - mvn clean test jacoco:report coveralls:report
+  - ./release/deploy.sh
