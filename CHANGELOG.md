@@ -3,12 +3,14 @@
 ## [Unreleased]
 
 ### Added
+- ability to make a release by creating a branch named "makerelease"
 
 ### Changed
 
 ### Deprecated
 
 ### Removed
+- most of default parameters in application.yml - if you were using it, put them in your own config file
 
 ### Fixed
 
