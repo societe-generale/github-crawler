@@ -3,7 +3,7 @@
 ## [Unreleased]
 
 ### Added
-- ability to make a release by creating a branch named "makerelease"
+- ability to make a release by creating a branch named "makeRelease"
 
 ### Changed
 
