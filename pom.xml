@@ -4,7 +4,6 @@
 
 
 
-    s
     <groupId>com.societegenerale.github-crawler</groupId>
     <artifactId>github-crawler-parent</artifactId>
     <version>1.0.4-SNAPSHOT</version>
