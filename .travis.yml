@@ -11,9 +11,6 @@ env:
     - secure: "the base64 string from when you encrypted GPG_PASSPHRASE"
     - # ^^ GPG_PASSPHRASE
 
-before_install:
-  - chmod +x ./release/deploy.sh
-
 jdk:
   - oraclejdk8
 script:
