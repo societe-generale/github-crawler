@@ -208,6 +208,7 @@
                     <tagNameFormat>github_crawler_@{project.version}</tagNameFormat>
                     <localCheckout>true</localCheckout>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <pushChanges>false</pushChanges>
                     <useReleaseProfile>false</useReleaseProfile>
                     <releaseProfiles>makeRelease</releaseProfiles>
                     <mavenExecutorId>forked-path</mavenExecutorId>
