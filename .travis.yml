@@ -21,7 +21,7 @@ after_success:
 
 deploy:
   provider: script
-  script: "mvn release:perform --settings release/mvnsettings.xml"
+  script: "../createReleaseProperties.sh && mvn release:perform --settings release/mvnsettings.xml"
   skip_cleanup: true
   on:
     tags: true
