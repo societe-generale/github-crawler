@@ -11,11 +11,17 @@ env:
     - secure: "the base64 string from when you encrypted GPG_PASSPHRASE"
     - # ^^ GPG_PASSPHRASE
 
-
 jdk:
   - oraclejdk8
 script:
   - mvn verify
+
 after_success:
   - mvn clean test jacoco:report coveralls:report
-  - ./release/deploy.sh
+
+deploy:
+  provider: script
+  script: "mvn release:perform --settings release/mvnsettings.xml"
+  skip_cleanup: true
+  on:
+    tags: true
