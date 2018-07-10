@@ -21,6 +21,8 @@ after_success:
 
 before_deploy:
   - release/createReleaseProperties.sh
+  - echo $GPG_SECRET_KEYS | base64 --decode | gpg --import
+  - echo $GPG_OWNERTRUST | base64 --decode | gpg --import-ownertrust
 
 deploy:
   provider: script
