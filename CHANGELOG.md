@@ -3,16 +3,23 @@
 ## [Unreleased]
 
 ### Added
-- ability to make a release by creating a branch named "makeRelease"
 
 ### Changed
 
 ### Deprecated
 
 ### Removed
-- most of default parameters in application.yml - if you were using it, put them in your own config file
 
 ### Fixed
+
+## [1.0.4] - 2018-07-10
+
+### Added
+- ability to make a Maven release with Travis, when pushing a tag
+
+### Removed
+- most of default parameters in application.yml - if you were using it, put them in your own config file
+
 
 ## [1.0.3] - 2018-06-29
 
