@@ -26,7 +26,7 @@ before_deploy:
 
 deploy:
   provider: script
-  script: mvn -X release:perform --settings release/mvnsettings.xml
+  script: mvn release:perform --settings release/mvnsettings.xml -Darguments="-DskipTests"
   skip_cleanup: true
   on:
     tags: true
