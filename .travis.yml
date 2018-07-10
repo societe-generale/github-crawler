@@ -19,9 +19,12 @@ script:
 after_success:
   - mvn clean test jacoco:report coveralls:report
 
+before_deploy:
+  - release/createReleaseProperties.sh
+
 deploy:
   provider: script
-  script: "../createReleaseProperties.sh && mvn release:perform --settings release/mvnsettings.xml"
+  script: mvn -X release:perform --settings release/mvnsettings.xml
   skip_cleanup: true
   on:
     tags: true
