@@ -39,7 +39,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.societegenerale.githubcrawler.config.GitHubCrawlerApplication</mainClass>
+                    <mainClass>com.societegenerale.githubcrawler.GitHubCrawlerApplication</mainClass>
                     <classifier>exec</classifier>
                 </configuration>
             </plugin>
