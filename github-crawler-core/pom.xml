@@ -4,7 +4,7 @@
 
     <groupId>com.societegenerale.github-crawler</groupId>
     <artifactId>github-crawler-core</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>github-crawler-core</name>
@@ -12,7 +12,7 @@
     <parent>
         <groupId>com.societegenerale.github-crawler</groupId>
         <artifactId>github-crawler-parent</artifactId>
-        <version>1.0.5</version>
+        <version>1.0.6-SNAPSHOT</version>
     </parent>
 
     <dependencies>
