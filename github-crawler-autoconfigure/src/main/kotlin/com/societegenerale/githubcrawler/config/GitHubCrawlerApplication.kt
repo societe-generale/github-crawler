@@ -1,5 +1,6 @@
-package com.societegenerale.githubcrawler
+package com.societegenerale.githubcrawler.config
 
+import com.societegenerale.githubcrawler.GitHubCrawler
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
