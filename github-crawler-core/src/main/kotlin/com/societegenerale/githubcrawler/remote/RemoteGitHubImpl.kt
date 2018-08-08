@@ -1,5 +1,6 @@
 package com.societegenerale.githubcrawler.remote
 
+import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
@@ -67,17 +68,44 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
 
     private val objectMapper = jacksonObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
-    override fun fetchRepositories(organizationName: String): Set<Repository> {
+    @Throws(NoReachableRepositories::class)
+    override fun validateRemoteConfig(organizationName: String){
 
-        val repositoriesFromOrga = HashSet<Repository>()
+        val response = performFirstCall(organizationName)
 
+        try {
+            extractRepositories(response)
+        }
+        catch(e : JsonProcessingException){
+            throw NoReachableRepositories("not able to parse response : ${response.body()}", e)
+        }
+
+    }
+
+    @Throws(NoReachableRepositories::class)
+    private fun performFirstCall(organizationName : String) : Response{
+
+        val reposUrl="$gitHubUrl/orgs/$organizationName/repos"
 
         val request = okhttp3.Request.Builder()
-                .url("$gitHubUrl/orgs/$organizationName/repos")
+                .url(reposUrl)
                 .header(ACCEPT, APPLICATION_JSON)
                 .build()
 
         val response = httpClient.newCall(request).execute()
+
+        if(!response.isSuccessful){
+            throw NoReachableRepositories("GET call to ${reposUrl} wasn't successful. Code : ${response.code()}, Message : ${response.message()}")
+        }
+
+        return response
+    }
+
+    override fun fetchRepositories(organizationName: String): Set<Repository> {
+
+        val repositoriesFromOrga = HashSet<Repository>()
+
+        val response = performFirstCall(organizationName)
 
         repositoriesFromOrga.addAll(extractRepositories(response))
 
@@ -113,16 +141,20 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
 
     private fun extractRepositories(response: Response): Set<Repository> {
 
-        //TODO if issue in URL (like trailing slash), we'll have a problem here - should catch it and log nicely what the issue is
-        val body = response.body()
+        try {
 
-        if (body != null) {
-            return objectMapper.readValue(body.string())
-        } else {
-            log.warn("response is null : {}", response)
-            return emptySet()
+            val body = response.body()
+
+            if (body != null) {
+                return objectMapper.readValue(body.string())
+            } else {
+                log.warn("response is null : {}", response)
+                return emptySet()
+            }
         }
-
+        catch(e : JsonProcessingException){
+            throw NoReachableRepositories("not able to parse response", e)
+        }
     }
 
     private fun getLinkToNextPageIfAny(response: Response): String? {
