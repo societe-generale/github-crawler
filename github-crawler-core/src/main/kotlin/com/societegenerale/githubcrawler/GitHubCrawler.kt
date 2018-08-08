@@ -7,10 +7,8 @@ import com.societegenerale.githubcrawler.ownership.OwnershipParser
 import com.societegenerale.githubcrawler.parsers.FileContentParser
 import com.societegenerale.githubcrawler.parsers.SearchResultParser
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
-import lombok.Getter
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpMethod
@@ -24,9 +22,11 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
                     private val ownershipParser: OwnershipParser,
                     private val output: List<GitHubCrawlerOutput>,
                     private val repositoryEnricher: RepositoryEnricher,
-                    @field:Getter
-                    val gitHubCrawlerProperties: GitHubCrawlerProperties,
-                    val environment: Environment) {
+                    private val gitHubCrawlerProperties: GitHubCrawlerProperties,
+                    private val environment: Environment,
+                    private val organizationName: String,
+                    private val gitHubUrl: String,
+                    private val configValidator: ConfigValidator) {
 
     companion object{
         const val NO_CRAWLER_RUN_ID_DEFINED : String = "NO_CRAWLER_RUN_ID_DEFINED"
@@ -34,15 +34,7 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
         val availableSearchResultParsers = HashMap<String, SearchResultParser>()
     }
 
-
     val log = LoggerFactory.getLogger(this.javaClass)
-
-    @Value("\${organizationName}")
-    private val organizationName: String? = null
-
-    @Value("\${gitHub.url}")
-    @Getter
-    val gitHubUrl: String? = null
 
     @Autowired
     private val fileContentParsers: List<FileContentParser> = emptyList()
@@ -53,8 +45,10 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
     @Throws(IOException::class)
     fun crawl() {
 
-        if(organizationName==null){
-            throw IllegalStateException("Organization is null - we need one to run the crawler")
+        val configValidationErrors = configValidator.getValidationErrors()
+
+        if(configValidationErrors.isNotEmpty()){
+            throw IllegalStateException("There are some config validation errors - please double check the config. \n"+configValidationErrors.joinToString(separator = "\n", prefix = "\t - ") )
         }
 
         if (availableFileContentParsers.isEmpty() || searchResultParsers.isEmpty()) {
@@ -73,6 +67,10 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
             }
         }
 
+    }
+
+    fun getGitHubCrawlerProperties() : GitHubCrawlerProperties{
+        return gitHubCrawlerProperties
     }
 
     private fun initParsersConfig() {

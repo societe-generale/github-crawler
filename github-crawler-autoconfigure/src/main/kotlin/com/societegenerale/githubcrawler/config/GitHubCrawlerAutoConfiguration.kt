@@ -1,6 +1,7 @@
 package com.societegenerale.githubcrawler.config
 
 
+import com.societegenerale.githubcrawler.ConfigValidator
 import com.societegenerale.githubcrawler.GitHubCrawler
 import com.societegenerale.githubcrawler.GitHubCrawlerProperties
 import com.societegenerale.githubcrawler.RepositoryEnricher
@@ -35,12 +36,29 @@ open class GitHubCrawlerAutoConfiguration {
                      ownershipParser: OwnershipParser,
                      output: List<GitHubCrawlerOutput>,
                      gitHubCrawlerProperties: GitHubCrawlerProperties,
-                     environment : Environment): GitHubCrawler {
+                     environment : Environment,
+                     @Value("\${organizationName}")
+                     organizationName: String,
+                     @Value("\${gitHub.url}")
+                     gitHubUrl: String,
+                     configValidator: ConfigValidator): GitHubCrawler {
 
         val repositoryEnricher = RepositoryEnricher(remoteGitHub)
 
-        return GitHubCrawler(remoteGitHub, ownershipParser, output, repositoryEnricher,gitHubCrawlerProperties,environment)
+        return GitHubCrawler(remoteGitHub, ownershipParser, output, repositoryEnricher,gitHubCrawlerProperties,environment,organizationName,gitHubUrl,configValidator)
     }
+
+    @Bean
+    open fun configValidator(gitHubCrawlerProperties: GitHubCrawlerProperties,
+                             @Value("\${gitHub.url}")
+                             gitHubUrl: String,
+                             @Value("\${organizationName}")
+                             organizationName: String,
+                             remoteGitHub: RemoteGitHub): ConfigValidator {
+
+        return ConfigValidator(gitHubCrawlerProperties, gitHubUrl,organizationName,remoteGitHub)
+    }
+
 
     @Bean
     open fun remoteGitHub(@Value("\${gitHub.url}") gitHubUrl: String): RemoteGitHub {
