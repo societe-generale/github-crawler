@@ -41,9 +41,23 @@ interface RemoteGitHub {
 
     fun fetchRepositories(organizationName: String): Set<Repository>
 
+    /**
+     * Enables us to hit the API once and confirm that our configuration is correct. If it's not, we throw an exception with details of what went wrong.
+     */
+    @Throws(NoReachableRepositories::class)
+    fun validateRemoteConfig(organizationName: String)
+
 }
 
 class NoFileFoundException : Exception {
+
+    constructor(message: String) : super(message)
+
+}
+
+class NoReachableRepositories : Exception {
+
+    constructor(message: String, t: Throwable) : super(message,t)
 
     constructor(message: String) : super(message)
 

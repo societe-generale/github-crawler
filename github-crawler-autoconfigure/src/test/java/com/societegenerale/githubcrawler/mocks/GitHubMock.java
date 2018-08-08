@@ -3,6 +3,7 @@ package com.societegenerale.githubcrawler.mocks;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import net.codestory.http.Context;
 import net.codestory.http.WebServer;
 import net.codestory.http.errors.NotFoundException;
 import net.codestory.http.payload.Payload;
@@ -20,6 +21,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.*;
 
+import static com.societegenerale.githubcrawler.remote.RemoteGitHubImpl.CONFIG_VALIDATION_REQUEST_HEADER;
 
 @Component
 @Slf4j
@@ -71,7 +73,7 @@ public class GitHubMock implements RemoteServiceMock {
                     routes.get("/api/v3/repos/MyOrganization/:repo/contents/.githubCrawler", (context, repo) -> getRepoConfigFileOnRepo(repo));
                     routes.get("/raw/MyOrganization/:repo/master/.githubCrawler", (context, repo) -> getActualRepoConfig(repo));
 
-                    routes.get("/api/v3/orgs/MyOrganization/repos", context -> getOrganisationContent());
+                    routes.get("/api/v3/orgs/MyOrganization/repos", context -> getOrganisationContent(context));
                     routes.get("/api/v3/organizations/1114/repos", context -> getOrganisationContentForNextPage());
 
                     routes.get("/api/v3/repos/MyOrganization/:repo/contents/pom.xml?ref=master", (context, repo) -> getPomXmlFileOnRepo(repo));
@@ -281,7 +283,7 @@ public class GitHubMock implements RemoteServiceMock {
 
         hasCalledNextPage = true;
 
-        return getOrganisationContent();
+        return getOrganisationContent(null);
     }
 
     private String getActualRepoConfig(String repoName) {
@@ -305,7 +307,10 @@ public class GitHubMock implements RemoteServiceMock {
 
     }
 
-    private Payload getOrganisationContent() throws IOException {
+    private Payload getOrganisationContent(Context context) throws IOException {
+
+        boolean isAconfigValidationCall = isConfigValidationHeaderPresent(context) ;
+
 
         log.info("fetching content of organisation...");
 
@@ -319,10 +324,18 @@ public class GitHubMock implements RemoteServiceMock {
             headers.put("link", "<http://localhost:" + GITHUB_MOCK_PORT + "/api/v3/organizations/1114/repos?page=" + currentPage + 1 +
                     ">; rel=\"next\", <http://localhost:" + GITHUB_MOCK_PORT + "/api/v3/organizations/1114/repos?page=8>; rel=\"last\"");
 
-            currentPage++;
+            if(!isAconfigValidationCall) {
+                currentPage++;
+            }
         }
 
         return response;
+    }
+
+    private boolean isConfigValidationHeaderPresent(Context context) {
+
+        return context !=null && context.header(CONFIG_VALIDATION_REQUEST_HEADER)!=null;
+
     }
 
     @Override

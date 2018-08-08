@@ -1,9 +1,6 @@
 package com.societegenerale.githubcrawler.config;
 
-import com.societegenerale.githubcrawler.FileToParseConversionService;
-import com.societegenerale.githubcrawler.GitHubCrawler;
-import com.societegenerale.githubcrawler.GitHubCrawlerProperties;
-import com.societegenerale.githubcrawler.RepositoryEnricher;
+import com.societegenerale.githubcrawler.*;
 import com.societegenerale.githubcrawler.mocks.GitHubMock;
 import com.societegenerale.githubcrawler.model.Repository;
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput;
@@ -40,11 +37,14 @@ public class TestConfig {
             OwnershipParser ownershipParser,
             List<GitHubCrawlerOutput> output,
             GitHubCrawlerProperties gitHubCrawlerProperties,
-            Environment environment) {
+            Environment environment,
+            String organizationName,
+            String gitHubUrl ,
+            ConfigValidator configValidator) {
 
         val repositoryEnricher = new RepositoryEnricher(remoteGitHub);
 
-        return new GitHubCrawler(remoteGitHub, ownershipParser, output, repositoryEnricher, gitHubCrawlerProperties, environment);
+        return new GitHubCrawler(remoteGitHub, ownershipParser, output, repositoryEnricher, gitHubCrawlerProperties, environment,organizationName,gitHubUrl,configValidator);
     }
 
     @Bean
