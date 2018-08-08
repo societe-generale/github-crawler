@@ -12,6 +12,12 @@
 
 ### Fixed
 
+## [1.0.5] - 2018-08-08
+
+### Fixed
+- issue #20 - now having better error message in case configuration of URL or organization are incorrect
+- issue #22 - we couldn't run the application from IDE anymore 
+
 ## [1.0.4] - 2018-07-10
 
 ### Added
