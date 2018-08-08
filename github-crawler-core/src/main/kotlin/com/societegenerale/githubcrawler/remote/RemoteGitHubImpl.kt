@@ -49,6 +49,7 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
         const val REPO_LEVEL_CONFIG_FILE = ".githubCrawler"
         const val APPLICATION_JSON = "application/json"
         const val ACCEPT = "accept"
+        const val CONFIG_VALIDATION_REQUEST_HEADER="X-configValidationRequest"
     }
 
     private val internalGitHubClient: InternalGitHubClient = Feign.builder()
@@ -71,7 +72,7 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
     @Throws(NoReachableRepositories::class)
     override fun validateRemoteConfig(organizationName: String){
 
-        val response = performFirstCall(organizationName)
+        val response = performFirstCall(organizationName,isConfigCall = true)
 
         try {
             extractRepositories(response)
@@ -83,14 +84,19 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
     }
 
     @Throws(NoReachableRepositories::class)
-    private fun performFirstCall(organizationName : String) : Response{
+    private fun performFirstCall(organizationName : String, isConfigCall : Boolean=false) : Response{
 
         val reposUrl="$gitHubUrl/orgs/$organizationName/repos"
 
-        val request = okhttp3.Request.Builder()
+        val requestBuilder = okhttp3.Request.Builder()
                 .url(reposUrl)
                 .header(ACCEPT, APPLICATION_JSON)
-                .build()
+
+        if(isConfigCall){
+            requestBuilder.addHeader(CONFIG_VALIDATION_REQUEST_HEADER,"true")
+        }
+
+        val request=requestBuilder.build()
 
         val response = httpClient.newCall(request).execute()
 
