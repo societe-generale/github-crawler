@@ -49,7 +49,7 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
         const val REPO_LEVEL_CONFIG_FILE = ".githubCrawler"
         const val APPLICATION_JSON = "application/json"
         const val ACCEPT = "accept"
-        const val CONFIG_VALIDATION_REQUEST_HEADER="X-configValidationRequest"
+        const val CONFIG_VALIDATION_REQUEST_HEADER = "X-configValidationRequest"
     }
 
     private val internalGitHubClient: InternalGitHubClient = Feign.builder()
@@ -64,44 +64,48 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
     private val httpClient = OkHttpClient()
 
 
-
     val log = LoggerFactory.getLogger(this.javaClass)
 
     private val objectMapper = jacksonObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
     @Throws(NoReachableRepositories::class)
-    override fun validateRemoteConfig(organizationName: String){
+    override fun validateRemoteConfig(organizationName: String) {
 
-        val response = performFirstCall(organizationName,isConfigCall = true)
+        val response = performFirstCall(organizationName, isConfigCall = true)
 
         try {
             extractRepositories(response)
-        }
-        catch(e : JsonProcessingException){
+        } catch (e: JsonProcessingException) {
             throw NoReachableRepositories("not able to parse response : ${response.body()}", e)
         }
 
     }
 
     @Throws(NoReachableRepositories::class)
-    private fun performFirstCall(organizationName : String, isConfigCall : Boolean=false) : Response{
+    private fun performFirstCall(organizationName: String, isConfigCall: Boolean = false): Response {
 
-        val reposUrl="$gitHubUrl/orgs/$organizationName/repos"
+        val reposUrl = "$gitHubUrl/orgs/$organizationName/repos"
 
         val requestBuilder = okhttp3.Request.Builder()
                 .url(reposUrl)
                 .header(ACCEPT, APPLICATION_JSON)
 
-        if(isConfigCall){
-            requestBuilder.addHeader(CONFIG_VALIDATION_REQUEST_HEADER,"true")
+        if (isConfigCall) {
+            requestBuilder.addHeader(CONFIG_VALIDATION_REQUEST_HEADER, "true")
         }
 
-        val request=requestBuilder.build()
+        val request = requestBuilder.build()
 
-        val response = httpClient.newCall(request).execute()
+        val response: Response
 
-        if(!response.isSuccessful){
-            throw NoReachableRepositories("GET call to ${reposUrl} wasn't successful. Code : ${response.code()}, Message : ${response.message()}")
+        try {
+            response = httpClient.newCall(request).execute()
+
+            if (!response.isSuccessful) {
+                throw NoReachableRepositories("GET call to ${reposUrl} wasn't successful. Code : ${response.code()}, Message : ${response.message()}")
+            }
+        } catch (e: IOException) {
+            throw NoReachableRepositories("Unable to perform the request",e)
         }
 
         return response
@@ -157,8 +161,7 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
                 log.warn("response is null : {}", response)
                 return emptySet()
             }
-        }
-        catch(e : JsonProcessingException){
+        } catch (e: JsonProcessingException) {
             throw NoReachableRepositories("not able to parse response", e)
         }
     }
@@ -337,8 +340,7 @@ internal class GitHubResponseDecoder : Decoder {
 
             if (type.typeName == FileOnRepository::class.java.name) {
                 throw NoFileFoundFeignException("no file found on repository")
-            }
-            else{
+            } else {
                 throw NoFileFoundFeignException("problem while fetching content, of unknown type")
             }
 
