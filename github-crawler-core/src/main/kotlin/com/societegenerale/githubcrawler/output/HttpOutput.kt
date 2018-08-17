@@ -28,7 +28,8 @@ class HttpOutput(private val targetUrl: String) : GitHubCrawlerOutput {
                     analyzedRepository.groups,
                     analyzedRepository.crawlerRunId,
                     analyzedRepository.searchResults,
-                    analyzedRepository.ownerTeam ?: "Undefined")
+                    analyzedRepository.ownerTeam ?: "Undefined",
+                    analyzedRepository.topics)
 
             val response = restTemplate.postForEntity(targetUrl, output, String::class.java)
 
