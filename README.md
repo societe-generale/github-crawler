@@ -158,9 +158,9 @@ With above config, when the crawler tries to fetch Dockerfile at the root of the
 
 - **Tagging a repo**
 
-It may happen that you want to "tag" some repos, to be able to filter easily on them when browsing the results. 
+You may want to "tag" some repos, to be able to filter easily on them when browsing the results.
 GitHub provides "topics" that are very easy to edit, which are actually similar to "tags".
-the tags information will be attached to all the repositories for which it has been configured. 
+GithubCrawler crawls through repository and attaches tags information with all the repositories for which topics have been configured.
 
 ## Parsers
 
