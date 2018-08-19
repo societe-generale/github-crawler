@@ -42,7 +42,9 @@ data class Repository(val url: String,
                       @JsonIgnore
                       val searchResults: Map<String, String> = HashMap(),
                       @JsonIgnore
-                      var ownerTeam: String?
+                      var ownerTeam: String?,
+                      @JsonIgnore
+                      var topics: List<String> = emptyList()
 ) {
 
     val log = LoggerFactory.getLogger(this.javaClass)
@@ -99,13 +101,8 @@ data class Repository(val url: String,
 
     }
 
-    fun copyTagsFromRepoConfig(): Repository {
-
-        if (config != null) {
-            return this.copy(tags = config.tags)
-        } else {
-            return this
-        }
+    fun copyTagsFromRepoTopics(): Repository {
+        return this.copy(tags = this.topics)
     }
 
     fun fetchOwner(ownershipParser: OwnershipParser) : Repository {

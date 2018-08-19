@@ -213,15 +213,7 @@ public class GitHubCrawlerTest {
 	}
 
 	@Test
-    public void shouldCopyTagsFromRepoConfigOnRepoResult() throws IOException {
-
-		String repoWithConfig = "api-gateway";
-
-		String repoConfig = "tags:\n" +
-				"  - \"someTag1\"\n" +
-				"  - \"someOtherTag\"";
-
-		githubMockServer.addRepoSideConfig(repoWithConfig, repoConfig);
+	public void shouldCopyTagsFromRepoTopicsOnRepoResult() throws IOException {
 
 		crawler.crawl();
 
@@ -230,11 +222,9 @@ public class GitHubCrawlerTest {
 		await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
 				.until(() -> assertThat(processedRepositories).hasSize(nbRepositoriesInOrga));
 
-		processedRepositories.stream().filter(repo -> repo.getName().equals(repoWithConfig)).forEach(repo -> {
-			assertThat(repo.getTags()).containsExactlyInAnyOrder("someTag1", "someOtherTag");
+		processedRepositories.stream().forEach(repo -> {
+			assertThat(repo.getTags()).containsExactlyInAnyOrder("testRepo");
 		});
-
-		assertThat(processedRepositories.stream().filter(repo -> repo.getName().equals(repoWithConfig)).count()).isEqualTo(1);
 	}
 
 	@Test

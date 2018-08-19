@@ -50,6 +50,7 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
         const val APPLICATION_JSON = "application/json"
         const val ACCEPT = "accept"
         const val CONFIG_VALIDATION_REQUEST_HEADER = "X-configValidationRequest"
+        const val APPLICATION_GITHUB_MERCY_PREVIEW_JSON = "application/vnd.github.mercy-preview+json"
     }
 
     private val internalGitHubClient: InternalGitHubClient = Feign.builder()
@@ -88,7 +89,7 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
 
         val requestBuilder = okhttp3.Request.Builder()
                 .url(reposUrl)
-                .header(ACCEPT, APPLICATION_JSON)
+                .header(ACCEPT, APPLICATION_GITHUB_MERCY_PREVIEW_JSON)
 
         if (isConfigCall) {
             requestBuilder.addHeader(CONFIG_VALIDATION_REQUEST_HEADER, "true")
@@ -130,7 +131,7 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
 
             val nextPageRequest = okhttp3.Request.Builder()
                     .url(nextPageLink)
-                    .header(ACCEPT, APPLICATION_JSON)
+                    .header(ACCEPT, APPLICATION_GITHUB_MERCY_PREVIEW_JSON)
                     .build()
 
             val nextPageResponse = httpClient.newCall(nextPageRequest).execute()

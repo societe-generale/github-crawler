@@ -114,7 +114,7 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
                 .map { repo -> repo.flagAsExcludedIfConfiguredAtRepoLevel() }
                 .filter { repo -> shouldKeepForFurtherProcessing(repo, gitHubCrawlerProperties) }
                 .map{repo -> repo.copy(crawlerRunId= crawlerRunId)}
-                .map { repo -> repo.copyTagsFromRepoConfig() }
+                .map { repo -> repo.copyTagsFromRepoTopics() }
                 .map { repo -> repo.addGroups(environment.activeProfiles) }
                 .map { repo -> repositoryEnricher.identifyBranchesToParse(repo,gitHubCrawlerProperties.crawlAllBranches, organizationName!!) }
                 .map { repo -> repositoryEnricher.fetchIndicatorsValues(repo,gitHubCrawlerProperties) }
