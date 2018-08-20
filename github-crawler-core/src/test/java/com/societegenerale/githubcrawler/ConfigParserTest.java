@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.module.kotlin.KotlinModule;
 import lombok.val;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.util.StreamUtils;
 
@@ -48,9 +47,6 @@ public class ConfigParserTest {
         val firstFile = parsedRepositoryConfig.getFilesToParse().get(0);
         assertThat(firstFile.getRedirectTo()).isEqualTo("moduleWhereDockerFileIs/Dockerfile");
         assertThat(firstFile.getName()).isEqualTo("Dockerfile");
-
-        val repoTags = parsedRepositoryConfig.getTags();
-        assertThat(repoTags).hasSize(2);
     }
 
     @Test
