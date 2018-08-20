@@ -12,6 +12,14 @@
 
 ### Fixed
 
+## [1.0.6] - 2018-08-20
+
+### Changed
+- issue #3 : Github topics are now used for tags. 
+
+### Deprecated
+- related to issue #3 - tags in repoConfig are not accepted anymore, they need to be declared in github's topics
+
 ## [1.0.5] - 2018-08-08
 
 ### Fixed
