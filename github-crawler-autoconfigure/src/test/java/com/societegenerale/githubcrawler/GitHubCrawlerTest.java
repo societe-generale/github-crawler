@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.jayway.awaitility.Awaitility.await;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -222,9 +223,21 @@ public class GitHubCrawlerTest {
 		await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
 				.until(() -> assertThat(processedRepositories).hasSize(nbRepositoriesInOrga));
 
-		processedRepositories.stream().forEach(repo -> {
-			assertThat(repo.getTags()).containsExactlyInAnyOrder("testRepo");
-		});
+		Map<String,List<String>> topicsPerRepo= processedRepositories.stream().collect(Collectors.toMap(r -> r.getName(),
+				r -> r.getTopics()));
+
+
+		String repoWith2topics="cwf-mobile";
+		String repoWithNoTopic="financing-platform-deal";
+
+		assertThat(topicsPerRepo.get(repoWith2topics)).containsExactlyInAnyOrder("testRepo","myTopic");
+		assertThat(topicsPerRepo.get(repoWithNoTopic)).isEmpty();
+
+		//removing the 2 special cases
+		topicsPerRepo.remove(repoWith2topics);
+		topicsPerRepo.remove(repoWithNoTopic);
+
+		topicsPerRepo.values().stream().forEach(topics -> assertThat(topics).containsExactlyInAnyOrder("testRepo") );
 	}
 
 	@Test

@@ -84,7 +84,8 @@
     "mirror_url": null,
     "open_issues_count": 0,
     "topics": [
-      "testRepo"
+      "testRepo",
+      "myTopic"
     ],
     "forks": 2,
     "open_issues": 0,
@@ -277,9 +278,7 @@
     "forks_count": 39,
     "mirror_url": null,
     "open_issues_count": 3,
-    "topics": [
-      "testRepo"
-    ],
+
     "forks": 39,
     "open_issues": 3,
     "watchers": 2,
