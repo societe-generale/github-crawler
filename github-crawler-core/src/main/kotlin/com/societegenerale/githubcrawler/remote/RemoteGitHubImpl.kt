@@ -318,10 +318,11 @@ private interface InternalGitHubClient {
 internal class GitHubResponseDecoder : Decoder {
     val log = LoggerFactory.getLogger(this.javaClass)
 
-    val mapper = ObjectMapper(YAMLFactory())
+    val repoConfigMapper = ObjectMapper(YAMLFactory())
 
     init {
-        mapper.registerModule(KotlinModule())
+        repoConfigMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        repoConfigMapper.registerModule(KotlinModule())
     }
 
     fun decodeRepoConfig(response: okhttp3.Response): RepositoryConfig {
@@ -371,7 +372,7 @@ internal class GitHubResponseDecoder : Decoder {
         }
 
         try {
-            return mapper.readValue(responseAsString, RepositoryConfig::class.java)
+            return repoConfigMapper.readValue(responseAsString, RepositoryConfig::class.java)
         } catch (e: IOException) {
             throw Repository.RepoConfigException("unable to parse config for repo - content : \"" + response.body() + "\"", e)
         }
