@@ -45,13 +45,6 @@ public class TestConfig {
         return new GitHubCrawler(remoteGitHub, ownershipParser, output, repositoryEnricher, gitHubCrawlerProperties, environment,organizationName,gitHubUrl,configValidator);
     }
 
-//    @Bean
-//    @Primary
-//    public RemoteGitHub remoteGitHub(@Value("${gitHub.url}") String gitHubUrl) {
-//
-//        return new RemoteGitHubImpl(gitHubUrl);
-//    }
-
     @Bean
     public OwnershipParser dummyOwnershipParser()    {
 
