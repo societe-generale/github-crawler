@@ -42,7 +42,7 @@ import java.lang.reflect.Type
  * Implementation is mainly based on Feign's Builder for standard calls, and OkHttpClient for the others
  */
 @Suppress("TooManyFunctions") // most of methods are one liners, implementing the methods declared in interface
-class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
+class RemoteGitHubImpl @JvmOverloads constructor (val gitHubUrl: String, val usersReposInsteadOfOrgasRepos: Boolean = false) : RemoteGitHub {
 
 
     companion object {
@@ -85,7 +85,7 @@ class RemoteGitHubImpl(val gitHubUrl: String) : RemoteGitHub {
     @Throws(NoReachableRepositories::class)
     private fun performFirstCall(organizationName: String, isConfigCall: Boolean = false): Response {
 
-        val reposUrl = "$gitHubUrl/orgs/$organizationName/repos"
+        val reposUrl = "$gitHubUrl/"+ if (usersReposInsteadOfOrgasRepos) "users" else "orgs" +"/$organizationName/repos"
 
         val requestBuilder = okhttp3.Request.Builder()
                 .url(reposUrl)

@@ -7,6 +7,8 @@ publishExcludedRepositories: false
 
 crawlAllBranches: false
 
+crawl.usersRepo.insteadOf.orgasRepos: false
+
 indicatorsToFetchByFile:
   "[pom.xml]":
       - name: spring_boot_starter_parent_version
