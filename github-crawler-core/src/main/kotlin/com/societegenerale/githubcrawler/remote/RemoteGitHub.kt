@@ -33,11 +33,9 @@ interface RemoteGitHub {
                     repositoryFullName: String,
                     commitSha: String): DetailedCommit
 
-    fun fetchTeams(token: String,
-                   organizationName: String): Set<Team>
+    fun fetchTeams(organizationName: String): Set<Team>
 
-    fun fetchTeamsMembers(token: String,
-                          teamId: String): Set<TeamMember>
+    fun fetchTeamsMembers(teamId: String): Set<TeamMember>
 
     fun fetchRepositories(organizationName: String): Set<Repository>
 

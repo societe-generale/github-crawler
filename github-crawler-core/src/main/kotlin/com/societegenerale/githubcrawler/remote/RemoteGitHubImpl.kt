@@ -94,6 +94,10 @@ class RemoteGitHubImpl @JvmOverloads constructor (val gitHubUrl: String, val use
 
         addOAuthTokenIfRequired(requestBuilder)
 
+        if (isConfigCall) {
+            requestBuilder.addHeader(CONFIG_VALIDATION_REQUEST_HEADER, "true")
+        }
+
         val request = requestBuilder.build()
 
         val response: Response
@@ -266,12 +270,12 @@ class RemoteGitHubImpl @JvmOverloads constructor (val gitHubUrl: String, val use
         return internalGitHubClient.fetchCommit(organizationName, repositoryFullName, commitSha)
     }
 
-    override fun fetchTeams(token: String, organizationName: String): Set<Team> {
-        return internalGitHubClient.fetchTeams(token, organizationName)
+    override fun fetchTeams(organizationName: String): Set<Team> {
+        return internalGitHubClient.fetchTeams(organizationName)
     }
 
-    override fun fetchTeamsMembers(token: String, teamId: String): Set<TeamMember> {
-        return internalGitHubClient.fetchTeamsMembers(token, teamId)
+    override fun fetchTeamsMembers(teamId: String): Set<TeamMember> {
+        return internalGitHubClient.fetchTeamsMembers(teamId)
     }
 
     override fun fetchRepoConfig(repoFullName: String, defaultBranch: String): RepositoryConfig {
@@ -338,12 +342,10 @@ private interface InternalGitHubClient {
                     @Param("commitSha") commitSha: String): DetailedCommit
 
     @RequestLine("GET /orgs/{organizationName}/teams")
-    fun fetchTeams(@Param("access_token") token: String,
-                   @Param("organizationName") organizationName: String): Set<Team>
+    fun fetchTeams(@Param("organizationName") organizationName: String): Set<Team>
 
     @RequestLine("GET /teams/{team}/members")
-    fun fetchTeamsMembers(@Param("access_token") token: String,
-                          @Param("team") teamId: String): Set<TeamMember>
+    fun fetchTeamsMembers(@Param("team") teamId: String): Set<TeamMember>
 
 
 }
