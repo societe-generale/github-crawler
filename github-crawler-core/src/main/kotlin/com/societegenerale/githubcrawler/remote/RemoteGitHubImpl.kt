@@ -85,7 +85,7 @@ class RemoteGitHubImpl @JvmOverloads constructor (val gitHubUrl: String, val use
     @Throws(NoReachableRepositories::class)
     private fun performFirstCall(organizationName: String, isConfigCall: Boolean = false): Response {
 
-        val reposUrl = "$gitHubUrl/"+ if (usersReposInsteadOfOrgasRepos) "users" else "orgs" +"/$organizationName/repos"
+        val reposUrl = "$gitHubUrl/"+userOrOrg()+"/$organizationName/repos"
 
         val requestBuilder = okhttp3.Request.Builder()
                 .url(reposUrl)
@@ -110,6 +110,10 @@ class RemoteGitHubImpl @JvmOverloads constructor (val gitHubUrl: String, val use
         }
 
         return response
+    }
+
+    private fun userOrOrg() : String{
+        return if (usersReposInsteadOfOrgasRepos) "users" else "orgs"
     }
 
     override fun fetchRepositories(organizationName: String): Set<Repository> {
