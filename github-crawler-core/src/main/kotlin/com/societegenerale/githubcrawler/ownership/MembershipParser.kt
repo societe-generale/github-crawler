@@ -5,7 +5,7 @@ import com.societegenerale.githubcrawler.remote.RemoteGitHub
 import org.slf4j.LoggerFactory
 import java.util.function.Consumer
 
-class MembershipParser(private val githubClient: RemoteGitHub, private val token: String, private val organizationName: String) {
+class MembershipParser(private val githubClient: RemoteGitHub, private val organizationName: String) {
 
     companion object {
         private val log = LoggerFactory.getLogger(MembershipParser::class.java)
@@ -15,15 +15,12 @@ class MembershipParser(private val githubClient: RemoteGitHub, private val token
 
     fun computeMembership(): Membership {
         val membership = Membership()
-        if (token.isBlank()) {
-            return membership
-        }
 
-        val teams = githubClient.fetchTeams(token, organizationName)
+        val teams = githubClient.fetchTeams(organizationName)
         log.debug("fetching teams for $organizationName organization returned $teams")
         teams.forEach(Consumer {
             if (EXCLUDED_TEAMS.contains(it.name).not()) {
-                val members = githubClient.fetchTeamsMembers(token, it.id)
+                val members = githubClient.fetchTeamsMembers(it.id)
                 membership.add(it, members)
                 log.debug("fetching teams members for ${it.name} team returned $members")
             }
