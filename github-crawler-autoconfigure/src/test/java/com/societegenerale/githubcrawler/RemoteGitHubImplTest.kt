@@ -4,6 +4,7 @@ import com.societegenerale.githubcrawler.mocks.GitHubMock
 import com.societegenerale.githubcrawler.remote.RemoteGitHubImpl
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
+import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.test.context.ActiveProfiles
@@ -43,5 +44,10 @@ class RemoteGitHubImplTest {
         val remoteGitHubForOrg = RemoteGitHubImpl("http://localhost:9900/api/v3", false);
         remoteGitHubForOrg.validateRemoteConfig("MyOrganization");
         assertThat(gitHubMock.getNbHitsOnUserRepos()).isEqualTo(0);
+    }
+
+    @After
+    fun shutDownMockGithub(){
+        gitHubMock.stop()
     }
 }

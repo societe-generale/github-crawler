@@ -6,6 +6,7 @@ import com.societegenerale.githubcrawler.mocks.GitHubMock;
 import com.societegenerale.githubcrawler.model.Repository;
 import lombok.val;
 import org.assertj.core.api.SoftAssertions;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,8 +35,10 @@ public class GitHubCrawlerTest {
 	@Autowired
 	private GitHubCrawler crawler;
 
+	private static GitHubMock githubMockServer;
+
 	@Autowired
-	private GitHubMock githubMockServer;
+	private GitHubMock tmpGithubMockServer;
 
 	@Autowired
 	private TestConfig.InMemoryGitHubCrawlerOutput output;
@@ -46,6 +49,16 @@ public class GitHubCrawlerTest {
 
 	@Before
 	public void mockSetUp(){
+
+		//we need a githubMockServer to be static, so that we can stop it once at the end in the @AfterClass method
+		//but at the same time, we need a version of it that is configured by Spring, so can't be static
+
+		//therefore we have small hack below, where we take the reference of the GitHubMock configured and injected by Spring,
+		//and assign it to the static variable the first time, when the static reference is null
+
+		if(githubMockServer==null){
+			githubMockServer=tmpGithubMockServer;
+		}
 
 		if(!hasGitHubMockServerStarted) {
 
@@ -67,7 +80,10 @@ public class GitHubCrawlerTest {
 		crawler.getGitHubCrawlerProperties().setCrawlAllBranches(false);
 	}
 
-
+	@AfterClass
+	public static void shutDown(){
+		githubMockServer.stop();
+	}
 
 	@Test
 	public void gitHubOrganisationPollerWorks() throws IOException {
