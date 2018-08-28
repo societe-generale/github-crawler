@@ -42,7 +42,7 @@ import java.lang.reflect.Type
  * Implementation is mainly based on Feign's Builder for standard calls, and OkHttpClient for the others
  */
 @Suppress("TooManyFunctions") // most of methods are one liners, implementing the methods declared in interface
-class RemoteGitHubImpl @JvmOverloads constructor (val gitHubUrl: String, val usersReposInsteadOfOrgasRepos: Boolean = false) : RemoteGitHub {
+class RemoteGitHubImpl @JvmOverloads constructor (val gitHubUrl: String, val usersReposInsteadOfOrgasRepos: Boolean = false, val oauthToken : String?) : RemoteGitHub {
 
 
     companion object {
@@ -58,6 +58,7 @@ class RemoteGitHubImpl @JvmOverloads constructor (val gitHubUrl: String, val use
             .encoder(GsonEncoder())
             .decoder(GitHubResponseDecoder())
             .decode404()
+            .requestInterceptor(GitHubOauthTokenSetter(oauthToken))
             .logger(Slf4jLogger(RemoteGitHubImpl::class.java!!))
             .logLevel(Logger.Level.FULL)
             .target<InternalGitHubClient>(InternalGitHubClient::class.java!!, gitHubUrl)
@@ -91,9 +92,7 @@ class RemoteGitHubImpl @JvmOverloads constructor (val gitHubUrl: String, val use
                 .url(reposUrl)
                 .header(ACCEPT, APPLICATION_GITHUB_MERCY_PREVIEW_JSON)
 
-        if (isConfigCall) {
-            requestBuilder.addHeader(CONFIG_VALIDATION_REQUEST_HEADER, "true")
-        }
+        addOAuthTokenIfRequired(requestBuilder)
 
         val request = requestBuilder.build()
 
@@ -110,6 +109,14 @@ class RemoteGitHubImpl @JvmOverloads constructor (val gitHubUrl: String, val use
         }
 
         return response
+    }
+
+    private fun addOAuthTokenIfRequired(requestBuilder : okhttp3.Request.Builder) : Unit{
+
+        if(oauthToken!=null){
+            requestBuilder.addHeader("Authorization", "token "+oauthToken)
+        }
+
     }
 
     private fun userOrOrg() : String{
@@ -133,10 +140,13 @@ class RemoteGitHubImpl @JvmOverloads constructor (val gitHubUrl: String, val use
             pageNb++
 
 
-            val nextPageRequest = okhttp3.Request.Builder()
+            val nextPageRequestBuilder = okhttp3.Request.Builder()
                     .url(nextPageLink)
                     .header(ACCEPT, APPLICATION_GITHUB_MERCY_PREVIEW_JSON)
-                    .build()
+
+            addOAuthTokenIfRequired(nextPageRequestBuilder)
+
+            val nextPageRequest=nextPageRequestBuilder.build()
 
             val nextPageResponse = httpClient.newCall(nextPageRequest).execute()
 
@@ -208,10 +218,13 @@ class RemoteGitHubImpl @JvmOverloads constructor (val gitHubUrl: String, val use
         val searchCodeUrl = urlBuilder.build().toString()
         val searchCodeInRepoUrl = searchCodeUrl + "+repo:" + repositoryFullName
 
-        val request = okhttp3.Request.Builder()
+        val requestBuilder = okhttp3.Request.Builder()
                 .url(searchCodeInRepoUrl)
                 .header(ACCEPT, APPLICATION_JSON)
-                .build()
+
+        addOAuthTokenIfRequired(requestBuilder)
+
+        val request=requestBuilder.build()
 
         val response = httpClient.newCall(request).execute()
 
@@ -230,10 +243,13 @@ class RemoteGitHubImpl @JvmOverloads constructor (val gitHubUrl: String, val use
         }
 
 
-        val request = okhttp3.Request.Builder()
+        val requestBuilder= okhttp3.Request.Builder()
                 .url(fileOnRepository.downloadUrl)
                 .header(ACCEPT, APPLICATION_JSON)
-                .build()
+
+        addOAuthTokenIfRequired(requestBuilder)
+
+        val request=requestBuilder.build()
 
         val response = httpClient.newCall(request).execute()
 
@@ -268,16 +284,31 @@ class RemoteGitHubImpl @JvmOverloads constructor (val gitHubUrl: String, val use
             return RepositoryConfig()
         }
 
-        val request = okhttp3.Request.Builder()
+        val requestBuilder = okhttp3.Request.Builder()
                 .url(configFileOnRepository.downloadUrl)
                 .header(ACCEPT, APPLICATION_JSON)
-                .build()
+
+        addOAuthTokenIfRequired(requestBuilder)
+
+        val request = requestBuilder.build()
 
         val response = httpClient.newCall(request).execute()
 
         val decoder = GitHubResponseDecoder()
 
         return decoder.decodeRepoConfig(response)
+    }
+
+}
+
+class GitHubOauthTokenSetter(val oauthToken: String?) : RequestInterceptor {
+
+    override fun apply(requestTemplate: RequestTemplate?) {
+
+        if(requestTemplate!=null && oauthToken!=null){
+            requestTemplate.header("Authorization", "token "+oauthToken)
+        }
+
     }
 
 }
@@ -307,12 +338,10 @@ private interface InternalGitHubClient {
                     @Param("commitSha") commitSha: String): DetailedCommit
 
     @RequestLine("GET /orgs/{organizationName}/teams")
-    @Headers("Authorization: {access_token}")
     fun fetchTeams(@Param("access_token") token: String,
                    @Param("organizationName") organizationName: String): Set<Team>
 
     @RequestLine("GET /teams/{team}/members")
-    @Headers("Authorization: {access_token}")
     fun fetchTeamsMembers(@Param("access_token") token: String,
                           @Param("team") teamId: String): Set<TeamMember>
 

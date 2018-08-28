@@ -1,16 +1,26 @@
-gitHub.url: https://github.com
+gitHub:
+  url: https://api.github.com
+  oauth.token: "1f81edb78cf51c5933c055531b95da7250da1cee"
 
 # or your GitHub Enterprise URL
 #gitHub.url: https://my-ghe-url/api/v3
 
 
-# your GitHub organization, for example myOrga in https://github.com/myOrga
-organizationName: myOrga
+# your GitHub organization or user, for example myOrga in https://github.com/myOrga
+organizationName: joshlong
 
 publishExcludedRepositories: false
 
 crawlAllBranches: false
 
+crawl.usersRepo.insteadOf.orgasRepos: true
+
+output.ciDroidCsvReadyFile.indicatorsToOutput: "spring_boot_starter_parent_version"
 
 
-
+indicatorsToFetchByFile:
+  "[pom.xml]":
+  - name: spring_boot_starter_parent_version
+    method: findDependencyVersionInXml
+    params:
+      artifactId: spring-boot-starter-parent
