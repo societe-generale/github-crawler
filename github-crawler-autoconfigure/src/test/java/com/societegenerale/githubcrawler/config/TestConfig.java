@@ -7,10 +7,8 @@ import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput;
 import com.societegenerale.githubcrawler.ownership.NoOpOwnershipParser;
 import com.societegenerale.githubcrawler.ownership.OwnershipParser;
 import com.societegenerale.githubcrawler.remote.RemoteGitHub;
-import com.societegenerale.githubcrawler.remote.RemoteGitHubImpl;
 import lombok.Getter;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,12 +43,6 @@ public class TestConfig {
         val repositoryEnricher = new RepositoryEnricher(remoteGitHub);
 
         return new GitHubCrawler(remoteGitHub, ownershipParser, output, repositoryEnricher, gitHubCrawlerProperties, environment,organizationName,gitHubUrl,configValidator);
-    }
-
-    @Bean
-    public RemoteGitHub remoteGitHub(@Value("${gitHub.url}") String gitHubUrl) {
-
-        return new RemoteGitHubImpl(gitHubUrl);
     }
 
     @Bean
