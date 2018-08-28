@@ -34,14 +34,14 @@ class RemoteGitHubImplTest {
 
         }
 
-        val remoteGitHubForUser = RemoteGitHubImpl("http://localhost:9900/api/v3", true);
+        val remoteGitHubForUser = RemoteGitHubImpl("http://localhost:9900/api/v3", true,null);
         assertThat(gitHubMock.getNbHitsOnUserRepos()).isEqualTo(0);
         remoteGitHubForUser.validateRemoteConfig("someUser");
         assertThat(gitHubMock.getNbHitsOnUserRepos()).isEqualTo(1);
 
         gitHubMock.reset()
 
-        val remoteGitHubForOrg = RemoteGitHubImpl("http://localhost:9900/api/v3", false);
+        val remoteGitHubForOrg = RemoteGitHubImpl("http://localhost:9900/api/v3", false,null);
         remoteGitHubForOrg.validateRemoteConfig("MyOrganization");
         assertThat(gitHubMock.getNbHitsOnUserRepos()).isEqualTo(0);
     }
