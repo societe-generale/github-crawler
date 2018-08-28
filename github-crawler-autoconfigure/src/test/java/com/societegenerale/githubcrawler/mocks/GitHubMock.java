@@ -65,10 +65,12 @@ public class GitHubMock implements RemoteServiceMock {
         return hasStarted;
     }
 
+    private WebServer gitHubWebServer;
+
     @Override
     public boolean start() {
 
-        WebServer gitHubWebServer = new WebServer();
+        gitHubWebServer = new WebServer();
         gitHubWebServer.configure(
                 routes -> {
 
@@ -111,6 +113,11 @@ public class GitHubMock implements RemoteServiceMock {
         hasStarted = true;
 
         return true;
+    }
+
+    @Override
+    public void stop() {
+        gitHubWebServer.stop();
     }
 
     private Payload geUserReposContent() throws IOException {
