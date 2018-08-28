@@ -1,22 +1,20 @@
 gitHub:
   url: https://api.github.com
-  oauth.token: "1f81edb78cf51c5933c055531b95da7250da1cee"
+# token is mandatory in some cases, like when the rate limit is enabled and quota is much bigger for authenticated requests
+  oauth.token: "XXXXXXXXXXXXXXXXXXXXXXXXX"
 
 # or your GitHub Enterprise URL
 #gitHub.url: https://my-ghe-url/api/v3
 
+# default is false, ie we expect to parse orgs. Set it to true to parse a given user's repo
+#crawl.usersRepo.insteadOf.orgasRepos: true
 
 # your GitHub organization or user, for example myOrga in https://github.com/myOrga
-organizationName: joshlong
+organizationName: yourOrga
 
 publishExcludedRepositories: false
 
 crawlAllBranches: false
-
-crawl.usersRepo.insteadOf.orgasRepos: true
-
-output.ciDroidCsvReadyFile.indicatorsToOutput: "spring_boot_starter_parent_version"
-
 
 indicatorsToFetchByFile:
   "[pom.xml]":
