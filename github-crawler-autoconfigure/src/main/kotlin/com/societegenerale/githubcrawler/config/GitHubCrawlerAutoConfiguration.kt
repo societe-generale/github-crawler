@@ -63,7 +63,7 @@ open class GitHubCrawlerAutoConfiguration {
     @Bean
     open fun remoteGitHub(@Value("\${gitHub.url}") gitHubUrl: String,
                           @Value("\${crawl.usersRepo.insteadOf.orgasRepos:false}" ) usersRepoInsteadOfOrgas: Boolean,
-                          @Value("\${gitHub.oauth.token}" ) oauthToken: String): RemoteGitHub {
+                          @Value("\${gitHub.oauth.token:#{null}}" ) oauthToken: String?): RemoteGitHub {
 
         return RemoteGitHubImpl(gitHubUrl,usersRepoInsteadOfOrgas,oauthToken)
     }
