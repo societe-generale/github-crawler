@@ -12,6 +12,16 @@
 
 ### Fixed
 
+## [1.0.7] - 2018-08-29
+
+### Fixed
+- following issue #3 - parsing of repo config shouldn't fail on unknown element
+
+### Changed
+- issue #25 - we can now parse user's repo, not only organization's
+- using Github OAuth token to send authenticated requests to github.com : this way, we're not impacted by the rate-limit
+
+
 ## [1.0.6] - 2018-08-20
 
 ### Changed
