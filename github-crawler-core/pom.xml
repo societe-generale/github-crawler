@@ -18,24 +18,10 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-feign</artifactId>
-            <version>${spring.cloud.feign.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.github.openfeign</groupId>
-                    <artifactId>feign-hystrix</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
         </dependency>
-
 
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
@@ -85,7 +71,6 @@
             <artifactId>okhttp</artifactId>
             <version>3.10.0</version>
         </dependency>
-
 
     </dependencies>
 

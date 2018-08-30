@@ -1,5 +1,6 @@
 package com.societegenerale.githubcrawler
 
+
 import com.google.common.collect.ImmutableList
 import com.societegenerale.githubcrawler.remote.NoReachableRepositories
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
