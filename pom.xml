@@ -132,8 +132,8 @@
             <scope>test</scope>
             <exclusions>
                 <exclusion>
-                    <artifactId>android-json</artifactId>
                     <groupId>com.vaadin.external.google</groupId>
+                    <artifactId>android-json</artifactId>
                 </exclusion>
 
                 <exclusion>
