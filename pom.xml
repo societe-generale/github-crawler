@@ -64,8 +64,6 @@
         <kotlin.version>1.2.50</kotlin.version>
         <mockito.version>2.17.0</mockito.version>
 
-        <spring.cloud.version>Finchley.RELEASE</spring.cloud.version>
-
         <jacoco.version>0.8.1</jacoco.version>
     </properties>
 
