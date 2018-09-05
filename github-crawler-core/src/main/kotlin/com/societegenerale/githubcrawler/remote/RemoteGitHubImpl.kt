@@ -17,7 +17,9 @@ import com.societegenerale.githubcrawler.model.commit.DetailedCommit
 import com.societegenerale.githubcrawler.model.team.Team
 import com.societegenerale.githubcrawler.model.team.TeamMember
 import feign.*
+import feign.FeignException.errorStatus
 import feign.codec.Decoder
+import feign.codec.ErrorDecoder
 import feign.gson.GsonEncoder
 import feign.httpclient.ApacheHttpClient
 import feign.slf4j.Slf4jLogger
@@ -42,7 +44,7 @@ import java.lang.reflect.Type
  * Implementation is mainly based on Feign's Builder for standard calls, and OkHttpClient for the others
  */
 @Suppress("TooManyFunctions") // most of methods are one liners, implementing the methods declared in interface
-class RemoteGitHubImpl @JvmOverloads constructor (val gitHubUrl: String, val usersReposInsteadOfOrgasRepos: Boolean = false, val oauthToken : String?) : RemoteGitHub {
+class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val usersReposInsteadOfOrgasRepos: Boolean = false, val oauthToken: String?) : RemoteGitHub {
 
 
     companion object {
@@ -57,6 +59,7 @@ class RemoteGitHubImpl @JvmOverloads constructor (val gitHubUrl: String, val use
             .client(ApacheHttpClient())
             .encoder(GsonEncoder())
             .decoder(GitHubResponseDecoder())
+            .errorDecoder(GiHubErrorDecoder())
             .decode404()
             .requestInterceptor(GitHubOauthTokenSetter(oauthToken))
             .logger(Slf4jLogger(RemoteGitHubImpl::class.java!!))
@@ -86,7 +89,7 @@ class RemoteGitHubImpl @JvmOverloads constructor (val gitHubUrl: String, val use
     @Throws(NoReachableRepositories::class)
     private fun performFirstCall(organizationName: String, isConfigCall: Boolean = false): Response {
 
-        val reposUrl = "$gitHubUrl/"+userOrOrg()+"/$organizationName/repos"
+        val reposUrl = "$gitHubUrl/" + userOrOrg() + "/$organizationName/repos"
 
         val requestBuilder = okhttp3.Request.Builder()
                 .url(reposUrl)
@@ -109,21 +112,21 @@ class RemoteGitHubImpl @JvmOverloads constructor (val gitHubUrl: String, val use
                 throw NoReachableRepositories("GET call to ${reposUrl} wasn't successful. Code : ${response.code()}, Message : ${response.message()}")
             }
         } catch (e: IOException) {
-            throw NoReachableRepositories("Unable to perform the request",e)
+            throw NoReachableRepositories("Unable to perform the request", e)
         }
 
         return response
     }
 
-    private fun addOAuthTokenIfRequired(requestBuilder : okhttp3.Request.Builder) : Unit{
+    private fun addOAuthTokenIfRequired(requestBuilder: okhttp3.Request.Builder): Unit {
 
-        if(oauthToken!=null){
-            requestBuilder.addHeader("Authorization", "token "+oauthToken)
+        if (oauthToken != null) {
+            requestBuilder.addHeader("Authorization", "token " + oauthToken)
         }
 
     }
 
-    private fun userOrOrg() : String{
+    private fun userOrOrg(): String {
         return if (usersReposInsteadOfOrgasRepos) "users" else "orgs"
     }
 
@@ -150,7 +153,7 @@ class RemoteGitHubImpl @JvmOverloads constructor (val gitHubUrl: String, val use
 
             addOAuthTokenIfRequired(nextPageRequestBuilder)
 
-            val nextPageRequest=nextPageRequestBuilder.build()
+            val nextPageRequest = nextPageRequestBuilder.build()
 
             val nextPageResponse = httpClient.newCall(nextPageRequest).execute()
 
@@ -228,7 +231,7 @@ class RemoteGitHubImpl @JvmOverloads constructor (val gitHubUrl: String, val use
 
         addOAuthTokenIfRequired(requestBuilder)
 
-        val request=requestBuilder.build()
+        val request = requestBuilder.build()
 
         val response = httpClient.newCall(request).execute()
 
@@ -247,13 +250,13 @@ class RemoteGitHubImpl @JvmOverloads constructor (val gitHubUrl: String, val use
         }
 
 
-        val requestBuilder= okhttp3.Request.Builder()
+        val requestBuilder = okhttp3.Request.Builder()
                 .url(fileOnRepository.downloadUrl)
                 .header(ACCEPT, APPLICATION_JSON)
 
         addOAuthTokenIfRequired(requestBuilder)
 
-        val request=requestBuilder.build()
+        val request = requestBuilder.build()
 
         val response = httpClient.newCall(request).execute()
 
@@ -263,7 +266,15 @@ class RemoteGitHubImpl @JvmOverloads constructor (val gitHubUrl: String, val use
     }
 
     override fun fetchCommits(organizationName: String, repositoryFullName: String, perPage: Int): Set<Commit> {
-        return internalGitHubClient.fetchCommits(organizationName, repositoryFullName, perPage)
+
+        return try {
+                internalGitHubClient.fetchCommits(organizationName, repositoryFullName, perPage)
+            }
+            catch (e: GitHubResponseDecoder.GithubException) {
+                log.warn("not able to fetch commits for repo $repositoryFullName",e)
+                emptySet()
+            }
+
     }
 
     override fun fetchCommit(organizationName: String, repositoryFullName: String, commitSha: String): DetailedCommit {
@@ -309,8 +320,8 @@ class GitHubOauthTokenSetter(val oauthToken: String?) : RequestInterceptor {
 
     override fun apply(requestTemplate: RequestTemplate?) {
 
-        if(requestTemplate!=null && oauthToken!=null){
-            requestTemplate.header("Authorization", "token "+oauthToken)
+        if (requestTemplate != null && oauthToken != null) {
+            requestTemplate.header("Authorization", "token " + oauthToken)
         }
 
     }
@@ -350,6 +361,18 @@ private interface InternalGitHubClient {
 
 }
 
+internal class GiHubErrorDecoder : ErrorDecoder {
+
+    override fun decode(methodKey: String?, response: feign.Response?): java.lang.Exception {
+
+        if (response?.status() == HttpStatus.CONFLICT.value()) {
+            throw GitHubResponseDecoder.GithubException("problem while fetching content... conflict state as per HTTP 409 code")
+        }
+
+        return errorStatus(methodKey, response);
+    }
+}
+
 internal class GitHubResponseDecoder : Decoder {
     val log = LoggerFactory.getLogger(this.javaClass)
 
@@ -380,8 +403,8 @@ internal class GitHubResponseDecoder : Decoder {
             } else {
                 throw NoFileFoundFeignException("problem while fetching content, of unknown type")
             }
-
-        } else {
+        }
+        else {
 
             log.debug("Decoding a successful response...")
 
@@ -415,6 +438,7 @@ internal class GitHubResponseDecoder : Decoder {
 
     class NoFileFoundFeignException(message: String) : FeignException(message)
 
+    class GithubException(message: String) : FeignException(message)
 
 }
 

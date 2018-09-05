@@ -1,53 +1,76 @@
 package com.societegenerale.githubcrawler
 
+import com.jayway.awaitility.Awaitility.await
 import com.societegenerale.githubcrawler.mocks.GitHubMock
 import com.societegenerale.githubcrawler.remote.RemoteGitHubImpl
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.fail
-import org.junit.After
+import org.junit.AfterClass
+import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
+import java.util.concurrent.TimeUnit.SECONDS
+
 
 @RunWith(SpringRunner::class)
 @ActiveProfiles(profiles = arrayOf("test"))
 class RemoteGitHubImplTest {
 
-    val gitHubMock : GitHubMock= GitHubMock();
+    companion object {
+
+        val githubMockServer: GitHubMock = GitHubMock();
+
+        @BeforeClass
+        @JvmStatic
+        fun startMockServer() {
+
+            githubMockServer.start()
+
+            await().atMost(5, SECONDS)
+                    .until{ assertThat(GitHubMock.hasStarted()) }
+        }
+
+        @AfterClass
+        fun shutDownMockGithub() {
+            githubMockServer.stop()
+        }
+    }
+
+
+    @Before
+    fun resetMockServer() {
+        githubMockServer.reset()
+    }
+
 
     @Test
     fun shouldCallUsersOrOrgsDependingOnConfig() {
 
-        gitHubMock.start();
-
-        var nbWait = 0
-
-        while(!GitHubMock.hasStarted()){
-            Thread.sleep(100)
-
-            nbWait++
-
-            if(nbWait>10){
-                fail("mock github server is taking too long to start - failing the test")
-            }
-
-        }
-
-        val remoteGitHubForUser = RemoteGitHubImpl("http://localhost:9900/api/v3", true,null);
-        assertThat(gitHubMock.getNbHitsOnUserRepos()).isEqualTo(0);
+        val remoteGitHubForUser = RemoteGitHubImpl("http://localhost:9900/api/v3", true, null);
+        assertThat(githubMockServer.getNbHitsOnUserRepos()).isEqualTo(0);
         remoteGitHubForUser.validateRemoteConfig("someUser");
-        assertThat(gitHubMock.getNbHitsOnUserRepos()).isEqualTo(1);
+        assertThat(githubMockServer.getNbHitsOnUserRepos()).isEqualTo(1);
 
-        gitHubMock.reset()
+        githubMockServer.reset()
 
-        val remoteGitHubForOrg = RemoteGitHubImpl("http://localhost:9900/api/v3", false,null);
+        val remoteGitHubForOrg = RemoteGitHubImpl("http://localhost:9900/api/v3", false, null);
         remoteGitHubForOrg.validateRemoteConfig("MyOrganization");
-        assertThat(gitHubMock.getNbHitsOnUserRepos()).isEqualTo(0);
+        assertThat(githubMockServer.getNbHitsOnUserRepos()).isEqualTo(0);
     }
 
-    @After
-    fun shutDownMockGithub(){
-        gitHubMock.stop()
+    @Test
+    fun shouldReturnEmptySet_whenNoCommitsInrepo() {
+
+        val remoteGitHubForUser = RemoteGitHubImpl("http://localhost:9900/api/v3", true, null);
+        githubMockServer.setReturnError409OnFetchCommits(true)
+
+
+        var commits=remoteGitHubForUser.fetchCommits("MyOrganization","myRepo",150)
+
+        assertThat(commits.isEmpty())
     }
+
+
 }
