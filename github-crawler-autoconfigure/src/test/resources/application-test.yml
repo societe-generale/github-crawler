@@ -1,7 +1,6 @@
 gitHub.url: http://localhost:9900/api/v3
 
 organizationName: MyOrganization
-securityToken: FAKE_TOKEN
 
 publishExcludedRepositories: false
 
@@ -30,8 +29,8 @@ searchesPerRepo:
       queryString: "q=metrics+extension:xml"
       method: count
 
-debug: true
-
+#debug: true
+#
 #logging.level:
 #  com.societegenerale.githubcrawler: DEBUG
 
