@@ -66,7 +66,6 @@ class RemoteGitHubImplTest {
         val remoteGitHubForUser = RemoteGitHubImpl("http://localhost:9900/api/v3", true, null);
         githubMockServer.setReturnError409OnFetchCommits(true)
 
-
         var commits=remoteGitHubForUser.fetchCommits("MyOrganization","myRepo",150)
 
         assertThat(commits.isEmpty())

@@ -380,6 +380,7 @@ public class GitHubMock implements RemoteServiceMock {
         existingResources.clear();
         searchHitsCount = 0;
         nbHitsOnUserRepos = 0;
+        shouldReturnError409OnFetchCommits=false;
     }
 
     public void addRepoSideConfig(String repoName, String config) {
