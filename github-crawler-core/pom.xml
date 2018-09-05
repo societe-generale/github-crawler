@@ -17,25 +17,40 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-feign</artifactId>
-            <version>${spring.cloud.feign.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.github.openfeign</groupId>
-                    <artifactId>feign-hystrix</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!--
+            Theoretically, we don't need to declare gson lib, as it's provided by spring-cloud-starter-openfeign .
+            The gson version is overridden in spring boot starter (to 2.8.5 as of Spring Boot 2.0.4)
+            However, when starter is built and used elsewhere, the version switches back to th eone defined in spring-cloud-starter-openfeign
+            and it doesn't work
 
+            more infos : https://stackoverflow.com/questions/52143687/not-getting-the-expected-version-when-using-the-spring-boot-starter-i-built
+         -->
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
+            <artifactId>spring-boot-starter-logging</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-gson</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-httpclient</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
@@ -68,24 +83,12 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>io.github.openfeign</groupId>
-            <artifactId>feign-gson</artifactId>
-            <version>${feign-dependencies.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.openfeign</groupId>
-            <artifactId>feign-httpclient</artifactId>
-            <version>${feign-dependencies.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
             <version>3.10.0</version>
         </dependency>
-
 
     </dependencies>
 

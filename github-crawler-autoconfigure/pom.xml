@@ -23,7 +23,6 @@
             <version>${project.parent.version}</version>
         </dependency>
 
-
         <dependency>
             <groupId>net.code-story</groupId>
             <artifactId>http</artifactId>

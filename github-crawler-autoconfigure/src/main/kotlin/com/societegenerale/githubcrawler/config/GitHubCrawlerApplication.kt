@@ -2,6 +2,7 @@ package com.societegenerale.githubcrawler
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
+import org.springframework.boot.WebApplicationType
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.builder.SpringApplicationBuilder
 import java.io.IOException
@@ -26,7 +27,7 @@ open class GitHubCrawlerApplication : CommandLineRunner {
 
         @JvmStatic
         fun main(args: Array<String>) {
-            SpringApplicationBuilder(GitHubCrawlerApplication::class.java).web(false).run(*args)
+            SpringApplicationBuilder(GitHubCrawlerApplication::class.java).web(WebApplicationType.NONE).run(*args)
         }
     }
 

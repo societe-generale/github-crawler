@@ -2,7 +2,6 @@ package com.societegenerale.githubcrawler.remote
 
 import com.societegenerale.githubcrawler.RepositoryConfig
 import com.societegenerale.githubcrawler.model.Branch
-import com.societegenerale.githubcrawler.model.FileOnRepository
 import com.societegenerale.githubcrawler.model.Repository
 import com.societegenerale.githubcrawler.model.SearchResult
 import com.societegenerale.githubcrawler.model.commit.Commit
