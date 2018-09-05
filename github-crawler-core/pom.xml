@@ -17,10 +17,19 @@
 
     <dependencies>
 
+        <!--
+            Theoretically, we don't need to declare gson lib, as it's provided by spring-cloud-starter-openfeign .
+            The gson version is overridden in spring boot starter (to 2.8.5 as of Spring Boot 2.0.4)
+            However, when starter is built and used elsewhere, the version switches back to th eone defined in spring-cloud-starter-openfeign
+            and it doesn't work
+
+            more infos : https://stackoverflow.com/questions/52143687/not-getting-the-expected-version-when-using-the-spring-boot-starter-i-built
+         -->
+
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.8.5</version>
+            <version>${gson.version}</version>
         </dependency>
 
         <dependency>
