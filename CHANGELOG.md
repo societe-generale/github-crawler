@@ -11,6 +11,14 @@
 ### Removed
 
 ### Fixed
+
+
+## [1.0.8] - 2018-09-05
+
+### Changed
+- issue #10 - migrated to Spring Boot 2.0.4
+
+### Fixed
 - issue #29 - not crashing anymore when fetching commits from a repository that is empty
 
 ## [1.0.7] - 2018-08-29
