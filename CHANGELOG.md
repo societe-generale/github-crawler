@@ -11,6 +11,7 @@
 ### Removed
 
 ### Fixed
+- issue #29 - not crashing anymore when fetching commits from a repository that is empty
 
 ## [1.0.7] - 2018-08-29
 

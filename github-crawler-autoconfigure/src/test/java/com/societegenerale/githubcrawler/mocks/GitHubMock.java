@@ -5,6 +5,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.codestory.http.Context;
 import net.codestory.http.WebServer;
+import net.codestory.http.constants.HttpStatus;
+import net.codestory.http.errors.HttpException;
 import net.codestory.http.errors.NotFoundException;
 import net.codestory.http.payload.Payload;
 import org.apache.commons.io.FileUtils;
@@ -60,6 +62,8 @@ public class GitHubMock implements RemoteServiceMock {
 
     @Getter
     private int searchHitsCount = 0;
+
+    private boolean shouldReturnError409OnFetchCommits = false;
 
     public static boolean hasStarted() {
         return hasStarted;
@@ -205,6 +209,11 @@ public class GitHubMock implements RemoteServiceMock {
 
     private Payload getCommits(String repo) throws IOException {
         log.debug("Getting Github commits on repo {}...", repo);
+
+        if(shouldReturnError409OnFetchCommits){
+            throw new ConflictException();
+        }
+
         return new Payload("application/json", FileUtils.readFileToString(ResourceUtils.getFile("classpath:commits.json"), "UTF-8"));
     }
 
@@ -371,6 +380,7 @@ public class GitHubMock implements RemoteServiceMock {
         existingResources.clear();
         searchHitsCount = 0;
         nbHitsOnUserRepos = 0;
+        shouldReturnError409OnFetchCommits=false;
     }
 
     public void addRepoSideConfig(String repoName, String config) {
@@ -389,4 +399,13 @@ public class GitHubMock implements RemoteServiceMock {
         this.reposWithPomXml.addAll(reposWithPomXMl);
     }
 
+    public void setReturnError409OnFetchCommits(boolean shouldReturnError) {
+        this.shouldReturnError409OnFetchCommits=shouldReturnError;
+    }
+
+    private class ConflictException extends HttpException {
+        ConflictException() {
+            super(HttpStatus.CONFLICT);
+        }
+    }
 }
