@@ -33,6 +33,7 @@ class RemoteGitHubImplTest {
         }
 
         @AfterClass
+        @JvmStatic
         fun shutDownMockGithub() {
             githubMockServer.stop()
         }
