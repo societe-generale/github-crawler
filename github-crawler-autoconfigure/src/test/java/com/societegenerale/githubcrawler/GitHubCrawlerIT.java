@@ -107,17 +107,31 @@ public class GitHubCrawlerIT {
 		assertThat(githubMockServer.getNbPages()).isEqualTo(2);
 
 	}
+//
+//	@Test
+//	public void excludedRepositoriesOnRepoConfigSideAreFlaggedAsExcluded() throws IOException {
+//
+//		String excludedRepoName="cwf-mobile";
+//		githubMockServer.addRepoSideConfig(excludedRepoName, GitHubMock.REPO_EXCLUDED_CONFIG);
+//
+//		crawler.crawl();
+//
+//		assertOnlyThisRepoIsFlaggedAsExcluded(excludedRepoName);
+//	}
 
-	@Test
-	public void excludedRepositoriesOnRepoConfigSideAreFlaggedAsExcluded() throws IOException {
-
-		String excludedRepoName="cwf-mobile";
-		githubMockServer.addRepoSideConfig(excludedRepoName, GitHubMock.REPO_EXCLUDED_CONFIG);
-
-		crawler.crawl();
-
-		assertOnlyThisRepoIsFlaggedAsExcluded(excludedRepoName);
-	}
+//	@Test
+//	public void gitHubOrganisationPollerWorks() throws IOException {
+//
+//		crawler.crawl();
+//
+//		Collection<Repository> processedRepositories=output.getAnalyzedRepositories().values();
+//
+//		assertThat(processedRepositories).hasSize(nbRepositoriesInOrga);
+//
+//		assertThat(processedRepositories.stream().map(Repository::getName).collect(toSet())).hasSize(nbRepositoriesInOrga);
+//		assertThat(processedRepositories.stream().map(Repository::getDefaultBranch).collect(toSet())).containsOnly("master");
+//
+//	}
 
 
 	@Test

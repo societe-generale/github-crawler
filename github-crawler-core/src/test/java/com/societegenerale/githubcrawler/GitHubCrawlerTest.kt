@@ -58,12 +58,28 @@ class GitHubCrawlerTest {
                 .until({ assertThat(processedRepositories).hasSize(2) })
 
 
-        assertThat(processedRepositories).hasSize(2)
         assertThat(processedRepositories.map { r -> r.name }).containsExactlyInAnyOrder("repo1","repo2")
         assertThat(processedRepositories.map { r -> r.defaultBranch }).containsOnly("master")
 
     }
 
+    @Test
+    @Throws(IOException::class)
+    fun excludedRepositoriesOnRepoConfigSideAreNotOutputByDefault() {
+
+        `when`(mockRemoteGitHub.fetchRepoConfig("fullRepo1","master")).thenReturn(RepositoryConfig(excluded = true))
+
+        gitHubCrawler.crawl()
+
+        val processedRepositories = output.analyzedRepositories.values
+
+        await().atMost(1, java.util.concurrent.TimeUnit.SECONDS)
+                .until({ assertThat(processedRepositories).hasSize(1) })
+
+        assertThat(processedRepositories.map { r -> r.name }).containsOnly("repo2")
+
+        assertThat(output.analyzedRepositories["repo2"]?.excluded).isFalse()
+    }
 
     inner class InMemoryGitHubCrawlerOutput : GitHubCrawlerOutput {
 
