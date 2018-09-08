@@ -50,16 +50,10 @@ class GitHubCrawlerTest {
     @Throws(IOException::class)
     fun gitHubOrganisationPollerWorks() {
 
-        gitHubCrawler.crawl()
+        val processedRepositories = crawlAndWaitUntilWeHaveRecordsInOutput(2)
 
-        val processedRepositories = output.analyzedRepositories.values
-
-        await().atMost(1, java.util.concurrent.TimeUnit.SECONDS)
-                .until({ assertThat(processedRepositories).hasSize(2) })
-
-
-        assertThat(processedRepositories.map { r -> r.name }).containsExactlyInAnyOrder("repo1","repo2")
-        assertThat(processedRepositories.map { r -> r.defaultBranch }).containsOnly("master")
+        assertThat(processedRepositories.keys).containsExactlyInAnyOrder("repo1","repo2")
+        assertThat(processedRepositories.values.map { r -> r.defaultBranch }).containsOnly("master")
 
     }
 
@@ -69,16 +63,36 @@ class GitHubCrawlerTest {
 
         `when`(mockRemoteGitHub.fetchRepoConfig("fullRepo1","master")).thenReturn(RepositoryConfig(excluded = true))
 
+        val processedRepositories = crawlAndWaitUntilWeHaveRecordsInOutput(1)
+
+        assertThat(processedRepositories.keys).containsOnly("repo2")
+        assertThat(output.analyzedRepositories["repo2"]?.excluded).isFalse()
+    }
+
+    @Test
+    @Throws(IOException::class)
+    fun excludedRepositoriesOnRepoConfigSideShouldBeOutputIfConfigured() {
+
+        `when`(mockRemoteGitHub.fetchRepoConfig("fullRepo1","master")).thenReturn(RepositoryConfig(excluded = true))
+
+        gitHubCrawlerProperties.publishExcludedRepositories=true
+
+        val processedRepositories = crawlAndWaitUntilWeHaveRecordsInOutput(2)
+
+        assertThat(processedRepositories.keys).containsExactlyInAnyOrder("repo1","repo2")
+        assertThat(processedRepositories ["repo2"]?.excluded).isFalse()
+        assertThat(processedRepositories ["repo1"]?.excluded).isTrue()
+    }
+
+    private fun crawlAndWaitUntilWeHaveRecordsInOutput(nbExpectedRecords : Int) : HashMap<String, Repository> {
+
         gitHubCrawler.crawl()
 
-        val processedRepositories = output.analyzedRepositories.values
-
         await().atMost(1, java.util.concurrent.TimeUnit.SECONDS)
-                .until({ assertThat(processedRepositories).hasSize(1) })
+                .until({ assertThat(output.analyzedRepositories.values).hasSize(nbExpectedRecords) })
 
-        assertThat(processedRepositories.map { r -> r.name }).containsOnly("repo2")
+        return output.analyzedRepositories
 
-        assertThat(output.analyzedRepositories["repo2"]?.excluded).isFalse()
     }
 
     inner class InMemoryGitHubCrawlerOutput : GitHubCrawlerOutput {

@@ -134,23 +134,23 @@ public class GitHubCrawlerIT {
 //	}
 
 
-	@Test
-	public void shouldNotPublishExcludedRepoWhenConfiguredAccordingly() throws IOException {
-
-		crawler.getGitHubCrawlerProperties().setPublishExcludedRepositories(false);
-
-		String excludedRepoName = "cwf-mobile";
-		githubMockServer.addRepoSideConfig(excludedRepoName, GitHubMock.REPO_EXCLUDED_CONFIG);
-
-		crawler.crawl();
-
-		Map<String, Repository> processedRepositories = output.getAnalyzedRepositories();
-
-		await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
-				.until(() -> assertThat(processedRepositories).hasSize(nbRepositoriesInOrga-1));
-
-		assertThat(processedRepositories).doesNotContainKeys(excludedRepoName);
-	}
+//	@Test
+//	public void shouldNotPublishExcludedRepoWhenConfiguredAccordingly() throws IOException {
+//
+//		crawler.getGitHubCrawlerProperties().setPublishExcludedRepositories(false);
+//
+//		String excludedRepoName = "cwf-mobile";
+//		githubMockServer.addRepoSideConfig(excludedRepoName, GitHubMock.REPO_EXCLUDED_CONFIG);
+//
+//		crawler.crawl();
+//
+//		Map<String, Repository> processedRepositories = output.getAnalyzedRepositories();
+//
+//		await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
+//				.until(() -> assertThat(processedRepositories).hasSize(nbRepositoriesInOrga-1));
+//
+//		assertThat(processedRepositories).doesNotContainKeys(excludedRepoName);
+//	}
 
 	@Test
 	public void excludingRepositoriesOnServerConfigSideWithSingleRegexp() throws IOException {
