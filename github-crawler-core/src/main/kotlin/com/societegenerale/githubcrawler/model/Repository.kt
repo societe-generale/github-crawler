@@ -22,9 +22,9 @@ data class Repository(val url: String,
                       @JsonIgnore
                       val excluded: Boolean = false,
                       @JsonIgnore
-                      val config: RepositoryConfig?,
+                      val config: RepositoryConfig? = null,
                       @JsonIgnore
-                      val reason: String?,
+                      val reason: String? = null,
                       @JsonIgnore
                       val skipped: Boolean = false,
                       @JsonProperty("full_name")
@@ -42,7 +42,7 @@ data class Repository(val url: String,
                       @JsonIgnore
                       val searchResults: Map<String, String> = HashMap(),
                       @JsonIgnore
-                      var ownerTeam: String?,
+                      var ownerTeam: String? = null,
                       @JsonIgnore
                       var topics: List<String> = emptyList()
 ) {
@@ -59,7 +59,7 @@ data class Repository(val url: String,
 
 
         if (matchedOnAnExclusionPattern) {
-            log.info("\texcluding repo {} because of server config ", name)
+            log.info("\texcluding repo ${name} because of server config ")
 
             return this.copy(excluded = true, reason = "excluded from server config side")
         }

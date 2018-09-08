@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { TestConfig.class, GitHubCrawlerAutoConfiguration.class })
 @ActiveProfiles(profiles={"test","profilesAreAWayOfGrouping"})
-public class GitHubCrawlerTest {
+public class GitHubCrawlerIT {
 
 	private final int MAX_TIMEOUT_FOR_CRAWLER=10;
 
@@ -83,20 +83,6 @@ public class GitHubCrawlerTest {
 	@AfterClass
 	public static void shutDown(){
 		githubMockServer.stop();
-	}
-
-	@Test
-	public void gitHubOrganisationPollerWorks() throws IOException {
-
-		crawler.crawl();
-
-		Collection<Repository> processedRepositories=output.getAnalyzedRepositories().values();
-
-		assertThat(processedRepositories).hasSize(nbRepositoriesInOrga);
-
-		assertThat(processedRepositories.stream().map(Repository::getName).collect(toSet())).hasSize(nbRepositoriesInOrga);
-		assertThat(processedRepositories.stream().map(Repository::getDefaultBranch).collect(toSet())).containsOnly("master");
-
 	}
 
 	@Test
