@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpMethod
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -28,8 +29,8 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
                     private val gitHubUrl: String,
                     private val configValidator: ConfigValidator) {
 
-    companion object{
-        const val NO_CRAWLER_RUN_ID_DEFINED : String = "NO_CRAWLER_RUN_ID_DEFINED"
+    companion object {
+        const val NO_CRAWLER_RUN_ID_DEFINED: String = "NO_CRAWLER_RUN_ID_DEFINED"
         val availableFileContentParsers = HashMap<String, FileContentParser>()
         val availableSearchResultParsers = HashMap<String, SearchResultParser>()
     }
@@ -47,8 +48,8 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
 
         val configValidationErrors = configValidator.getValidationErrors()
 
-        if(configValidationErrors.isNotEmpty()){
-            throw IllegalStateException("There are some config validation errors - please double check the config. \n"+configValidationErrors.joinToString(separator = "\n", prefix = "\t - ") )
+        if (configValidationErrors.isNotEmpty()) {
+            throw IllegalStateException("There are some config validation errors - please double check the config. \n" + configValidationErrors.joinToString(separator = "\n", prefix = "\t - "))
         }
 
         if (availableFileContentParsers.isEmpty() || searchResultParsers.isEmpty()) {
@@ -69,7 +70,7 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
 
     }
 
-    fun getGitHubCrawlerProperties() : GitHubCrawlerProperties{
+    fun getGitHubCrawlerProperties(): GitHubCrawlerProperties {
         return gitHubCrawlerProperties
     }
 
@@ -102,22 +103,25 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
         //TODO control better the number of threads
 
         log.info("active Spring profiles that we'll use as group attribute :")
-        environment.activeProfiles.asIterable().forEach({it ->  log.info("- $it")})
+        environment.activeProfiles.asIterable().forEach({ it -> log.info("- $it") })
 
-        val crawlerRunId : String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val crawlerRunId: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         log.info("crawler run ID : $crawlerRunId")
 
+        log.info("${repositoriesFromOrga.size} repositories to crawl...")
+
         repositoriesFromOrga.parallelStream()
+                .map { repo -> logRepoProcessing(repo) }
                 .map { repo -> repo.flagAsExcludedIfRequired(gitHubCrawlerProperties.repositoriesToExclude) }
                 .filter { repo -> shouldKeepForFurtherProcessing(repo, gitHubCrawlerProperties) }
                 .map { repo -> repositoryEnricher.loadRepoSpecificConfigIfAny(repo) }
                 .map { repo -> repo.flagAsExcludedIfConfiguredAtRepoLevel() }
                 .filter { repo -> shouldKeepForFurtherProcessing(repo, gitHubCrawlerProperties) }
-                .map{repo -> repo.copy(crawlerRunId= crawlerRunId)}
+                .map { repo -> repo.copy(crawlerRunId = crawlerRunId) }
                 .map { repo -> repo.copyTagsFromRepoTopics() }
                 .map { repo -> repo.addGroups(environment.activeProfiles) }
-                .map { repo -> repositoryEnricher.identifyBranchesToParse(repo,gitHubCrawlerProperties.crawlAllBranches, organizationName!!) }
-                .map { repo -> repositoryEnricher.fetchIndicatorsValues(repo,gitHubCrawlerProperties) }
+                .map { repo -> repositoryEnricher.identifyBranchesToParse(repo, gitHubCrawlerProperties.crawlAllBranches, organizationName!!) }
+                .map { repo -> repositoryEnricher.fetchIndicatorsValues(repo, gitHubCrawlerProperties) }
                 .map { repo -> repo.fetchOwner(ownershipParser) }
                 .map { repo -> applySearchResultsOnRepo(gitHubCrawlerProperties, repo) }
                 .map { repo -> publish(repo) }
@@ -126,23 +130,28 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
 
     }
 
+    private fun logRepoProcessing(repo: Repository): Repository {
+        log.info("processing repo ${repo.name}")
+        return repo;
+    }
+
     /**
      * Not able to implement the search call to GitHub using Feignclient, as the parameters follow a not very standard pattern.
      * So implementing the call with a regular restTemplate
      */
     private fun applySearchResultsOnRepo(gitHubCrawlerProperties: GitHubCrawlerProperties, repo: Repository): Repository {
 
-        val searchResults=gitHubCrawlerProperties.searchesPerRepo.asIterable()
-                       .map{ (searchName,searchParam) -> Triple(searchName,searchParam,fetchCodeSearchResult(repo,searchParam.queryString)) }
-                       .map{ (searchName,searchParam,searchResult) -> Pair(searchName,parseSearchResult(searchParam,searchResult))}
-                       .toMap()
+        val searchResults = gitHubCrawlerProperties.searchesPerRepo.asIterable()
+                .map { (searchName, searchParam) -> Triple(searchName, searchParam, fetchCodeSearchResult(repo, searchParam.queryString)) }
+                .map { (searchName, searchParam, searchResult) -> Pair(searchName, parseSearchResult(searchParam, searchResult)) }
+                .toMap()
 
-        return repo.copy(searchResults=searchResults)
+        return repo.copy(searchResults = searchResults)
     }
 
     private fun parseSearchResult(searchParam: SearchParam, searchResult: SearchResult): String {
 
-        val parser= availableSearchResultParsers.get(searchParam.method);
+        val parser = availableSearchResultParsers.get(searchParam.method);
 
         return parser!!.parse(searchResult)
     }
@@ -151,18 +160,23 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
 
         val restTemplate = RestTemplate()
 
-        val responseEntity = restTemplate.exchange("$gitHubUrl/search/code?" + buildQueryString(queryString, repo),
-                HttpMethod.GET, null, object : ParameterizedTypeReference<SearchResult>() {
+        var actualQueryString=buildQueryString(queryString, repo)
 
-        })
+        try {
+            val responseEntity = restTemplate.exchange("$gitHubUrl/search/code?" + actualQueryString,
+                    HttpMethod.GET, null, object : ParameterizedTypeReference<SearchResult>() {
+            })
 
-        if(responseEntity.hasBody()){
-            return responseEntity.body
+            if (responseEntity.hasBody()) {
+                return responseEntity.body
+            }
+        } catch (e: HttpClientErrorException) {
+            log.info("problem while parsing the search result for ${actualQueryString} on ${repo.name}", e)
         }
-        else{
-            //TOOD return empty searchResult
-            return SearchResult(0)
-        }
+
+        //TODO return empty searchResult
+        return SearchResult(0)
+
 
     }
 
