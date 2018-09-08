@@ -11,6 +11,7 @@
 ### Removed
 
 ### Fixed
+- issue #31 - now handling invalid search results without crashing
 
 
 ## [1.0.8] - 2018-09-05
