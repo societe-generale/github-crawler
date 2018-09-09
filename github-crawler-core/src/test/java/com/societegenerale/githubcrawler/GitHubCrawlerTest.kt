@@ -32,6 +32,9 @@ class GitHubCrawlerTest {
 
     @Before
     fun setUp() {
+
+
+
         gitHubCrawler = GitHubCrawler(mockRemoteGitHub, ownershipParser, outputs, repositoryEnricher, gitHubCrawlerProperties, mockEnvironment, organizationName, gitHubUrl, mockConfigValidator)
 
         `when`(mockRemoteGitHub.fetchRepositories(organizationName)).thenReturn(setOf(
@@ -84,11 +87,22 @@ class GitHubCrawlerTest {
         assertThat(processedRepositories ["repo1"]?.excluded).isTrue()
     }
 
+    @Test
+    @Throws(IOException::class)
+    fun reposExcludedOnCrawlerConfigSideAreNotInOutput() {
+
+        gitHubCrawlerProperties.repositoriesToExclude=Arrays.asList("repo2")
+
+        val processedRepositories = crawlAndWaitUntilWeHaveRecordsInOutput(1)
+
+        assertThat(processedRepositories.keys).containsExactlyInAnyOrder("repo1")
+    }
+
     private fun crawlAndWaitUntilWeHaveRecordsInOutput(nbExpectedRecords : Int) : HashMap<String, Repository> {
 
         gitHubCrawler.crawl()
 
-        await().atMost(1, java.util.concurrent.TimeUnit.SECONDS)
+        await().atMost(2, java.util.concurrent.TimeUnit.SECONDS)
                 .until({ assertThat(output.analyzedRepositories.values).hasSize(nbExpectedRecords) })
 
         return output.analyzedRepositories

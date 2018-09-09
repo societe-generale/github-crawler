@@ -184,16 +184,16 @@ public class GitHubCrawlerIT {
 	}
 
 
-	@Test
-	public void fetchingRepoConfigForNonExcludedRepos() throws IOException {
-
-		String excludedRepoName="api-gateway";
-		crawler.getGitHubCrawlerProperties().setRepositoriesToExclude(Arrays.asList(excludedRepoName));
-
-		crawler.crawl();
-
-		assertThat(githubMockServer.getRepoConfigHits()).hasSize(nbRepositoriesInOrga - 1);
-	}
+//	@Test
+//	public void fetchingRepoConfigForNonExcludedRepos() throws IOException {
+//
+//		String excludedRepoName="api-gateway";
+//		crawler.getGitHubCrawlerProperties().setRepositoriesToExclude(Arrays.asList(excludedRepoName));
+//
+//		crawler.crawl();
+//
+//		assertThat(githubMockServer.getRepoConfigHits()).hasSize(nbRepositoriesInOrga - 1);
+//	}
 
 
 
