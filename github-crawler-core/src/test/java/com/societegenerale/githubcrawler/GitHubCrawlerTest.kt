@@ -33,13 +33,11 @@ class GitHubCrawlerTest {
     @Before
     fun setUp() {
 
-
-
         gitHubCrawler = GitHubCrawler(mockRemoteGitHub, ownershipParser, outputs, repositoryEnricher, gitHubCrawlerProperties, mockEnvironment, organizationName, gitHubUrl, mockConfigValidator)
 
         `when`(mockRemoteGitHub.fetchRepositories(organizationName)).thenReturn(setOf(
-                                Repository(url="url1",fullName = "fullRepo1",name= "repo1",defaultBranch="master",creationDate = Date(),lastUpdateDate = Date()),
-                                Repository(url="url2",fullName = "fullRepo2",name= "repo2",defaultBranch="master",creationDate = Date(),lastUpdateDate = Date())
+                                Repository(url="url1",fullName = "fullRepo1",name= "repo1",defaultBranch="master",creationDate = Date(),lastUpdateDate = Date(),topics= listOf("topic1a","topic1b")),
+                                Repository(url="url2",fullName = "fullRepo2",name= "repo2",defaultBranch="master",creationDate = Date(),lastUpdateDate = Date(),groups= listOf("group2a","group2b"))
         ))
 
         `when`(mockRemoteGitHub.fetchRepoConfig(anyString(),anyString())).thenReturn(RepositoryConfig())
@@ -96,6 +94,17 @@ class GitHubCrawlerTest {
         val processedRepositories = crawlAndWaitUntilWeHaveRecordsInOutput(1)
 
         assertThat(processedRepositories.keys).containsExactlyInAnyOrder("repo1")
+    }
+
+    @Test
+    @Throws(IOException::class)
+    fun shouldCopyTagsFromRepoTopicsOnRepoResult() {
+
+        val processedRepositories = crawlAndWaitUntilWeHaveRecordsInOutput(2)
+
+        assertThat(processedRepositories.get("repo1")?.tags).containsExactlyInAnyOrder("topic1a","topic1b")
+        assertThat(processedRepositories.get("repo2")?.tags).isEmpty()
+
     }
 
     private fun crawlAndWaitUntilWeHaveRecordsInOutput(nbExpectedRecords : Int) : HashMap<String, Repository> {
