@@ -161,26 +161,26 @@ public class GitHubCrawlerIT {
 		assertOnlyThisRepoIsFlaggedAsExcluded("api-gateway");
 	}
 
-	@Test
-	public void excludingRepositoriesOnServerConfigSideWithMultipleRegexp() throws IOException {
-
-		crawler.getGitHubCrawlerProperties().setRepositoriesToExclude(Arrays.asList(".*-documentation$",
-				"^(?!financing-platform-.*$).*"));
-
-		crawler.crawl();
-
-		SoftAssertions softly = new SoftAssertions();
-
-		List<String> excludedRepositories = output.getAnalyzedRepositories().keySet().stream()
-				.filter(repoName -> output.getAnalyzedRepositories().get(repoName).getExcluded())
-				.collect(toList());
-
-
-		softly.assertThat(excludedRepositories).contains("cwf-mobile", "welcome-pack", "api-gateway", "initial-load", "financing-platform-documentation");
-		softly.assertThat(excludedRepositories).doesNotContain("financing-platform-deal", "financing-platform-web");
-
-		softly.assertAll();
-	}
+//	@Test
+//	public void excludingRepositoriesOnServerConfigSideWithMultipleRegexp() throws IOException {
+//
+//		crawler.getGitHubCrawlerProperties().setRepositoriesToExclude(Arrays.asList(".*-documentation$",
+//				"^(?!financing-platform-.*$).*"));
+//
+//		crawler.crawl();
+//
+//		SoftAssertions softly = new SoftAssertions();
+//
+//		List<String> excludedRepositories = output.getAnalyzedRepositories().keySet().stream()
+//				.filter(repoName -> output.getAnalyzedRepositories().get(repoName).getExcluded())
+//				.collect(toList());
+//
+//
+//		softly.assertThat(excludedRepositories).contains("cwf-mobile", "welcome-pack", "api-gateway", "initial-load", "financing-platform-documentation");
+//		softly.assertThat(excludedRepositories).doesNotContain("financing-platform-deal", "financing-platform-web");
+//
+//		softly.assertAll();
+//	}
 
 
 //	@Test

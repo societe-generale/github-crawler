@@ -93,7 +93,27 @@ class GitHubCrawlerTest {
 
         val processedRepositories = crawlAndWaitUntilWeHaveRecordsInOutput(1)
 
-        assertThat(processedRepositories.keys).containsExactlyInAnyOrder("repo1")
+        assertThat(processedRepositories.keys).containsExactly("repo1")
+    }
+
+    @Test
+    fun excludingRepositoriesOnServerConfigSideWithMultipleRegexp() {
+
+        gitHubCrawlerProperties.repositoriesToExclude = Arrays.asList(".*1$",".*2$")
+
+        val processedRepositories = crawlAndWaitUntilWeHaveRecordsInOutput(0)
+
+        assertThat(processedRepositories.keys).isEmpty()
+    }
+
+    @Test
+    fun excludingRepositoriesOnServerConfigSideWithSingleRegexp() {
+
+        gitHubCrawlerProperties.repositoriesToExclude = Arrays.asList(".*1$")
+
+        val processedRepositories = crawlAndWaitUntilWeHaveRecordsInOutput(1)
+
+        assertThat(processedRepositories.keys).containsExactly("repo2")
     }
 
     @Test
@@ -104,7 +124,6 @@ class GitHubCrawlerTest {
 
         assertThat(processedRepositories.get("repo1")?.tags).containsExactlyInAnyOrder("topic1a","topic1b")
         assertThat(processedRepositories.get("repo2")?.tags).isEmpty()
-
     }
 
     private fun crawlAndWaitUntilWeHaveRecordsInOutput(nbExpectedRecords : Int) : HashMap<String, Repository> {
