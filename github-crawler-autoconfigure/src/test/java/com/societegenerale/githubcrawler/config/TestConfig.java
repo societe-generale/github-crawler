@@ -6,6 +6,7 @@ import com.societegenerale.githubcrawler.model.Repository;
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput;
 import com.societegenerale.githubcrawler.ownership.NoOpOwnershipParser;
 import com.societegenerale.githubcrawler.ownership.OwnershipParser;
+import com.societegenerale.githubcrawler.parsers.FileContentParser;
 import com.societegenerale.githubcrawler.remote.RemoteGitHub;
 import lombok.Getter;
 import lombok.val;
@@ -38,11 +39,12 @@ public class TestConfig {
             Environment environment,
             String organizationName,
             String gitHubUrl ,
-            ConfigValidator configValidator) {
+            ConfigValidator configValidator,
+            List<FileContentParser> fileContentParsers) {
 
         val repositoryEnricher = new RepositoryEnricher(remoteGitHub);
 
-        return new GitHubCrawler(remoteGitHub, ownershipParser, output, repositoryEnricher, gitHubCrawlerProperties, environment,organizationName,gitHubUrl,configValidator);
+        return new GitHubCrawler(remoteGitHub, ownershipParser, output, repositoryEnricher, gitHubCrawlerProperties, environment,organizationName,gitHubUrl,configValidator,fileContentParsers);
     }
 
     @Bean

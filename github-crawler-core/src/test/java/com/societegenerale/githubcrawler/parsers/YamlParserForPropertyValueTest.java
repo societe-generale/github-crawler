@@ -20,7 +20,7 @@ public class YamlParserForPropertyValueTest {
     final String indicatorName = "someIndicatorName";
     String yamlFileSnippet;
     Map<String, String> params = new HashMap<>();
-    IndicatorDefinition pomXmlDependencyVersion = new IndicatorDefinition();
+    IndicatorDefinition pomXmlDependencyVersion = new IndicatorDefinition(indicatorName,FIND_PROPERTY_VALUE_IN_YAML,params);
 
     YamlParserForPropertyValue fileContentParser = new YamlParserForPropertyValue();
 
@@ -29,9 +29,6 @@ public class YamlParserForPropertyValueTest {
 
         yamlFileSnippet=
                 FileUtils.readFileToString(ResourceUtils.getFile("classpath:sample_yamlfile.yml"), "UTF-8");
-
-        pomXmlDependencyVersion.setName(indicatorName);
-        pomXmlDependencyVersion.setMethod(FIND_PROPERTY_VALUE_IN_YAML);
     }
 
     @Test

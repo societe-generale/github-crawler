@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import static com.societegenerale.githubcrawler.parsers.PomXmlParserForDependencyVersion.ARTIFACT_ID;
 import static com.societegenerale.githubcrawler.parsers.PomXmlParserForDependencyVersion.FIND_DEPENDENCY_VERSION_IN_XML_METHOD;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,7 +20,7 @@ public class PomXmlParserForDependencyVersionTest {
     final String indicatorName = "someIndicatorName";
     String pomXmlSnippet;
     Map<String, String> params = new HashMap<>();
-    IndicatorDefinition pomXmlDependencyVersion = new IndicatorDefinition();
+    IndicatorDefinition pomXmlDependencyVersion = new IndicatorDefinition(indicatorName,FIND_DEPENDENCY_VERSION_IN_XML_METHOD,params);
     PomXmlParserForDependencyVersion fileContentParser = new PomXmlParserForDependencyVersion();
 
     @Before
@@ -29,9 +28,6 @@ public class PomXmlParserForDependencyVersionTest {
 
         pomXmlSnippet =  FileUtils.readFileToString(ResourceUtils.getFile("classpath:sample_pom.xml"),"UTF-8");
 
-
-        pomXmlDependencyVersion.setName(indicatorName);
-        pomXmlDependencyVersion.setMethod(FIND_DEPENDENCY_VERSION_IN_XML_METHOD);
     }
 
     @Test

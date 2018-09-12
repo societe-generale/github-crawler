@@ -26,7 +26,9 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
                     private val environment: Environment,
                     private val organizationName: String,
                     private val gitHubUrl: String,
-                    private val configValidator: ConfigValidator) {
+                    private val configValidator: ConfigValidator,
+                    @Autowired
+                    private val fileContentParsers: List<FileContentParser> = emptyList()) {
 
     companion object{
         const val NO_CRAWLER_RUN_ID_DEFINED : String = "NO_CRAWLER_RUN_ID_DEFINED"
@@ -36,8 +38,7 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
 
     val log = LoggerFactory.getLogger(this.javaClass)
 
-    @Autowired
-    private val fileContentParsers: List<FileContentParser> = emptyList()
+
 
     @Autowired
     private val searchResultParsers: List<SearchResultParser> = emptyList()
