@@ -1,6 +1,6 @@
 # GitHub crawler
 
-[![Build Status](https://travis-ci.org/societe-generale/github-crawler.svg?branch=master)](https://travis-ci.org/societe-generale/github-crawler) [![DepShield Badge](https://depshield.sonatype.org/badges/societe-generale/github-crawler/depshield.svg)]
+[![Build Status](https://travis-ci.org/societe-generale/github-crawler.svg?branch=master)](https://travis-ci.org/societe-generale/github-crawler) ![DepShield Badge](https://depshield.sonatype.org/badges/societe-generale/github-crawler/depshield.svg)
 
 ## Why can it be useful ?
 
