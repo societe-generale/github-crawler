@@ -3,7 +3,6 @@
 ## [Unreleased]
 
 ### Added
-- issue #35 - new parser : CountXmlElementsParser
 
 ### Changed
 
@@ -12,8 +11,15 @@
 ### Removed
 
 ### Fixed
-- issue #31 - now handling invalid search results without crashing
 
+## [1.0.9] - 2018-09-20
+
+### Added
+- issue #35 - new parser : CountXmlElementsParser
+
+### Fixed
+- issue #31 - now handling invalid search results without crashing
+- issue #34 - now giving details when HttpOutput POST fails
 
 ## [1.0.8] - 2018-09-05
 
