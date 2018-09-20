@@ -8,6 +8,7 @@ import com.societegenerale.githubcrawler.RepositoryEnricher
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput
 import com.societegenerale.githubcrawler.ownership.NoOpOwnershipParser
 import com.societegenerale.githubcrawler.ownership.OwnershipParser
+import com.societegenerale.githubcrawler.parsers.FileContentParser
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
 import com.societegenerale.githubcrawler.remote.RemoteGitHubImpl
 import org.springframework.beans.factory.annotation.Value
@@ -41,11 +42,12 @@ open class GitHubCrawlerAutoConfiguration {
                      organizationName: String,
                      @Value("\${gitHub.url}")
                      gitHubUrl: String,
-                     configValidator: ConfigValidator): GitHubCrawler {
+                     configValidator: ConfigValidator,
+                     fileContentParsers: List<FileContentParser>): GitHubCrawler {
 
         val repositoryEnricher = RepositoryEnricher(remoteGitHub)
 
-        return GitHubCrawler(remoteGitHub, ownershipParser, output, repositoryEnricher,gitHubCrawlerProperties,environment,organizationName,gitHubUrl,configValidator)
+        return GitHubCrawler(remoteGitHub, ownershipParser, output, repositoryEnricher,gitHubCrawlerProperties,environment,organizationName,gitHubUrl,configValidator,fileContentParsers)
     }
 
     @Bean

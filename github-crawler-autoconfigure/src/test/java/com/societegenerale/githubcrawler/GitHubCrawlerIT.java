@@ -17,7 +17,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.jayway.awaitility.Awaitility.await;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -28,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { TestConfig.class, GitHubCrawlerAutoConfiguration.class })
 @ActiveProfiles(profiles={"test","profilesAreAWayOfGrouping"})
-public class GitHubCrawlerTest {
+public class GitHubCrawlerIT {
 
 	private final int MAX_TIMEOUT_FOR_CRAWLER=10;
 
@@ -86,20 +85,6 @@ public class GitHubCrawlerTest {
 	}
 
 	@Test
-	public void gitHubOrganisationPollerWorks() throws IOException {
-
-		crawler.crawl();
-
-		Collection<Repository> processedRepositories=output.getAnalyzedRepositories().values();
-
-		assertThat(processedRepositories).hasSize(nbRepositoriesInOrga);
-
-		assertThat(processedRepositories.stream().map(Repository::getName).collect(toSet())).hasSize(nbRepositoriesInOrga);
-		assertThat(processedRepositories.stream().map(Repository::getDefaultBranch).collect(toSet())).containsOnly("master");
-
-	}
-
-	@Test
 	public void shouldHitOrgaNextPageOfRepositoriesIfMorethanOne() throws IOException {
 
 		int nbPages = 2;
@@ -123,36 +108,6 @@ public class GitHubCrawlerTest {
 	}
 
 	@Test
-	public void excludedRepositoriesOnRepoConfigSideAreFlaggedAsExcluded() throws IOException {
-
-		String excludedRepoName="cwf-mobile";
-		githubMockServer.addRepoSideConfig(excludedRepoName, GitHubMock.REPO_EXCLUDED_CONFIG);
-
-		crawler.crawl();
-
-		assertOnlyThisRepoIsFlaggedAsExcluded(excludedRepoName);
-	}
-
-
-	@Test
-	public void shouldNotPublishExcludedRepoWhenConfiguredAccordingly() throws IOException {
-
-		crawler.getGitHubCrawlerProperties().setPublishExcludedRepositories(false);
-
-		String excludedRepoName = "cwf-mobile";
-		githubMockServer.addRepoSideConfig(excludedRepoName, GitHubMock.REPO_EXCLUDED_CONFIG);
-
-		crawler.crawl();
-
-		Map<String, Repository> processedRepositories = output.getAnalyzedRepositories();
-
-		await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
-				.until(() -> assertThat(processedRepositories).hasSize(nbRepositoriesInOrga-1));
-
-		assertThat(processedRepositories).doesNotContainKeys(excludedRepoName);
-	}
-
-	@Test
 	public void excludingRepositoriesOnServerConfigSideWithSingleRegexp() throws IOException {
 
 		String excludedRepoName = "api-.*";
@@ -161,42 +116,6 @@ public class GitHubCrawlerTest {
 
 		assertOnlyThisRepoIsFlaggedAsExcluded("api-gateway");
 	}
-
-	@Test
-	public void excludingRepositoriesOnServerConfigSideWithMultipleRegexp() throws IOException {
-
-		crawler.getGitHubCrawlerProperties().setRepositoriesToExclude(Arrays.asList(".*-documentation$",
-				"^(?!financing-platform-.*$).*"));
-
-		crawler.crawl();
-
-		SoftAssertions softly = new SoftAssertions();
-
-		List<String> excludedRepositories = output.getAnalyzedRepositories().keySet().stream()
-				.filter(repoName -> output.getAnalyzedRepositories().get(repoName).getExcluded())
-				.collect(toList());
-
-
-		softly.assertThat(excludedRepositories).contains("cwf-mobile", "welcome-pack", "api-gateway", "initial-load", "financing-platform-documentation");
-		softly.assertThat(excludedRepositories).doesNotContain("financing-platform-deal", "financing-platform-web");
-
-		softly.assertAll();
-	}
-
-
-	@Test
-	public void fetchingRepoConfigForNonExcludedRepos() throws IOException {
-
-		String excludedRepoName="api-gateway";
-		crawler.getGitHubCrawlerProperties().setRepositoriesToExclude(Arrays.asList(excludedRepoName));
-
-		crawler.crawl();
-
-		assertThat(githubMockServer.getRepoConfigHits()).hasSize(nbRepositoriesInOrga - 1);
-	}
-
-
-
 
 	@Test
 	public void shouldLoadIndicatorsConfig() {
@@ -230,33 +149,6 @@ public class GitHubCrawlerTest {
 	}
 
 	@Test
-	public void shouldCopyTagsFromRepoTopicsOnRepoResult() throws IOException {
-
-		crawler.crawl();
-
-		Collection<Repository> processedRepositories = output.getAnalyzedRepositories().values();
-
-		await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
-				.until(() -> assertThat(processedRepositories).hasSize(nbRepositoriesInOrga));
-
-		Map<String,List<String>> topicsPerRepo= processedRepositories.stream().collect(Collectors.toMap(r -> r.getName(),
-				r -> r.getTopics()));
-
-
-		String repoWith2topics="cwf-mobile";
-		String repoWithNoTopic="financing-platform-deal";
-
-		assertThat(topicsPerRepo.get(repoWith2topics)).containsExactlyInAnyOrder("testRepo","myTopic");
-		assertThat(topicsPerRepo.get(repoWithNoTopic)).isEmpty();
-
-		//removing the 2 special cases
-		topicsPerRepo.remove(repoWith2topics);
-		topicsPerRepo.remove(repoWithNoTopic);
-
-		topicsPerRepo.values().stream().forEach(topics -> assertThat(topics).containsExactlyInAnyOrder("testRepo") );
-	}
-
-	@Test
 	public void shouldCopyActiveProfilesAsGroupsOnRepo() throws IOException {
 
 		crawler.crawl();
@@ -271,7 +163,6 @@ public class GitHubCrawlerTest {
 		});
 
 	}
-
 
 	@Test
 	public void shouldNotFetchFilesWithIndicatorsIfRepoIsExcluded() throws IOException {
@@ -427,10 +318,7 @@ public class GitHubCrawlerTest {
 			assertThat(repo.getSearchResults().get("nbOfMetricsInPomXml")).isEqualTo("2");
 
 		});
-
-
 	}
-
 
 	@Test
 	public void outputResultsShouldHaveACrawlerRunId() throws IOException {

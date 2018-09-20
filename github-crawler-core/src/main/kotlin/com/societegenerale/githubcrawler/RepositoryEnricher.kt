@@ -95,7 +95,7 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub){
         }
 
 
-        val fileContent: String?
+        val fileContent: String
         try {
             fileContent = fetchFileWithIndicatorsToFind(repository.fullName,branch, pathToFileToGetIndicatorsFrom)
         } catch (e: NoFileFoundException) {

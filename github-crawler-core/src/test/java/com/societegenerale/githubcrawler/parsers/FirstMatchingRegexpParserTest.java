@@ -3,7 +3,6 @@ package com.societegenerale.githubcrawler.parsers;
 import com.societegenerale.githubcrawler.IndicatorDefinition;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.util.ResourceUtils;
 
@@ -24,16 +23,10 @@ public class FirstMatchingRegexpParserTest {
 
     FirstMatchingRegexpParser fileContentParser = new FirstMatchingRegexpParser();
 
-    IndicatorDefinition firstMatchingRegexpToFind = new IndicatorDefinition();
-
     Map<String, String> params = new HashMap<>();
 
-    @Before
-    public void setup() {
+    IndicatorDefinition firstMatchingRegexpToFind = new IndicatorDefinition(indicatorName,FIND_FIRST_VALUE_WITH_REGEXP_CAPTURE_METHOD,params);
 
-        firstMatchingRegexpToFind.setName(indicatorName);
-        firstMatchingRegexpToFind.setMethod(FIND_FIRST_VALUE_WITH_REGEXP_CAPTURE_METHOD);
-    }
 
     @Test
     public void shouldFindValueBasedOnRegexp() {
