@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.web.client.RestTemplate
 import java.io.IOException
 
 @Configuration
@@ -33,7 +34,7 @@ open class GitHubCrawlerOutputConfig {
     @AutoConfigureOrder(value = 2)
     open fun httpOutput(@Value("\${output.http.targetUrl:TARGET_URL_IS_MANDATORY}") targetUrl: String): GitHubCrawlerOutput {
 
-        return HttpOutput(targetUrl)
+        return HttpOutput(targetUrl, RestTemplate())
     }
 
 
