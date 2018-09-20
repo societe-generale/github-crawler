@@ -14,7 +14,6 @@ class CountXmlElementsParser : FileContentParser {
     companion object {
         const val COUNT_XML_ELEMENTS_METHOD = "countMatchingXmlElements"
         const val XPATH_TO_MATCH = "xpathToMatch"
-        const val NOT_FOUND = "not found"
     }
 
     val log = LoggerFactory.getLogger(this.javaClass)

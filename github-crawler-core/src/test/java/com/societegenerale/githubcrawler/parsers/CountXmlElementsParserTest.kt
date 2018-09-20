@@ -20,5 +20,16 @@ class CountXmlElementsParserTest {
         assertThat(result.get("nbProperties")).isEqualTo("5")
     }
 
+    @Test
+    fun should_report_0_if_no_match() {
+
+        var nbModulesIndicator = IndicatorDefinition("nbProperties", CountXmlElementsParser.COUNT_XML_ELEMENTS_METHOD, mapOf(Pair(XPATH_TO_MATCH, "//*[local-name()='project']/*[local-name()='modules']/*")))
+        val countXmlElementsParser = CountXmlElementsParser()
+
+        val result = countXmlElementsParser.parseFileContentForIndicator(FileUtils.readFileToString(ResourceUtils.getFile("classpath:sample_pom.xml"), "UTF-8"), "", nbModulesIndicator)
+
+        assertThat(result.get("nbProperties")).isEqualTo("0")
+    }
+
 
 }
