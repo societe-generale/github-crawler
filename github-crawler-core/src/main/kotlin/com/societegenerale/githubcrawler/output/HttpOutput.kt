@@ -2,18 +2,15 @@ package com.societegenerale.githubcrawler.output
 
 import com.societegenerale.githubcrawler.model.Repository
 import org.slf4j.LoggerFactory
+import org.springframework.http.ResponseEntity
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 
 
-class HttpOutput(private val targetUrl: String) : GitHubCrawlerOutput {
+class HttpOutput(private val targetUrl: String,
+                 private val restTemplate: RestTemplate) : GitHubCrawlerOutput {
 
     val log = LoggerFactory.getLogger(this.javaClass)
-
-    private val restTemplate: RestTemplate
-
-    init {
-        this.restTemplate = RestTemplate()
-    }
 
     override fun output(analyzedRepository: Repository) {
 
@@ -31,13 +28,22 @@ class HttpOutput(private val targetUrl: String) : GitHubCrawlerOutput {
                     analyzedRepository.ownerTeam ?: "Undefined",
                     analyzedRepository.topics)
 
-            val response = restTemplate.postForEntity(targetUrl, output, String::class.java)
+            val response : ResponseEntity<String>
 
-            if (!response.statusCode.is2xxSuccessful) {
-                log.warn("couldn't push result for repo {} - code {} - {}", analyzedRepository.name, response.statusCode, response.body)
+            try {
+                response = restTemplate.postForEntity(targetUrl, output, String::class.java)
+
+                if (!response.statusCode.is2xxSuccessful) {
+                    logHttpError(analyzedRepository.name, response.statusCodeValue,response.body)
+                }
+            } catch (e : HttpClientErrorException) {
+                logHttpError(analyzedRepository.name, e.rawStatusCode,e.message ?: "no additional message provided")
             }
-
         }
+    }
+
+    private fun logHttpError(repoName: String, errorCode : Int, message : String) {
+        log.warn("couldn't push result for repo {} - code {} - {}", repoName, errorCode, message)
     }
 
 }
