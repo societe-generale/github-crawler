@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Added
+- issue #35 - new parser : CountXmlElementsParser
 
 ### Changed
 
