@@ -38,6 +38,12 @@ open class GitHubCrawlerParserConfig {
         return YamlParserForPropertyValue()
     }
 
+    @Bean
+    open fun countXmlElementsParser(): CountXmlElementsParser {
+
+        return CountXmlElementsParser()
+    }
+
 }
 
 
