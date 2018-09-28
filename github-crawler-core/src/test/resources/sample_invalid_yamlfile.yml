@@ -1,0 +1,29 @@
+interesting.property: "myExpectedValue"
+
+interestingComplexProperty:
+  item1:
+      - name: subItem1
+        property: subItem1_value
+  item2:
+      - name: @willNotWork@
+        property: subItem2_value
+
+interesting:
+  nested:
+    property: "myExpectedNestedValue"
+  semiNested.property: "semiNestedValue"
+
+boolean.property: true
+
+
+
+---
+spring:
+  profiles: aProfile
+server:
+  ssl:
+    key-store: hello
+
+interesting:
+  nested:
+    property: "NotExpectingToFindThisOne"

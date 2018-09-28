@@ -56,7 +56,7 @@ class YamlParserForPropertyValue : FileContentParser {
             }
         } catch (e: ScannerException) {
             log.warn("problem while parsing yaml file", e)
-            result.put(kpi.name, "issue while parsing " + e.message)
+            result.put(kpi.name, "issue while parsing " + e.message.toString())
         }
 
         return result
