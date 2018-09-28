@@ -18,6 +18,7 @@ class YamlParserForPropertyValue : FileContentParser {
         return FIND_PROPERTY_VALUE_IN_YAML
     }
 
+
     val log = LoggerFactory.getLogger(this.javaClass)
 
     override fun parseFileContentForIndicator(fileContent: String, pathToFileToGetIndicatorsFrom: String, kpi: IndicatorDefinition): Map<String, String> {
@@ -46,21 +47,17 @@ class YamlParserForPropertyValue : FileContentParser {
                     result.put(kpi.name, yamlDocument.get(propertyName)?.toString() ?: parseForNestedProperties(yamlDocument, propertyName))
                 } catch (e: PrefixNotFoundInDocumentException) {
                     //do nothing, iterate to next document if any
+                }
 
-                    if (result.isNotEmpty()) {
-                        //returning the result found in first document
-                        return result;
-                    }
-
+                if (result.isNotEmpty()) {
+                    //returning the result found in first document
+                    return result;
                 }
             }
         } catch (e: ScannerException) {
             log.warn("problem while parsing yaml file", e)
             result.put(kpi.name, "issue while parsing " + e.message)
         }
-
-
-
 
         return result
     }
