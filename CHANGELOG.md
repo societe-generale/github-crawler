@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Added
+- a property (crawlInParallel) to enable/disable the parallel processing or repositories. default is true
 
 ### Changed
 

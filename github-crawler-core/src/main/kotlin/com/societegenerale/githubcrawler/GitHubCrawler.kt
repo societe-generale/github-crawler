@@ -111,8 +111,9 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
 
         log.info("${repositoriesFromOrga.size} repositories to crawl...")
 
-        repositoriesFromOrga.parallelStream()
-                .map { repo -> logRepoProcessing(repo) }
+        val repoStream = if (gitHubCrawlerProperties.crawlInParallel) repositoriesFromOrga.parallelStream() else repositoriesFromOrga.stream();
+
+        repoStream.map { repo -> logRepoProcessing(repo) }
                 .map { repo -> repo.flagAsExcludedIfRequired(gitHubCrawlerProperties.repositoriesToExclude) }
                 .filter { repo -> shouldKeepForFurtherProcessing(repo, gitHubCrawlerProperties) }
                 .map { repo -> repositoryEnricher.loadRepoSpecificConfigIfAny(repo) }
@@ -161,7 +162,7 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
 
         val restTemplate = RestTemplate()
 
-        var actualQueryString=buildQueryString(queryString, repo)
+        var actualQueryString = buildQueryString(queryString, repo)
 
         try {
             val responseEntity = restTemplate.exchange("$gitHubUrl/search/code?" + actualQueryString,

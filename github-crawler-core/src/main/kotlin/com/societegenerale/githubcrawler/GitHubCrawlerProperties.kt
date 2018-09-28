@@ -8,4 +8,5 @@ class GitHubCrawlerProperties(val searchesPerRepo: Map<String, SearchParam> = Ha
                               val indicatorsToFetchByFile: Map<com.societegenerale.githubcrawler.FileToParse, List<IndicatorDefinition>> = HashMap(),
                               var repositoriesToExclude: List<String> = ArrayList(),
                               var publishExcludedRepositories: Boolean = false,
-                              var crawlAllBranches: Boolean = false)
+                              var crawlAllBranches: Boolean = false,
+                              var crawlInParallel: Boolean = true)
