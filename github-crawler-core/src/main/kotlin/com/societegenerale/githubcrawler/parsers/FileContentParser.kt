@@ -5,7 +5,9 @@ import com.societegenerale.githubcrawler.IndicatorDefinition
 
 /**
  * A parser that takes a given file content as a parameter, and returns the values that we're looking for. Implementation will typically define a
- * couple of configuration parameter that are required to perform its duty. See how [PomXmlParserForDependencyVersion] defines and uses [PomXmlParserForDependencyVersion.ARTIFACT_ID] for instance
+ * couple of configuration parameter that are required to perform its duty. See how [PomXmlParserForDependencyVersion] defines and uses [PomXmlParserForDependencyVersion.ARTIFACT_ID] for instance.
+ *
+ * @note : implementations have to handle internally any kind of runtime exception that would happen during parsing, otherwise crawler will crash.
  */
 interface FileContentParser {
 

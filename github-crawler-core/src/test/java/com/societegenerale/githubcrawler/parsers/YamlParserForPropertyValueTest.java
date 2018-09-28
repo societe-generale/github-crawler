@@ -71,6 +71,19 @@ public class YamlParserForPropertyValueTest {
         assertThat(indicatorsFound.get(indicatorName)).isEqualTo("semiNestedValue");
     }
 
+    @Test
+    public void yieldsIssueWhileParsingIfError() throws IOException {
+
+        params.put(PROPERTY_NAME, "anything");
+        pomXmlDependencyVersion.setParams(params);
+
+        Map<String, String> indicatorsFound = fileContentParser.parseFileContentForIndicator(FileUtils.readFileToString(ResourceUtils.getFile("classpath:sample_invalid_yamlfile.yml"), "UTF-8"),
+                                                                                             StringUtils.EMPTY,
+                                                                                            pomXmlDependencyVersion);
+
+        assertThat(indicatorsFound.get(indicatorName)).startsWith("issue while parsing ");
+    }
+
     private Map<String, String> parseSampleYamlForProperty(String propertyName) {
         params.put(PROPERTY_NAME, propertyName);
         pomXmlDependencyVersion.setParams(params);
