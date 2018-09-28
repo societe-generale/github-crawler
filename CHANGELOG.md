@@ -3,7 +3,6 @@
 ## [Unreleased]
 
 ### Added
-- a property (crawlInParallel) to enable/disable the parallel processing or repositories. default is true
 
 ### Changed
 
@@ -12,6 +11,14 @@
 ### Removed
 
 ### Fixed
+
+## [1.0.10] - 2018-09-28
+
+### Added
+- a property (crawlInParallel) to enable/disable the parallel processing or repositories. default is true
+
+### Fixed
+- issue #39 - handling exception during yaml parsing to avoid crash
 
 ## [1.0.9] - 2018-09-20
 
