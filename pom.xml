@@ -169,8 +169,21 @@
         <dependency>
             <groupId>org.dom4j</groupId>
             <artifactId>dom4j</artifactId>
-            <version>2.1.0</version>
+            <version>2.1.1</version>
         </dependency>
+
+        <!-- see https://github.com/dom4j/dom4j/issues/24
+
+        Jaxen is declared as an optional dependency in dom4j 2.1.1, as a workaround.
+        Once this is fixed, we shouldn't have to declare jaxen ourselves, it should be pulled transitively.
+
+        -->
+        <dependency>
+            <groupId>jaxen</groupId>
+            <artifactId>jaxen</artifactId>
+            <version>1.1.6</version>
+        </dependency>
+
 
     </dependencies>
 
