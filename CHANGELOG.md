@@ -11,6 +11,7 @@
 ### Removed
 
 ### Fixed
+- upgraded dom4j version to fix vulnerability CVE-2018-1000632
 
 ## [1.0.10] - 2018-09-28
 
