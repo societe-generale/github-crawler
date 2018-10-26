@@ -1,5 +1,6 @@
 package com.societegenerale.githubcrawler
 
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.WebApplicationType
@@ -13,12 +14,17 @@ open class GitHubCrawlerApplication : CommandLineRunner {
     @Autowired
     private val crawler: GitHubCrawler? = null
 
+    val log = LoggerFactory.getLogger(this.javaClass)
 
     @Throws(IOException::class)
     override fun run(vararg args: String) {
 
-        crawler!!.crawl()
-
+        try {
+            crawler!!.crawl()
+        }
+        catch(e : Exception ){
+            log.error("problem while running github crawler",e)
+        }
 
     }
 
