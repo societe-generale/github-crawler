@@ -58,6 +58,12 @@ class YamlParserForPropertyValue : FileContentParser {
             log.warn("problem while parsing yaml file", e)
             result.put(kpi.name, "issue while parsing " + e.message.toString())
         }
+        //TODO refactor to multi catch when it's added to Kotlin
+        catch (e: ParsingException) {
+            log.warn("problem while parsing yaml file", e)
+            result.put(kpi.name, "issue while parsing " + e.message.toString())
+        }
+
 
         return result
     }
@@ -92,6 +98,8 @@ class YamlParserForPropertyValue : FileContentParser {
 
             is Boolean -> matchingValue.toString()
 
+            is List<*> -> matchingValue.joinToString()
+
             is Map<*, *> -> {
 
                 val recombinedPropertyNameWithoutFirstElement = propertyNameComponents.subList(1, propertyNameComponents.size).joinToString(".")
@@ -101,13 +109,13 @@ class YamlParserForPropertyValue : FileContentParser {
 
             }
 
-            else -> throw ParsingException("don't know  how to process this " + matchingValue)
+            else -> { throw ParsingException("don't know  how to process this " + matchingValue.javaClass) }
 
         }
     }
 
 }
 
-class PrefixNotFoundInDocumentException(message: String) : Throwable()
+class PrefixNotFoundInDocumentException(message: String) : Throwable(message)
 
-class ParsingException(message: String) : Throwable()
+class ParsingException(message: String) : Throwable(message)

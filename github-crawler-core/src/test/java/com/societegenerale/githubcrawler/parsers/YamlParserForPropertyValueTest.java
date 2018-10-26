@@ -32,6 +32,14 @@ public class YamlParserForPropertyValueTest {
     }
 
     @Test
+    public void joinListAsStringIfValueIsList() {
+
+        Map<String, String> indicatorsFound = parseSampleYamlForProperty("interesting.valueAsList");
+
+        assertThat(indicatorsFound.get(indicatorName)).isEqualTo("item1, item2");
+    }
+
+    @Test
     public void canFindAsimplePropertyValue() {
 
         Map<String, String> indicatorsFound = parseSampleYamlForProperty("interesting.property");

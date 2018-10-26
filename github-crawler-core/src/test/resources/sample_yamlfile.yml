@@ -12,8 +12,13 @@ interesting:
   nested:
     property: "myExpectedNestedValue"
   semiNested.property: "semiNestedValue"
+  valueAsList:
+    - item1
+    - item2
 
 boolean.property: true
+
+
 
 
 
