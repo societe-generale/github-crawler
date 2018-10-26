@@ -12,6 +12,7 @@
 
 ### Fixed
 - upgraded dom4j version to fix vulnerability CVE-2018-1000632
+- issue #44 - CountXmlElementsParser makes the crawler crash when there's a parsing issue
 
 ## [1.0.10] - 2018-09-28
 
