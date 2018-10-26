@@ -11,8 +11,15 @@
 ### Removed
 
 ### Fixed
+
+
+## [1.0.11] - 2018-10-26
+
+### Fixed
 - upgraded dom4j version to fix vulnerability CVE-2018-1000632
 - issue #44 - CountXmlElementsParser makes the crawler crash when there's a parsing issue
+- issue #46 - now stacktrace is logged when there's a runtime exception during processing
+- YamlParser can now parse results that are lists without crashing 
 
 ## [1.0.10] - 2018-09-28
 
