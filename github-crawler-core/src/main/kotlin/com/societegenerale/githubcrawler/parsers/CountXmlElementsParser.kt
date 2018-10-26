@@ -24,7 +24,15 @@ class CountXmlElementsParser : FileContentParser {
 
     override fun parseFileContentForIndicator(fileContent: String, pathToFileToGetIndicatorsFrom: String, kpi: IndicatorDefinition): Map<String, String> {
 
-        return internalParseFileContentForIndicator(fileContent, kpi)
+        try {
+            return internalParseFileContentForIndicator(fileContent, kpi)
+        }
+        catch(e : Exception){
+
+            log.warn("problem while parsing the file - ",e)
+
+            return mapOf(Pair(kpi.name,"issue while parsing the file"))
+        }
     }
 
     private fun internalParseFileContentForIndicator(fileContent: String, kpi: IndicatorDefinition): Map<String, String> {

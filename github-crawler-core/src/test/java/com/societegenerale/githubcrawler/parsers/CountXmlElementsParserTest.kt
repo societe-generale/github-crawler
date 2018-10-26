@@ -31,4 +31,14 @@ class CountXmlElementsParserTest {
         assertThat(result.get("nbModules")).isEqualTo("0")
     }
 
+    @Test
+    fun should_catch_parsing_exception_internally() {
+
+        var nbModulesIndicator = IndicatorDefinition("nbModules", CountXmlElementsParser.COUNT_XML_ELEMENTS_METHOD, mapOf(Pair(XPATH_TO_MATCH, "project/modules")))
+
+        val result = countXmlElementsParser.parseFileContentForIndicator(FileUtils.readFileToString(ResourceUtils.getFile("classpath:sample_pom_with_namespace_issue.xml"), "UTF-8"), "", nbModulesIndicator)
+
+        assertThat(result.get("nbModules")).isEqualTo("issue while parsing the file")
+    }
+
 }
