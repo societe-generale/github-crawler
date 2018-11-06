@@ -5,6 +5,7 @@
 ### Added
 
 ### Changed
+- upgrade to Kotlin 1.3.0
 
 ### Deprecated
 
