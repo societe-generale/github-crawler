@@ -71,7 +71,7 @@ open class GitHubCrawlerAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(value = OwnershipParser::class)
+    @ConditionalOnMissingBean(OwnershipParser::class)
     open fun dummyOwnershipParser(): OwnershipParser {
 
         return NoOpOwnershipParser()

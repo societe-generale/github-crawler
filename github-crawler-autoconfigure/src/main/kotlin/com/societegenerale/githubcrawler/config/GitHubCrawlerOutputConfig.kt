@@ -58,7 +58,7 @@ open class GitHubCrawlerOutputConfig {
 
 
     @Bean
-    @ConditionalOnMissingBean(value = GitHubCrawlerOutput::class)
+    @ConditionalOnMissingBean(GitHubCrawlerOutput::class)
     @AutoConfigureOrder(value = 100)
     open fun defaultOutput(): GitHubCrawlerOutput {
 
