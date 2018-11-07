@@ -1,7 +1,5 @@
 package com.societegenerale.githubcrawler.config
 
-import com.societegenerale.githubcrawler.GitHubCrawlerProperties
-import com.societegenerale.githubcrawler.output.*
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.AutoConfigureOrder
@@ -51,9 +49,10 @@ open class GitHubCrawlerOutputConfig {
     @ConditionalOnProperty(name = ["output.ciDroidJsonReadyFile.indicatorsToOutput"])
     @AutoConfigureOrder(value = 4)
     @Throws(IOException::class)
-    open fun ciDroidReadyJsonFileOutput(@Value("\${output.ciDroidJsonReadyFile.indicatorsToOutput}") indicatorsToOutput: String): GitHubCrawlerOutput {
+    open fun ciDroidReadyJsonFileOutput(@Value("\${output.ciDroidJsonReadyFile.indicatorsToOutput}") indicatorsToOutput: String,
+                                        @Value("\${output.ciDroidJsonReadyFile.withTags}") withTags: Boolean=false): GitHubCrawlerOutput {
 
-        return CIdroidReadyJsonFileOutput(indicatorsToOutput.split(","))
+        return CIdroidReadyJsonFileOutput(indicatorsToOutput.split(","),withTags)
     }
 
 

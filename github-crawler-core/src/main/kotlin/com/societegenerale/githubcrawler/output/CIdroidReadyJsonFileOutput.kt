@@ -16,7 +16,7 @@ import java.util.*
 
 class CIdroidReadyJsonFileOutput @Throws(IOException::class)
 
-constructor(val indicatorsToOutput: List<String>) : GitHubCrawlerOutput {
+constructor(val indicatorsToOutput: List<String>, val withTags: Boolean=false) : GitHubCrawlerOutput {
 
     val log = LoggerFactory.getLogger(this.javaClass)
 
@@ -52,6 +52,10 @@ constructor(val indicatorsToOutput: List<String>) : GitHubCrawlerOutput {
                 sb.append("\"filePathOnRepo\": \"").append(actualIndicators.get(indicatorsToOutput[0])).append("\",")
 
                 appendOtherIndicatorsIfAny(sb, actualIndicators)
+
+                if(withTags){
+                    sb.append("\"tags\": \"").append(analyzedRepository.tags).append("\",")
+                }
 
                 sb.append("\"branchName\": \"").append(branch.name).append("\"")
 
