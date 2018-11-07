@@ -4,7 +4,6 @@ import com.societegenerale.githubcrawler.config.GitHubCrawlerAutoConfiguration;
 import com.societegenerale.githubcrawler.config.TestConfig;
 import com.societegenerale.githubcrawler.mocks.GitHubMock;
 import com.societegenerale.githubcrawler.model.Repository;
-import lombok.val;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -230,7 +229,7 @@ public class GitHubCrawlerIT {
 
 		String indicatorName = "docker_image_used";
 
-		val indicatorValueFoundInFilePostRedirection = processedRepositories.stream().filter(repo -> repo.getName().equals(repoWithConfig))
+		Optional<String> indicatorValueFoundInFilePostRedirection = processedRepositories.stream().filter(repo -> repo.getName().equals(repoWithConfig))
 				.map(repo -> repo.getIndicatorsForBranch("master"))
 				.filter(indicators -> indicators.containsKey(indicatorName))
 				.map(indicators -> indicators.get(indicatorName))

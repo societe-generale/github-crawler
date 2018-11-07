@@ -8,8 +8,6 @@ import com.societegenerale.githubcrawler.ownership.NoOpOwnershipParser;
 import com.societegenerale.githubcrawler.ownership.OwnershipParser;
 import com.societegenerale.githubcrawler.parsers.FileContentParser;
 import com.societegenerale.githubcrawler.remote.RemoteGitHub;
-import lombok.Getter;
-import lombok.val;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,7 +40,7 @@ public class TestConfig {
             ConfigValidator configValidator,
             List<FileContentParser> fileContentParsers) {
 
-        val repositoryEnricher = new RepositoryEnricher(remoteGitHub);
+        RepositoryEnricher repositoryEnricher = new RepositoryEnricher(remoteGitHub);
 
         return new GitHubCrawler(remoteGitHub, ownershipParser, output, repositoryEnricher, gitHubCrawlerProperties, environment,organizationName,gitHubUrl,configValidator,fileContentParsers);
     }
@@ -69,8 +67,11 @@ public class TestConfig {
 
     public class InMemoryGitHubCrawlerOutput implements GitHubCrawlerOutput {
 
-        @Getter
         private Map<String, Repository> analyzedRepositories = new HashMap<>();
+
+        public Map<String, Repository> getAnalyzedRepositories() {
+            return analyzedRepositories;
+        }
 
         @Override
         public void output(Repository analyzedRepository) throws IOException {
