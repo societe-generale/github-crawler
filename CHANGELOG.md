@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Added
+- optional _withTags_ property on ciDroidJsonReadyFile output
 
 ### Changed
 - upgrade to Kotlin 1.3.0
