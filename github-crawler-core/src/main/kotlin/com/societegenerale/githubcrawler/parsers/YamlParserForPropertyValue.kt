@@ -40,6 +40,7 @@ class YamlParserForPropertyValue : FileContentParser {
 
             yamlDocuments.forEach {
 
+                @Suppress("UNCHECKED_CAST")
                 val yamlDocument = it as Map<String, Any>
 
                 try {
@@ -105,6 +106,7 @@ class YamlParserForPropertyValue : FileContentParser {
                 val recombinedPropertyNameWithoutFirstElement = propertyNameComponents.subList(1, propertyNameComponents.size).joinToString(".")
 
                 //TODO see why explicit cast is required, while it should be implicit
+                @Suppress("UNCHECKED_CAST")
                 return parseForNestedProperties(matchingValue as Map<String, Any?>, recombinedPropertyNameWithoutFirstElement)
 
             }
