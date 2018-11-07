@@ -63,9 +63,9 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
             .errorDecoder(GiHubErrorDecoder())
             .decode404()
             .requestInterceptor(GitHubOauthTokenSetter(oauthToken))
-            .logger(Slf4jLogger(RemoteGitHubImpl::class.java!!))
+            .logger(Slf4jLogger(RemoteGitHubImpl::class.java))
             .logLevel(Logger.Level.FULL)
-            .target<InternalGitHubClient>(InternalGitHubClient::class.java!!, gitHubUrl)
+            .target<InternalGitHubClient>(InternalGitHubClient::class.java, gitHubUrl)
 
     private val httpClient = OkHttpClient()
 

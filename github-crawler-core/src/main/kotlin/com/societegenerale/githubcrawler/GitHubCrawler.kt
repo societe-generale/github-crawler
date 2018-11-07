@@ -122,7 +122,7 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
                 .map { repo -> repo.copy(crawlerRunId = crawlerRunId) }
                 .map { repo -> repo.copyTagsFromRepoTopics() }
                 .map { repo -> repo.addGroups(environment.activeProfiles) }
-                .map { repo -> repositoryEnricher.identifyBranchesToParse(repo, gitHubCrawlerProperties.crawlAllBranches, organizationName!!) }
+                .map { repo -> repositoryEnricher.identifyBranchesToParse(repo, gitHubCrawlerProperties.crawlAllBranches, organizationName) }
                 .map { repo -> repositoryEnricher.fetchIndicatorsValues(repo, gitHubCrawlerProperties) }
                 .map { repo -> repo.fetchOwner(ownershipParser) }
                 .map { repo -> applySearchResultsOnRepo(gitHubCrawlerProperties, repo) }
@@ -170,7 +170,7 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
             })
 
             if (responseEntity.hasBody()) {
-                return responseEntity.body
+                return responseEntity.body!!
             }
         } catch (e: HttpClientErrorException) {
             log.info("problem while parsing the search result for ${actualQueryString} on ${repo.name}", e)

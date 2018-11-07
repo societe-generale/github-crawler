@@ -42,7 +42,7 @@ class HttpOutput(private val targetUrl: String,
         }
     }
 
-    private fun logHttpError(repoName: String, errorCode : Int, message : String) {
+    private fun logHttpError(repoName: String, errorCode : Int, message : String?) {
         log.warn("couldn't push result for repo {} - code {} - {}", repoName, errorCode, message)
     }
 
