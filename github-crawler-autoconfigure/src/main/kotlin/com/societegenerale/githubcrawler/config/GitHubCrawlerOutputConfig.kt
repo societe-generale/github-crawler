@@ -11,6 +11,9 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.client.RestTemplate
 import java.io.IOException
 
+import com.societegenerale.githubcrawler.GitHubCrawlerProperties
+import com.societegenerale.githubcrawler.output.*
+
 @Configuration
 @EnableConfigurationProperties(GitHubCrawlerProperties::class)
 open class GitHubCrawlerOutputConfig {
