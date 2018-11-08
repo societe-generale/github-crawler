@@ -20,7 +20,7 @@ import java.util.*
 
 class HttpOutputTest {
 
-    private val logger = LoggerFactory.getLogger(HttpOutput::class.java!!)
+    private val logger = LoggerFactory.getLogger(HttpOutput::class.java)
 
 
     @Test
