@@ -4,6 +4,7 @@
 
 ### Added
 - optional _withTags_ property on ciDroidJsonReadyFile output
+- properties auto-completion in IDE
 
 ### Changed
 - upgrade to Kotlin 1.3.0
@@ -13,6 +14,7 @@
 ### Removed
 
 ### Fixed
+- Kotlin compiler warnings
 
 
 ## [1.0.11] - 2018-10-26
