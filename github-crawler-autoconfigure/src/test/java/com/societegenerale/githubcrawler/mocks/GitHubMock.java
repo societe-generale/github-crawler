@@ -1,8 +1,5 @@
 package com.societegenerale.githubcrawler.mocks;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import net.codestory.http.Context;
 import net.codestory.http.WebServer;
 import net.codestory.http.constants.HttpStatus;
@@ -11,6 +8,7 @@ import net.codestory.http.errors.NotFoundException;
 import net.codestory.http.payload.Payload;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
@@ -26,8 +24,9 @@ import java.util.*;
 import static com.societegenerale.githubcrawler.remote.RemoteGitHubImpl.CONFIG_VALIDATION_REQUEST_HEADER;
 
 @Component
-@Slf4j
 public class GitHubMock implements RemoteServiceMock {
+
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(GitHubMock.class);
 
     private String organisationResponse = "organisation.json";
 
@@ -39,28 +38,39 @@ public class GitHubMock implements RemoteServiceMock {
 
     private Map<String, String> existingResources = new HashMap<>();
 
-    @Getter
+    public List<String> getRepoConfigHits() {
+        return repoConfigHits;
+    }
+
+    public List<String> getPomXmlHits() {
+        return pomXmlHits;
+    }
+
+    public int getNbPages() {
+        return nbPages;
+    }
+
+    public boolean isHasCalledNextPage() {
+        return hasCalledNextPage;
+    }
+
     private List<String> repoConfigHits = new ArrayList<>();
 
-    @Getter
     private List<String> pomXmlHits = new ArrayList<>();
 
-    @Setter
-    @Getter
     private int nbPages = 1;
 
     private int nbHitsOnUserRepos = 0;
 
     private int currentPage = 1;
 
-    @Getter
+
     private boolean hasCalledNextPage = false;
 
     private List<String> reposWithNoConfig = new ArrayList<>();
 
     private List<String> reposWithPomXml = new ArrayList<>();
 
-    @Getter
     private int searchHitsCount = 0;
 
     private boolean shouldReturnError409OnFetchCommits = false;
@@ -401,6 +411,14 @@ public class GitHubMock implements RemoteServiceMock {
 
     public void setReturnError409OnFetchCommits(boolean shouldReturnError) {
         this.shouldReturnError409OnFetchCommits=shouldReturnError;
+    }
+
+    public void setNbPages(int nbPages) {
+        this.nbPages=nbPages;
+    }
+
+    public int getSearchHitsCount() {
+        return searchHitsCount;
     }
 
     private class ConflictException extends HttpException {
