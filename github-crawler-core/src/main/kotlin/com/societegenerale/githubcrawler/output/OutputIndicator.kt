@@ -14,7 +14,7 @@ data class OutputIndicator(val name: String,
                            val tags: List<String> = ArrayList(),
                            val groups: List<String> = ArrayList(),
                            val crawlerRunId: String,
-                           val searchResult:Map<String,String> = HashMap(),
+                           val searchResult:Map<String,Any> = HashMap(),
                            val ownerTeam: String,
                            val topics:List<String> = emptyList()) {
 

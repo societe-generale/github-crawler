@@ -33,7 +33,6 @@ class GitHubCrawlerTest {
     val gitHubCrawlerProperties = GitHubCrawlerProperties(indicatorsToFetchByFile = mapOf(Pair(FileToParse(fileToParse, null), listOf(indicator))))
     val mockEnvironment = mock(Environment::class.java)
     val organizationName = "myOrg"
-    val gitHubUrl = "githubUrl"
     val mockConfigValidator = mock(ConfigValidator::class.java)
 
     lateinit var gitHubCrawler: GitHubCrawler
@@ -41,7 +40,7 @@ class GitHubCrawlerTest {
     @Before
     fun setUp() {
 
-        gitHubCrawler = GitHubCrawler(mockRemoteGitHub, ownershipParser, outputs, repositoryEnricher, gitHubCrawlerProperties, mockEnvironment, organizationName, gitHubUrl, mockConfigValidator,fileContentParsers)
+        gitHubCrawler = GitHubCrawler(mockRemoteGitHub, ownershipParser, outputs, repositoryEnricher, gitHubCrawlerProperties, mockEnvironment, organizationName, mockConfigValidator,fileContentParsers)
 
         `when`(mockRemoteGitHub.fetchRepositories(organizationName)).thenReturn(setOf(
                 Repository(url = "url1", fullName = "fullRepo1", name = "repo1", defaultBranch = "master", creationDate = Date(), lastUpdateDate = Date(), topics = listOf("topic1a", "topic1b")),

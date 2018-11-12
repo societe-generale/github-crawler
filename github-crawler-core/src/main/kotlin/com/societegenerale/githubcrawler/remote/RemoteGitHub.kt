@@ -19,7 +19,7 @@ interface RemoteGitHub {
     //TODO this should be a Set, not a List
             List<Branch>
 
-    fun fetchCodeSearchResult(repositoryFullName: String, query: String): SearchResult
+    fun fetchCodeSearchResult(repository: Repository, query: String): SearchResult
 
     @Throws(NoFileFoundException::class)
     fun fetchFileContent(repositoryFullName: String, branchName: String, fileToFetch: String): String

@@ -36,13 +36,12 @@ public class TestConfig {
             GitHubCrawlerProperties gitHubCrawlerProperties,
             Environment environment,
             String organizationName,
-            String gitHubUrl ,
             ConfigValidator configValidator,
             List<FileContentParser> fileContentParsers) {
 
         RepositoryEnricher repositoryEnricher = new RepositoryEnricher(remoteGitHub);
 
-        return new GitHubCrawler(remoteGitHub, ownershipParser, output, repositoryEnricher, gitHubCrawlerProperties, environment,organizationName,gitHubUrl,configValidator,fileContentParsers);
+        return new GitHubCrawler(remoteGitHub, ownershipParser, output, repositoryEnricher, gitHubCrawlerProperties, environment,organizationName,configValidator,fileContentParsers);
     }
 
     @Bean

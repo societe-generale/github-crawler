@@ -57,6 +57,16 @@ open class GitHubCrawlerOutputConfig {
         return CIdroidReadyJsonFileOutput(indicatorsToOutput.split(","),withTags)
     }
 
+    @Bean
+    @ConditionalOnProperty(name = ["output.searchPatternInCodeCsvFileOutput.searchNameToOutput"])
+    @AutoConfigureOrder(value = 5)
+    @Throws(IOException::class)
+    open fun searchPatternInCodeCsvFileOutput(@Value("\${output.searchPatternInCodeCsvFileOutput.searchNameToOutput}") searchNameToOutput: String): GitHubCrawlerOutput {
+
+        return SearchPatternInCodeCsvFileOutput(searchNameToOutput)
+    }
+
+
 
     @Bean
     @ConditionalOnMissingBean(GitHubCrawlerOutput::class)

@@ -17,6 +17,6 @@ interface SearchResultParser {
      * @param searchResult the search result that we got when the search query was performed for this repository
      * @return the "indicator" that was found, following the parsing/analysis of the provided [SearchResult]
      */
-    fun parse(searchResult : SearchResult): String
+    fun parse(searchResult : SearchResult): Any
 
 }

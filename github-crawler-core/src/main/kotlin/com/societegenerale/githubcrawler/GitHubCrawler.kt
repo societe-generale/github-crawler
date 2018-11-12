@@ -9,11 +9,7 @@ import com.societegenerale.githubcrawler.parsers.SearchResultParser
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.core.ParameterizedTypeReference
 import org.springframework.core.env.Environment
-import org.springframework.http.HttpMethod
-import org.springframework.web.client.HttpClientErrorException
-import org.springframework.web.client.RestTemplate
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -26,7 +22,6 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
                     private val gitHubCrawlerProperties: GitHubCrawlerProperties,
                     private val environment: Environment,
                     private val organizationName: String,
-                    private val gitHubUrl: String,
                     private val configValidator: ConfigValidator,
                     @Autowired
                     private val fileContentParsers: List<FileContentParser> = emptyList()) {
@@ -144,48 +139,18 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
     private fun applySearchResultsOnRepo(gitHubCrawlerProperties: GitHubCrawlerProperties, repo: Repository): Repository {
 
         val searchResults = gitHubCrawlerProperties.searchesPerRepo.asIterable()
-                .map { (searchName, searchParam) -> Triple(searchName, searchParam, fetchCodeSearchResult(repo, searchParam.queryString)) }
+                .map { (searchName, searchParam) -> Triple(searchName, searchParam, remoteGitHub.fetchCodeSearchResult(repo, searchParam.queryString)) }
                 .map { (searchName, searchParam, searchResult) -> Pair(searchName, parseSearchResult(searchParam, searchResult)) }
                 .toMap()
 
         return repo.copy(searchResults = searchResults)
     }
 
-    private fun parseSearchResult(searchParam: SearchParam, searchResult: SearchResult): String {
+    private fun parseSearchResult(searchParam: SearchParam, searchResult: SearchResult): Any {
 
         val parser = availableSearchResultParsers.get(searchParam.method);
 
         return parser!!.parse(searchResult)
-    }
-
-    private fun fetchCodeSearchResult(repo: Repository, queryString: String): SearchResult {
-
-        val restTemplate = RestTemplate()
-
-        var actualQueryString = buildQueryString(queryString, repo)
-
-        try {
-            val responseEntity = restTemplate.exchange("$gitHubUrl/search/code?" + actualQueryString,
-                    HttpMethod.GET, null, object : ParameterizedTypeReference<SearchResult>() {
-            })
-
-            if (responseEntity.hasBody()) {
-                return responseEntity.body!!
-            }
-        } catch (e: HttpClientErrorException) {
-            log.info("problem while parsing the search result for ${actualQueryString} on ${repo.name}", e)
-        }
-
-        //TODO return empty searchResult
-        return SearchResult(0)
-
-
-    }
-
-    private fun buildQueryString(queryString: String, repo: Repository): String {
-
-        return "q=$queryString repo:${repo.fullName}"
-
     }
 
     private fun publish(repo: Repository): Repository {

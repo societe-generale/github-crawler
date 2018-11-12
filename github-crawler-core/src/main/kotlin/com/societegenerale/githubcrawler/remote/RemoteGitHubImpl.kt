@@ -1,5 +1,6 @@
 package com.societegenerale.githubcrawler.remote
 
+import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -218,16 +219,12 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
     /**
      * Because the GitHub API is a bit strange here, with the not very standard filter on repository, we need to build the request manually
      */
-    override fun fetchCodeSearchResult(repositoryFullName: String, query: String): SearchResult {
+    override fun fetchCodeSearchResult(repository: Repository, query: String): SearchResult {
 
-        val urlBuilder = HttpUrl.parse(gitHubUrl + "/search/code")!!.newBuilder()
-        urlBuilder.addQueryParameter("query", query)
-
-        val searchCodeUrl = urlBuilder.build().toString()
-        val searchCodeInRepoUrl = searchCodeUrl + "+repo:" + repositoryFullName
+        val searchCodeUrl = HttpUrl.parse(gitHubUrl +buildQueryString(query,repository))!!.newBuilder().build().toString()
 
         val requestBuilder = okhttp3.Request.Builder()
-                .url(searchCodeInRepoUrl)
+                .url(searchCodeUrl)
                 .header(ACCEPT, APPLICATION_JSON)
 
         addOAuthTokenIfRequired(requestBuilder)
@@ -236,7 +233,20 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
 
         val response = httpClient.newCall(request).execute()
 
-        return ObjectMapper().readValue(response.body().toString(), SearchResult::class.java)
+        val responseAsString=response.body()?.string()
+        log.info("response : "+responseAsString)
+
+        return try {
+            objectMapper.readValue(responseAsString, SearchResult::class.java)
+        }
+        catch(e : JsonParseException){
+            log.warn("parsing error",e)
+            SearchResult(0, emptyList())
+        }
+    }
+
+    private fun buildQueryString(queryString: String, repo: Repository): String {
+        return "/search/code?q=$queryString repo:${repo.fullName}"
     }
 
     override fun fetchFileContent(repositoryFullName: String, branchName: String, fileToFetch: String): String {
@@ -249,7 +259,6 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
             //translating exception to a non Feign specific one
             throw NoFileFoundException("can't find $fileToFetch in repo $repositoryFullName, in branch $branchName")
         }
-
 
         val requestBuilder = okhttp3.Request.Builder()
                 .url(fileOnRepository.downloadUrl)

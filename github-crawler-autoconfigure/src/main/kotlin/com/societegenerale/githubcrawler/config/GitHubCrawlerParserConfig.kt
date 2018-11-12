@@ -44,6 +44,13 @@ open class GitHubCrawlerParserConfig {
         return CountXmlElementsParser()
     }
 
+    @Bean
+    open fun pathSearchResultParser(): ItemPathSearchResultParser{
+
+        return ItemPathSearchResultParser()
+    }
+
+
 }
 
 

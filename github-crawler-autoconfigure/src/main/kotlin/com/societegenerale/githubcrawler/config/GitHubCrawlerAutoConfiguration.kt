@@ -40,14 +40,13 @@ open class GitHubCrawlerAutoConfiguration {
                      environment : Environment,
                      @Value("\${organizationName}")
                      organizationName: String,
-                     @Value("\${gitHub.url}")
-                     gitHubUrl: String,
                      configValidator: ConfigValidator,
-                     fileContentParsers: List<FileContentParser>): GitHubCrawler {
+                     fileContentParsers: List<FileContentParser>
+                     ): GitHubCrawler {
 
         val repositoryEnricher = RepositoryEnricher(remoteGitHub)
 
-        return GitHubCrawler(remoteGitHub, ownershipParser, output, repositoryEnricher,gitHubCrawlerProperties,environment,organizationName,gitHubUrl,configValidator,fileContentParsers)
+        return GitHubCrawler(remoteGitHub, ownershipParser, output, repositoryEnricher,gitHubCrawlerProperties,environment,organizationName,configValidator,fileContentParsers)
     }
 
     @Bean
