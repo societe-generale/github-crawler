@@ -1,80 +1,46 @@
 package com.societegenerale.githubcrawler.output
 
 import com.societegenerale.githubcrawler.model.Repository
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.IOException
-import java.nio.charset.StandardCharsets
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.nio.file.StandardOpenOption
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
-class SearchPatternInCodeCsvFileOutput @Throws(IOException::class)
+class SearchPatternInCodeCsvFileOutput (private val searchNameToOutput: String) : CsvFileOutput(searchNameToOutput)  {
 
-constructor(private val searchNameToOutput: String) : GitHubCrawlerOutput {
+    override val log: Logger
+        get() = LoggerFactory.getLogger(this.javaClass)
 
-    val log = LoggerFactory.getLogger(this.javaClass)
 
-    private val finalOutputFileName: String
-
-    companion object {
-        const val PREFIX: String = "SearchPatternInCode_"
+    override fun getCsvHeaderFrom(initParam: Any): String {
+        return "repositoryFullName;location"
     }
 
-    init {
-
-        val now = LocalDateTime.now()
-
-        val formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
-
-        finalOutputFileName = PREFIX + now.format(formatter) + ".txt"
-
-        val writer = Files.newBufferedWriter(Paths.get(finalOutputFileName),
-                StandardCharsets.UTF_8,
-                StandardOpenOption.CREATE_NEW)
-
-        writer.write("repositoryFullName;location"+System.lineSeparator())
-
-        writer.close()
+    override fun getPrefix(): String {
+        return "SearchPatternInCode_"
     }
 
-    @Throws(IOException::class)
-    override fun output(analyzedRepository: Repository) {
+    override fun outputRepository(analyzedRepository: Repository): StringBuilder {
 
-        val writer = Files.newBufferedWriter(Paths.get(finalOutputFileName),
-                StandardCharsets.UTF_8,
-                StandardOpenOption.WRITE, StandardOpenOption.APPEND)
+        val sb=StringBuilder()
 
-        try {
+        val searchItemPaths=analyzedRepository.searchResults.get(searchNameToOutput)
 
-            val sb=StringBuilder()
+        if(searchItemPaths is List<*>){
 
-            val searchItemPaths=analyzedRepository.searchResults.get(searchNameToOutput)
-
-            if(searchItemPaths is List<*>){
-
-                for(itemPathFound in searchItemPaths) {
-                    sb.append(analyzedRepository.fullName).append(";")
-                    sb.append(itemPathFound).append(";")
-                    sb.append(System.lineSeparator());
-                }
-
-            }
-            else {
-
+            for(itemPathFound in searchItemPaths) {
                 sb.append(analyzedRepository.fullName).append(";")
-                sb.append("unable to parse item path").append(";")
-                sb.append(System.lineSeparator())
-
+                sb.append(itemPathFound).append(";")
+                sb.append(System.lineSeparator());
             }
-            writer.write(sb.toString())
 
-        } catch (e: IOException) {
-            log.error("problem while writing to output file", e)
         }
+        else {
 
-        writer.close()
+            sb.append(analyzedRepository.fullName).append(";")
+            sb.append("unable to parse item path").append(";")
+            sb.append(System.lineSeparator())
 
+        }
+        return sb
     }
+
 }

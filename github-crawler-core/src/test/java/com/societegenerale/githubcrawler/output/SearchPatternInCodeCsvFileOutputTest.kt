@@ -36,7 +36,7 @@ class SearchPatternInCodeCsvFileOutputTest{
 
         val generatedFile= File(".").walkBottomUp()
                                     .filter{f -> f.isFile}
-                                    .findLast{f -> f.name.startsWith(SearchPatternInCodeCsvFileOutput.PREFIX)}
+                                    .findLast{f -> f.name.startsWith(searchPatternInCodeCsvFileOutput.getPrefix())}
 
         assertThat(generatedFile?.readText(Charsets.UTF_8)).isEqualTo(expectedFileContent)
 

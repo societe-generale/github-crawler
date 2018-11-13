@@ -9,10 +9,11 @@ import java.util.*
 
 class CIdroidReadyCsvFileOutputTest {
 
-    private val cIdroidReadyCsvFileOutput = CIdroidReadyCsvFileOutput(listOf("indic1", "indic2"))
 
     @Test
     fun shouldGenerateExpectedFile() {
+
+        val cIdroidReadyCsvFileOutput = CIdroidReadyCsvFileOutput(listOf("indic1", "indic2"))
 
         val repo1masterBranchIndicators = mapOf(Pair("indic1", "value1_forRepo1"), Pair("indic2", "value2_forRepo1"))
         val repo1Indicators = mapOf(Pair(Branch("master"), repo1masterBranchIndicators))
@@ -35,7 +36,7 @@ class CIdroidReadyCsvFileOutputTest {
 
         val generatedFile = File(".").walkBottomUp()
                 .filter { f -> f.isFile }
-                .findLast { f -> f.name.startsWith(CIdroidReadyCsvFileOutput.PREFIX) }
+                .findLast { f -> f.name.startsWith(cIdroidReadyCsvFileOutput.getPrefix()) }
 
         assertThat(generatedFile?.readText(Charsets.UTF_8)).isEqualTo(expectedFileContent)
 
