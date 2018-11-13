@@ -18,19 +18,23 @@ constructor(private val searchNameToOutput: String) : GitHubCrawlerOutput {
 
     private val finalOutputFileName: String
 
+    companion object {
+        const val PREFIX: String = "SearchPatternInCode_"
+    }
+
     init {
 
         val now = LocalDateTime.now()
 
         val formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
 
-        finalOutputFileName = "SearchPatternInCode_" + now.format(formatter) + ".txt"
+        finalOutputFileName = PREFIX + now.format(formatter) + ".txt"
 
         val writer = Files.newBufferedWriter(Paths.get(finalOutputFileName),
                 StandardCharsets.UTF_8,
                 StandardOpenOption.CREATE_NEW)
 
-        writer.write("repositoryFullName;location\n")
+        writer.write("repositoryFullName;location"+System.lineSeparator())
 
         writer.close()
     }
