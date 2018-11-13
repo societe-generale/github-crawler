@@ -1,69 +1,37 @@
 package com.societegenerale.githubcrawler.output
 
 import com.societegenerale.githubcrawler.model.Repository
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.IOException
-import java.nio.charset.StandardCharsets
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.nio.file.StandardOpenOption
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
-class CIdroidReadyCsvFileOutput @Throws(IOException::class)
+class CIdroidReadyCsvFileOutput(val indicatorsToOutput: List<String>) : CsvFileOutput(indicatorsToOutput) {
 
-constructor(val indicatorsToOutput: List<String>) : GitHubCrawlerOutput {
+    override val log: Logger
+        get() = LoggerFactory.getLogger(this.javaClass)
 
-    val log = LoggerFactory.getLogger(this.javaClass)
-
-    private val finalOutputFileName: String
-
-    init {
-
-        val now = LocalDateTime.now()
-
-        val formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
-
-        finalOutputFileName = "CIdroidReadyContent_" + now.format(formatter) + ".txt"
-
-        val writer = Files.newBufferedWriter(Paths.get(finalOutputFileName),
-                StandardCharsets.UTF_8,
-                StandardOpenOption.CREATE_NEW)
-
-        writer.write("repositoryFullName;branchName;filePath\n")
-
-        writer.close()
+    override fun getCsvHeaderFrom(initParam : Any): String {
+        return "repositoryFullName;branchName;" + (initParam as List<*>).joinToString(separator = ";")
     }
 
-    @Throws(IOException::class)
-    override fun output(analyzedRepository: Repository) {
+    override fun getPrefix(): String {
+        return "CIdroidReadyContent_"
+    }
 
-        val writer = Files.newBufferedWriter(Paths.get(finalOutputFileName),
-                StandardCharsets.UTF_8,
-                StandardOpenOption.WRITE, StandardOpenOption.APPEND)
+    override fun outputRepository(analyzedRepository: Repository): StringBuilder {
 
-        try {
+        val sb = StringBuilder()
 
-            val sb=StringBuilder()
+        for ((branch, actualIndicators) in analyzedRepository.indicators) {
+            sb.append(analyzedRepository.fullName).append(";")
+            sb.append(branch.name).append(";")
 
-            for((branch,actualIndicators) in analyzedRepository.indicators ){
-                sb.append(analyzedRepository.fullName).append(";")
-                sb.append(branch.name).append(";")
-
-                for(indicatorToOutput in indicatorsToOutput){
-                    sb.append(actualIndicators.get(indicatorToOutput) ?: "N/A").append(";")
-                }
-
-                sb.append(System.lineSeparator());
+            for (indicatorToOutput in indicatorsToOutput) {
+                sb.append(actualIndicators.get(indicatorToOutput) ?: "N/A").append(";")
             }
 
-            writer.write(sb.toString())
-
-        } catch (e: IOException) {
-            log.error("problem while writing to output file", e)
+            sb.append(System.lineSeparator());
         }
 
-        writer.close()
-
+        return sb
     }
 }

@@ -40,7 +40,7 @@ data class Repository(val url: String,
                       @JsonIgnore
                       val crawlerRunId: String = "NO_CRAWLER_RUN_ID_DEFINED",
                       @JsonIgnore
-                      val searchResults: Map<String, String> = HashMap(),
+                      val searchResults: Map<String, Any> = HashMap(),
                       @JsonIgnore
                       var ownerTeam: String? = null,
                       @JsonIgnore
