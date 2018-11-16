@@ -57,7 +57,7 @@ open class GitHubCrawlerAutoConfiguration {
     @Bean
     open fun remoteGitHub(gitHubCrawlerProperties: GitHubCrawlerProperties): RemoteGitHub {
 
-        return RemoteGitHubImpl(gitHubCrawlerProperties.githubConfig.url,gitHubCrawlerProperties.githubConfig.crawlUsersRepoInsteadOfOrgasRepos,gitHubCrawlerProperties.githubConfig.oauthToken)
+        return RemoteGitHubImpl(gitHubCrawlerProperties.githubConfig.apiUrl,gitHubCrawlerProperties.githubConfig.crawlUsersRepoInsteadOfOrgasRepos,gitHubCrawlerProperties.githubConfig.oauthToken)
     }
 
     @Bean

@@ -1,7 +1,7 @@
 github-crawler:
 
   githubConfig:
-    url: http://localhost:9900/api/v3
+    apiUrl: http://localhost:9900/api/v3
     organizationName: MyOrganization
 
   publishExcludedRepositories: false
@@ -34,7 +34,7 @@ github-crawler:
 #debug: true
 #
 #logging.level:
-#  root: DEBUG
+#  com.societegenerale.githubcrawler: DEBUG
 
 
 
