@@ -69,10 +69,10 @@ class FileOutputTest{
         //not a great test.. would need to inject a fake DateTi;eProvider to control precisely output
         assertThat(lines[0]).startsWith("OUTPUT FOR GitHub crawler - ");
 
-        assertThat(lines[1]).startsWith("Repository(apiUrl=http://hello, name=repo1, defaultBranch=master, creationDate=")
+        assertThat(lines[1]).startsWith("Repository(url=http://hello, name=repo1, defaultBranch=master, creationDate=")
         assertThat(lines[1]).contains(", excluded=false, config=null, reason=null, skipped=false, fullName=orgName/repoName1, indicators={}, branchesToParse=[], tags=[], groups=[], crawlerRunId=NO_CRAWLER_RUN_ID_DEFINED, searchResults={}, ownerTeam=null, topics=[])")
 
-        assertThat(lines[2]).startsWith("Repository(apiUrl=http://hello2, name=repo2, defaultBranch=master, creationDate=")
+        assertThat(lines[2]).startsWith("Repository(url=http://hello2, name=repo2, defaultBranch=master, creationDate=")
         assertThat(lines[2]).endsWith(", excluded=false, config=null, reason=null, skipped=false, fullName=orgName/repoName2, indicators={}, branchesToParse=[], tags=[], groups=[], crawlerRunId=NO_CRAWLER_RUN_ID_DEFINED, searchResults={}, ownerTeam=null, topics=[])")
 
 
