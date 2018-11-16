@@ -33,7 +33,7 @@ class RepositoryEnricherTest {
     @Test
     fun shouldHaveEmptyIndicatorsWhenNoneIsConfigured() {
 
-        val properties = GitHubCrawlerProperties()
+        val properties = GitHubCrawlerProperties(GithubConfig())
 
         val repoAfterProcessing=repositoryEnricher.fetchIndicatorsValues(repository,properties)
 

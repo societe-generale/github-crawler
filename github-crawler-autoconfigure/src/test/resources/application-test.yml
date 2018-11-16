@@ -1,34 +1,36 @@
-gitHub.url: http://localhost:9900/api/v3
+github-crawler:
 
-organizationName: MyOrganization
+  githubConfig:
+    apiUrl: http://localhost:9900/api/v3
+    organizationName: MyOrganization
 
-publishExcludedRepositories: false
+  publishExcludedRepositories: false
 
-crawlAllBranches: false
+  crawlAllBranches: false
 
-indicatorsToFetchByFile:
-  "[pom.xml]":
-      - name: spring_boot_starter_parent_version
-        method: findDependencyVersionInXml
-        params:
-          artifactId: spring-boot-starter-parent
-  Jenkinsfile:
-      - name: build_helper_package
-        method: findFirstValueWithRegexpCapture
-        params:
-          pattern: "(?s).*com\\.a\\.given\\.package\\BuildHelpers.*"
-  Dockerfile:
-      - name: docker_image_used
-        method: findFirstValueWithRegexpCapture
-        params:
-          pattern: "FROM\\s.*\\/(.*)\\s?.*"
+  indicatorsToFetchByFile:
+    "[pom.xml]":
+        - name: spring_boot_starter_parent_version
+          method: findDependencyVersionInXml
+          params:
+            artifactId: spring-boot-starter-parent
+    Jenkinsfile:
+        - name: build_helper_package
+          method: findFirstValueWithRegexpCapture
+          params:
+            pattern: "(?s).*com\\.a\\.given\\.package\\BuildHelpers.*"
+    Dockerfile:
+        - name: docker_image_used
+          method: findFirstValueWithRegexpCapture
+          params:
+            pattern: "FROM\\s.*\\/(.*)\\s?.*"
 
 
-searchesPerRepo:
-  nbOfMetricsInPomXml:
-      queryString: "q=metrics+extension:xml"
-      method: count
-
+  searchesPerRepo:
+    nbOfMetricsInPomXml:
+        queryString: "q=metrics+extension:xml"
+        method: count
+#
 #debug: true
 #
 #logging.level:

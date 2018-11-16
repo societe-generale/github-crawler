@@ -11,7 +11,6 @@ import com.societegenerale.githubcrawler.ownership.OwnershipParser
 import com.societegenerale.githubcrawler.parsers.FileContentParser
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
 import com.societegenerale.githubcrawler.remote.RemoteGitHubImpl
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -38,35 +37,27 @@ open class GitHubCrawlerAutoConfiguration {
                      output: List<GitHubCrawlerOutput>,
                      gitHubCrawlerProperties: GitHubCrawlerProperties,
                      environment : Environment,
-                     @Value("\${organizationName}")
-                     organizationName: String,
                      configValidator: ConfigValidator,
                      fileContentParsers: List<FileContentParser>
                      ): GitHubCrawler {
 
         val repositoryEnricher = RepositoryEnricher(remoteGitHub)
 
-        return GitHubCrawler(remoteGitHub, ownershipParser, output, repositoryEnricher,gitHubCrawlerProperties,environment,organizationName,configValidator,fileContentParsers)
+        return GitHubCrawler(remoteGitHub, ownershipParser, output, repositoryEnricher,gitHubCrawlerProperties,environment,gitHubCrawlerProperties.githubConfig.organizationName,configValidator,fileContentParsers)
     }
 
     @Bean
     open fun configValidator(gitHubCrawlerProperties: GitHubCrawlerProperties,
-                             @Value("\${gitHub.url}")
-                             gitHubUrl: String,
-                             @Value("\${organizationName}")
-                             organizationName: String,
                              remoteGitHub: RemoteGitHub): ConfigValidator {
 
-        return ConfigValidator(gitHubCrawlerProperties, gitHubUrl,organizationName,remoteGitHub)
+        return ConfigValidator(gitHubCrawlerProperties,remoteGitHub)
     }
 
 
     @Bean
-    open fun remoteGitHub(@Value("\${gitHub.url}") gitHubUrl: String,
-                          @Value("\${crawl.usersRepo.insteadOf.orgasRepos:false}" ) usersRepoInsteadOfOrgas: Boolean,
-                          @Value("\${gitHub.oauth.token:#{null}}" ) oauthToken: String?): RemoteGitHub {
+    open fun remoteGitHub(gitHubCrawlerProperties: GitHubCrawlerProperties): RemoteGitHub {
 
-        return RemoteGitHubImpl(gitHubUrl,usersRepoInsteadOfOrgas,oauthToken)
+        return RemoteGitHubImpl(gitHubCrawlerProperties.githubConfig.apiUrl,gitHubCrawlerProperties.githubConfig.crawlUsersRepoInsteadOfOrgasRepos,gitHubCrawlerProperties.githubConfig.oauthToken)
     }
 
     @Bean
