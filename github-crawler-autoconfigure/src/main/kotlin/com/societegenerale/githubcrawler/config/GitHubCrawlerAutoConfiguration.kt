@@ -30,22 +30,6 @@ open class GitHubCrawlerAutoConfiguration {
         // If we rename it, Spring won't find it, and it will fail
         return com.societegenerale.githubcrawler.FileToParseConversionService()
     }
-//
-//    @Bean
-//    open fun githubConfig(
-//                          @Value("\${gitHub.url}")
-//                          url : String,
-//                          @Value("\${gitHub.url}")
-//                          oauthToken : String,
-//                          @Value("\${organizationName}")
-//                          organizationName: String,
-//                          @Value("\${gitHub.url}")
-//                          crawlUsersRepoInsteadOfOrgasRepos : Boolean
-//                          ) :GithubConfig{
-//
-//        return GithubConfig(url,oauthToken,organizationName,crawlUsersRepoInsteadOfOrgasRepos)
-//    }
-
 
     @Bean
     open fun crawler(remoteGitHub: RemoteGitHub,
