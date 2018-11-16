@@ -10,6 +10,7 @@ Keeping a minimum of consistency between the repositories becomes a challenge wh
 - have we set up the proper security config in all our repositories ?
 - which versions of the library X are we using across ?
 - are we using a library that we are not supposed to use anymore ?
+- do we use hardcoded string in unexpected places in our code ?
 - which team is owner of a repository ? 
 
 These are all simple questions that sometimes take hours to answer, with always the risk of missing one repository in the analysis, making the answer inaccurate.
@@ -19,9 +20,9 @@ Github crawler will be able to report very useful information in few seconds !**
 
 ## How does it work ?
 
-Github crawler is a Spring Boot command line application. It is written in Java and Kotlin, the target being to move as much as possible to Kotlin.
+Github crawler is a Spring Boot command line application, written in Kotlin.
 
-Following a simple configuration, it will use Github API starting from a given organization level, then for each public repository, will look for patterns in specified files. 
+Following a simple configuration, it will use Github API starting from a given organization level, then for each repository, will look for patterns in specified files or perform other actions. 
 
 You can easily exclude repositories from the analysis, configure the files and patterns you're interested in. If you have several types of repositories (front-end, back-end, config repositories for instance), you can have separate configuration files so that the information retrieved is relevant to each scope of analysis.
 
@@ -39,71 +40,75 @@ Several outputs can be configured at the same time. You can define as many indic
 Below configuration shows how parsers are invoked for each indicator, thanks to the ```method``` attribute.
 
 ```yaml
-    # the base GitHub URL for your Github enterprise instance to crawl
-    gitHub.url: https://my.githubEnterprise/api/v3
+    github-crawler:
     
-    # or if it's github.com...
-    # gitHub.url: https://api.github.com
-    
-    # the name of the GitHub organization to crawl. To fetch the repositories, the crawler will hit 
-    # https://${gitHub.url}/api/v3/orgs/${organizationName}/repos
-    organizationName: MyOrganization
-    
-    #repositories matching one of the configured regexp will be excluded
-    repositoriesToExclude:
-      # exclude the ones that start with "financing-platform-" and end with "-run"
-      - "^financing-platform-.*-run$"
-      # exclude the ones that DON'T start with "financing-platform-" 
-      - "^(?!financing-platform-.*$).*"
-    
-    # do you want the excluded repositories to be written in output ? (default is false)
-    # even if they won't have any indicators attached, it can be useful to output excluded repositories, 
-    # especially at beginning, to make sure you're not missing any
-    publishExcludedRepositories: true
-    
-    # by default, we'll crawl only the repositories' default branch. But in some cases, you may want to crawl all branches
-    crawlAllBranches: true
-    
-    # default output is console - it will be configured automatically if no output is defined
-    # the crawler takes a list of output, so you can configure several
-    output:
-      file:
-      # we'll output one repository branch per line, in a file named ${filenamePrefix}_yyyyMMdd_hhmmss.txt
-       filenamePrefix: "orgaCheckupOutput"
-      http:
-        # we'll POST one repository branch individually to ${targetUrl}
-        targetUrl: "http://someElasticSearchServer:9201/technologymap/MyOrganization"
-     
-    # list the files to crawl for, and the patterns to look for in each file         
-    indicatorsToFetchByFile:
-    # use syntax with "[....]" to escape the dot in the file name (configuration can't be parsed otherwise, as "." is a meaningful character in yaml files)
-      "[pom.xml]":
-        # name of the indicator that will be reported for that repository in the output
-        - name: spring_boot_starter_parent_version
-          # name of the method to find the value in the file, pointing to one of the implementation classes of FileContentParser
-          method: findDependencyVersionInXml
-          # the parameters to the method, specific to each method type
-          params:
-            # findDependencyVersionInXml needs an artifactId as a parameter : it will find the version for that Maven artifact by doing a SAX parsing, even if the version is a ${variable} defined in <properties> section
-            artifactId: spring-boot-starter-parent
-        - name: spring_boot_dependencies_version
-          method: findDependencyVersionInXml
-          params:
-            artifactId: spring-boot-dependencies
-      #another file to parse..
-      Dockerfile:
-        - name: docker_image_used
-            # findFirstValueWithRegexpCapture needs a pattern as a parameter. The pattern needs to contain a group capture (see https://regexone.com/lesson/capturing_groups) 
-            # the first match will be returned as the value for this indicator             
-          method: findFirstValueWithRegexpCapture
-          params:
-            pattern: ".*\\/(.*)\\s?"
-    
-      "[src/main/resources/application.yml]":
-          - name: spring_application_name
-            method: findPropertyValueInYamlFile
-            params:
-              propertyName: "spring.application.name"
+      githubConfig:    
+        # the base GitHub URL for your Github enterprise instance to crawl
+        # or if it's github.com...
+        # gitHub.url: https://api.github.com
+        apiUrl: https://my.githubEnterprise/api/v3
+        oauthToken: "YOUR_TOKEN"
+        # the name of the GitHub organization to crawl. To fetch the repositories, the crawler will hit 
+        # https://${gitHub.url}/api/v3/orgs/${organizationName}/repos
+        organizationName: MyOrganization
+        # default is false - API URL is slightly different depending on whether you're crawling an organization (most common case) or a user's repositories
+        crawlUsersRepoInsteadOfOrgasRepos: false
+ 
+        #repositories matching one of the configured regexp will be excluded
+        repositoriesToExclude:
+          # exclude the ones that start with "financing-platform-" and end with "-run"
+          - "^financing-platform-.*-run$"
+          # exclude the ones that DON'T start with "financing-platform-" 
+          - "^(?!financing-platform-.*$).*"
+        
+        # do you want the excluded repositories to be written in output ? (default is false)
+        # even if they won't have any indicators attached, it can be useful to output excluded repositories, 
+        # especially at beginning, to make sure you're not missing any
+        publishExcludedRepositories: true
+        
+        # by default, we'll crawl only the repositories' default branch. But in some cases, you may want to crawl all branches
+        crawlAllBranches: true
+        
+        # default output is console - it will be configured automatically if no output is defined
+        # the crawler takes a list of output, so you can configure several
+        outputs:
+          file:
+          # we'll output one repository branch per line, in a file named ${filenamePrefix}_yyyyMMdd_hhmmss.txt
+           filenamePrefix: "orgaCheckupOutput"
+          http:
+            # we'll POST one repository branch individually to ${targetUrl}
+            targetUrl: "http://someElasticSearchServer:9201/technologymap/MyOrganization"
+         
+        # list the files to crawl for, and the patterns to look for in each file         
+        indicatorsToFetchByFile:
+        # use syntax with "[....]" to escape the dot in the file name (configuration can't be parsed otherwise, as "." is a meaningful character in yaml files)
+          "[pom.xml]":
+            # name of the indicator that will be reported for that repository in the output
+            - name: spring_boot_starter_parent_version
+              # name of the method to find the value in the file, pointing to one of the implementation classes of FileContentParser
+              method: findDependencyVersionInXml
+              # the parameters to the method, specific to each method type
+              params:
+                # findDependencyVersionInXml needs an artifactId as a parameter : it will find the version for that Maven artifact by doing a SAX parsing, even if the version is a ${variable} defined in <properties> section
+                artifactId: spring-boot-starter-parent
+            - name: spring_boot_dependencies_version
+              method: findDependencyVersionInXml
+              params:
+                artifactId: spring-boot-dependencies
+          #another file to parse..
+          Dockerfile:
+            - name: docker_image_used
+                # findFirstValueWithRegexpCapture needs a pattern as a parameter. The pattern needs to contain a group capture (see https://regexone.com/lesson/capturing_groups) 
+                # the first match will be returned as the value for this indicator             
+              method: findFirstValueWithRegexpCapture
+              params:
+                pattern: ".*\\/(.*)\\s?"
+        
+          "[src/main/resources/application.yml]":
+              - name: spring_application_name
+                method: findPropertyValueInYamlFile
+                params:
+                  propertyName: "spring.application.name"
 ```
 
 ## Link with [CI-droid](https://github.com/societe-generale/ci-droid)
@@ -111,7 +116,7 @@ Below configuration shows how parsers are invoked for each indicator, thanks to 
 [CI-droid](https://github.com/societe-generale/ci-droid) is another of our tools, that can help you perform the same actions (modifying a pom.xml, replacing a string by another) in N resources, in X repositories. When there are dozens of resources to update, it can be cumbersome to prepare the message. GitHub crawler can help here, with below config :
 
 ```yaml
-    output:
+    outputs:
       ciDroidJsonReadyFile:
         # this should be an indicator defined in indicatorsToFetchByFile section
         indicatorsToOutput: "pomFilePath" 
@@ -224,7 +229,7 @@ Have a look at below very simple script :
 2. place your yml config files along with the jar
 3. run the jar with your config files (--spring.config.location parameter) and the proper profile (--spring.profiles.active)
 
---> it should work and ouput will be available according to your configuration
+--> it should work and output will be available according to your configuration
 
 ```bash
 #!/usr/bin/env bash
