@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 
 
 @ConfigurationProperties("github-crawler.githubConfig")
-class GithubConfig(val url: String="",
-                        val oauthToken: String="",
-                        val organizationName: String="",
-                        val crawlUsersRepoInsteadOfOrgasRepos: Boolean=false)
+class GithubConfig(var url: String="",
+                        var oauthToken: String="",
+                        var organizationName: String="",
+                        var crawlUsersRepoInsteadOfOrgasRepos: Boolean=false)
