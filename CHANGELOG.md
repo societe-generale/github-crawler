@@ -8,6 +8,7 @@
 
 ### Changed
 - upgrade to Kotlin 1.3.10
+- BREAKING CHANGE - all properties are now under a github-crawler prefix
 
 ### Deprecated
 
