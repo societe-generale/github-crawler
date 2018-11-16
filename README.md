@@ -40,9 +40,9 @@ Several outputs can be configured at the same time. You can define as many indic
 Below configuration shows how parsers are invoked for each indicator, thanks to the ```method``` attribute.
 
 ```yaml
-    github-crawler:
+github-crawler:
     
-      githubConfig:    
+    githubConfig:    
         # the base GitHub URL for your Github enterprise instance to crawl
         # or if it's github.com...
         # gitHub.url: https://api.github.com
@@ -53,62 +53,62 @@ Below configuration shows how parsers are invoked for each indicator, thanks to 
         organizationName: MyOrganization
         # default is false - API URL is slightly different depending on whether you're crawling an organization (most common case) or a user's repositories
         crawlUsersRepoInsteadOfOrgasRepos: false
- 
-        #repositories matching one of the configured regexp will be excluded
-        repositoriesToExclude:
-          # exclude the ones that start with "financing-platform-" and end with "-run"
-          - "^financing-platform-.*-run$"
-          # exclude the ones that DON'T start with "financing-platform-" 
-          - "^(?!financing-platform-.*$).*"
-        
-        # do you want the excluded repositories to be written in output ? (default is false)
-        # even if they won't have any indicators attached, it can be useful to output excluded repositories, 
-        # especially at beginning, to make sure you're not missing any
-        publishExcludedRepositories: true
-        
-        # by default, we'll crawl only the repositories' default branch. But in some cases, you may want to crawl all branches
-        crawlAllBranches: true
-        
-        # default output is console - it will be configured automatically if no output is defined
-        # the crawler takes a list of output, so you can configure several
-        outputs:
-          file:
-          # we'll output one repository branch per line, in a file named ${filenamePrefix}_yyyyMMdd_hhmmss.txt
-           filenamePrefix: "orgaCheckupOutput"
-          http:
-            # we'll POST one repository branch individually to ${targetUrl}
-            targetUrl: "http://someElasticSearchServer:9201/technologymap/MyOrganization"
-         
-        # list the files to crawl for, and the patterns to look for in each file         
-        indicatorsToFetchByFile:
-        # use syntax with "[....]" to escape the dot in the file name (configuration can't be parsed otherwise, as "." is a meaningful character in yaml files)
-          "[pom.xml]":
-            # name of the indicator that will be reported for that repository in the output
-            - name: spring_boot_starter_parent_version
-              # name of the method to find the value in the file, pointing to one of the implementation classes of FileContentParser
-              method: findDependencyVersionInXml
-              # the parameters to the method, specific to each method type
-              params:
-                # findDependencyVersionInXml needs an artifactId as a parameter : it will find the version for that Maven artifact by doing a SAX parsing, even if the version is a ${variable} defined in <properties> section
-                artifactId: spring-boot-starter-parent
-            - name: spring_boot_dependencies_version
-              method: findDependencyVersionInXml
-              params:
-                artifactId: spring-boot-dependencies
-          #another file to parse..
-          Dockerfile:
-            - name: docker_image_used
-                # findFirstValueWithRegexpCapture needs a pattern as a parameter. The pattern needs to contain a group capture (see https://regexone.com/lesson/capturing_groups) 
-                # the first match will be returned as the value for this indicator             
-              method: findFirstValueWithRegexpCapture
-              params:
-                pattern: ".*\\/(.*)\\s?"
-        
-          "[src/main/resources/application.yml]":
-              - name: spring_application_name
-                method: findPropertyValueInYamlFile
-                params:
-                  propertyName: "spring.application.name"
+     
+    #repositories matching one of the configured regexp will be excluded
+    repositoriesToExclude:
+      # exclude the ones that start with "financing-platform-" and end with "-run"
+      - "^financing-platform-.*-run$"
+      # exclude the ones that DON'T start with "financing-platform-" 
+      - "^(?!financing-platform-.*$).*"
+    
+    # do you want the excluded repositories to be written in output ? (default is false)
+    # even if they won't have any indicators attached, it can be useful to output excluded repositories, 
+    # especially at beginning, to make sure you're not missing any
+    publishExcludedRepositories: true
+    
+    # by default, we'll crawl only the repositories' default branch. But in some cases, you may want to crawl all branches
+    crawlAllBranches: true
+    
+    # default output is console - it will be configured automatically if no output is defined
+    # the crawler takes a list of output, so you can configure several
+    outputs:
+      file:
+      # we'll output one repository branch per line, in a file named ${filenamePrefix}_yyyyMMdd_hhmmss.txt
+       filenamePrefix: "orgaCheckupOutput"
+      http:
+        # we'll POST one repository branch individually to ${targetUrl}
+        targetUrl: "http://someElasticSearchServer:9201/technologymap/MyOrganization"
+     
+    # list the files to crawl for, and the patterns to look for in each file         
+    indicatorsToFetchByFile:
+    # use syntax with "[....]" to escape the dot in the file name (configuration can't be parsed otherwise, as "." is a meaningful character in yaml files)
+      "[pom.xml]":
+        # name of the indicator that will be reported for that repository in the output
+        - name: spring_boot_starter_parent_version
+          # name of the method to find the value in the file, pointing to one of the implementation classes of FileContentParser
+          method: findDependencyVersionInXml
+          # the parameters to the method, specific to each method type
+          params:
+            # findDependencyVersionInXml needs an artifactId as a parameter : it will find the version for that Maven artifact by doing a SAX parsing, even if the version is a ${variable} defined in <properties> section
+            artifactId: spring-boot-starter-parent
+        - name: spring_boot_dependencies_version
+          method: findDependencyVersionInXml
+          params:
+            artifactId: spring-boot-dependencies
+      #another file to parse..
+      Dockerfile:
+        - name: docker_image_used
+            # findFirstValueWithRegexpCapture needs a pattern as a parameter. The pattern needs to contain a group capture (see https://regexone.com/lesson/capturing_groups) 
+            # the first match will be returned as the value for this indicator             
+          method: findFirstValueWithRegexpCapture
+          params:
+            pattern: ".*\\/(.*)\\s?"
+    
+      "[src/main/resources/application.yml]":
+          - name: spring_application_name
+            method: findPropertyValueInYamlFile
+            params:
+              propertyName: "spring.application.name"
 ```
 
 ## Link with [CI-droid](https://github.com/societe-generale/ci-droid)
