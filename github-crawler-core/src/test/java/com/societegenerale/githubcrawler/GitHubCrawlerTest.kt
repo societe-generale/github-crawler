@@ -30,7 +30,7 @@ class GitHubCrawlerTest {
 
     val fileContentParsers=listOf(SimpleFilePathParser())
 
-    val gitHubCrawlerProperties = GitHubCrawlerProperties(indicatorsToFetchByFile = mapOf(Pair(FileToParse(fileToParse, null), listOf(indicator))))
+    val gitHubCrawlerProperties = GitHubCrawlerProperties(githubConfig= GithubConfig(), indicatorsToFetchByFile = mapOf(Pair(FileToParse(fileToParse, null), listOf(indicator))))
     val mockEnvironment = mock(Environment::class.java)
     val organizationName = "myOrg"
     val mockConfigValidator = mock(ConfigValidator::class.java)

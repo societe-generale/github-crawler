@@ -21,47 +21,47 @@ open class GitHubCrawlerOutputConfig {
 
 
     @Bean
-    @ConditionalOnProperty(name = ["output.file.filenamePrefix"])
+    @ConditionalOnProperty(name = ["github-crawler.outputs.file.filenamePrefix"])
     @AutoConfigureOrder(value = 1)
     @Throws(IOException::class)
-    open fun fileOutput(@Value("\${output.file.filenamePrefix:githubCrawlerOutput}") fileNamePrefix: String): GitHubCrawlerOutput {
+    open fun fileOutput(@Value("\${github-crawler.outputs.file.filenamePrefix:githubCrawlerOutput}") fileNamePrefix: String): GitHubCrawlerOutput {
 
         return FileOutput(fileNamePrefix)
     }
 
     @Bean
-    @ConditionalOnProperty(name = ["output.http.targetUrl"])
+    @ConditionalOnProperty(name = ["github-crawler.outputs.http.targetUrl"])
     @AutoConfigureOrder(value = 2)
-    open fun httpOutput(@Value("\${output.http.targetUrl:TARGET_URL_IS_MANDATORY}") targetUrl: String): GitHubCrawlerOutput {
+    open fun httpOutput(@Value("\${github-crawler.outputs.http.targetUrl:TARGET_URL_IS_MANDATORY}") targetUrl: String): GitHubCrawlerOutput {
 
         return HttpOutput(targetUrl, RestTemplate())
     }
 
 
     @Bean
-    @ConditionalOnProperty(name = ["output.ciDroidCsvReadyFile.indicatorsToOutput"])
+    @ConditionalOnProperty(name = ["github-crawler.outputs.ciDroidCsvReadyFile.indicatorsToOutput"])
     @AutoConfigureOrder(value = 3)
     @Throws(IOException::class)
-    open fun ciDroidReadyCsvFileOutput(@Value("\${output.ciDroidCsvReadyFile.indicatorsToOutput}") indicatorsToOutput: String): GitHubCrawlerOutput {
+    open fun ciDroidReadyCsvFileOutput(@Value("\${github-crawler.outputs.ciDroidCsvReadyFile.indicatorsToOutput}") indicatorsToOutput: String): GitHubCrawlerOutput {
 
         return CIdroidReadyCsvFileOutput(indicatorsToOutput.split(","))
     }
 
     @Bean
-    @ConditionalOnProperty(name = ["output.ciDroidJsonReadyFile.indicatorsToOutput"])
+    @ConditionalOnProperty(name = ["github-crawler.outputs.ciDroidJsonReadyFile.indicatorsToOutput"])
     @AutoConfigureOrder(value = 4)
     @Throws(IOException::class)
-    open fun ciDroidReadyJsonFileOutput(@Value("\${output.ciDroidJsonReadyFile.indicatorsToOutput}") indicatorsToOutput: String,
-                                        @Value("\${output.ciDroidJsonReadyFile.withTags:false}") withTags: Boolean): GitHubCrawlerOutput {
+    open fun ciDroidReadyJsonFileOutput(@Value("\${github-crawler.outputs.ciDroidJsonReadyFile.indicatorsToOutput}") indicatorsToOutput: String,
+                                        @Value("\${github-crawler.outputs.ciDroidJsonReadyFile.withTags:false}") withTags: Boolean): GitHubCrawlerOutput {
 
         return CIdroidReadyJsonFileOutput(indicatorsToOutput.split(","),withTags)
     }
 
     @Bean
-    @ConditionalOnProperty(name = ["output.searchPatternInCodeCsvFileOutput.searchNameToOutput"])
+    @ConditionalOnProperty(name = ["github-crawler.outputs.searchPatternInCodeCsvFileOutput.searchNameToOutput"])
     @AutoConfigureOrder(value = 5)
     @Throws(IOException::class)
-    open fun searchPatternInCodeCsvFileOutput(@Value("\${output.searchPatternInCodeCsvFileOutput.searchNameToOutput}") searchNameToOutput: String): GitHubCrawlerOutput {
+    open fun searchPatternInCodeCsvFileOutput(@Value("\${github-crawler.outputs.searchPatternInCodeCsvFileOutput.searchNameToOutput}") searchNameToOutput: String): GitHubCrawlerOutput {
 
         return SearchPatternInCodeCsvFileOutput(searchNameToOutput)
     }
