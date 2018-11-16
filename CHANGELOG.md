@@ -7,7 +7,7 @@
 - properties auto-completion in IDE
 
 ### Changed
-- upgrade to Kotlin 1.3.0
+- upgrade to Kotlin 1.3.10
 
 ### Deprecated
 
