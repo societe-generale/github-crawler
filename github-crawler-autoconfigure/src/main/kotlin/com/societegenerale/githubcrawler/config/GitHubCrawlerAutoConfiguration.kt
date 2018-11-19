@@ -43,7 +43,7 @@ open class GitHubCrawlerAutoConfiguration {
 
         val repositoryEnricher = RepositoryEnricher(remoteGitHub)
 
-        return GitHubCrawler(remoteGitHub, ownershipParser, output, repositoryEnricher,gitHubCrawlerProperties,environment,gitHubCrawlerProperties.githubConfig.organizationName,configValidator,fileContentParsers)
+        return GitHubCrawler(remoteGitHub, output, repositoryEnricher,gitHubCrawlerProperties,environment,gitHubCrawlerProperties.githubConfig.organizationName,configValidator,fileContentParsers)
     }
 
     @Bean

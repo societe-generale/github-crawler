@@ -6,6 +6,12 @@ github-crawler:
     organizationName: MyOrg
     crawlUsersRepoInsteadOfOrgasRepos: false
 
+  publishExcludedRepositories: false
+  crawl-in-parallel: false
+  crawlAllBranches: false
+
+  outputs:
+    searchPatternInCodeCsvFileOutput.searchNameToOutput: "consulCatalogWatch"
 
   indicatorsToFetchByFile:
     "[pom.xml]":
@@ -14,12 +20,12 @@ github-crawler:
       params:
         artifactId: spring-boot-starter-parent
 
-  publishExcludedRepositories: false
-  crawl-in-parallel: false
-  crawlAllBranches: false
-
-  outputs:
-    searchPatternInCodeCsvFileOutput.searchNameToOutput: "consulCatalogWatch"
+  miscRepositoryTasks:
+    searchesPerRepo:
+      consulCatalogWatch:
+        queryString: "ConsulCatalogWatch"
+        method: path
+    findLastCommitDate: true
 
 
 logging:
@@ -28,7 +34,3 @@ logging:
     com.societegenerale.githubcrawler.remote: info
     com.societegenerale.githubcrawler.parsers: info
 
-searchesPerRepo:
-  consulCatalogWatch:
-    queryString: "ConsulCatalogWatch"
-    method: path

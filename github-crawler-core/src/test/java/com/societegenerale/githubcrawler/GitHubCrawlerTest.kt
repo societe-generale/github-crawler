@@ -40,7 +40,7 @@ class GitHubCrawlerTest {
     @Before
     fun setUp() {
 
-        gitHubCrawler = GitHubCrawler(mockRemoteGitHub, ownershipParser, outputs, repositoryEnricher, gitHubCrawlerProperties, mockEnvironment, organizationName, mockConfigValidator,fileContentParsers)
+        gitHubCrawler = GitHubCrawler(mockRemoteGitHub, outputs, repositoryEnricher, gitHubCrawlerProperties, mockEnvironment, organizationName, mockConfigValidator,fileContentParsers)
 
         `when`(mockRemoteGitHub.fetchRepositories(organizationName)).thenReturn(setOf(
                 Repository(url = "url1", fullName = "fullRepo1", name = "repo1", defaultBranch = "master", creationDate = Date(), lastUpdateDate = Date(), topics = listOf("topic1a", "topic1b")),

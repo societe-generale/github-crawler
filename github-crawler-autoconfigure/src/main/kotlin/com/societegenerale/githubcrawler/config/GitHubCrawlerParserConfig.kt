@@ -2,6 +2,8 @@ package com.societegenerale.githubcrawler.config
 
 
 import com.societegenerale.githubcrawler.parsers.*
+import com.societegenerale.githubcrawler.repoTaskToPerform.PathsForHitsOnRepoSearch
+import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskToPerform
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -20,11 +22,6 @@ open class GitHubCrawlerParserConfig {
         return FirstMatchingRegexpParser()
     }
 
-    @Bean
-    open fun countSearchResultParser(): CountSearchResultParser {
-
-        return CountSearchResultParser()
-    }
 
     @Bean
     open fun simpleFilePathParser(): SimpleFilePathParser {
@@ -48,6 +45,12 @@ open class GitHubCrawlerParserConfig {
     open fun pathSearchResultParser(): ItemPathSearchResultParser{
 
         return ItemPathSearchResultParser()
+    }
+
+    @Bean
+    open fun pathsForHitsOnRepoSearch(): RepoTaskToPerform {
+
+        return PathsForHitsOnRepoSearch()
     }
 
 

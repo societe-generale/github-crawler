@@ -24,7 +24,6 @@ class HttpOutput(private val targetUrl: String,
                     analyzedRepository.tags,
                     analyzedRepository.groups,
                     analyzedRepository.crawlerRunId,
-                    analyzedRepository.searchResults,
                     analyzedRepository.miscTasksResults[branch] ?: emptyMap(),
                     analyzedRepository.topics)
 

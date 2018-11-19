@@ -52,7 +52,7 @@ class SearchPatternInCodeCsvFileOutputTest{
                 lastUpdateDate = Date(),
                 reason = null,
                 url = "http://hello",
-                searchResults= mapOf(Pair(SEARCH_NAME_TO_OUTPUT,searchResults)),
+                miscTasksResults= mapOf(Pair(Branch("master"),mapOf(Pair(SEARCH_NAME_TO_OUTPUT,searchResults)))),
                 branchesToParse = listOf(Branch("master"))
                 )
 
