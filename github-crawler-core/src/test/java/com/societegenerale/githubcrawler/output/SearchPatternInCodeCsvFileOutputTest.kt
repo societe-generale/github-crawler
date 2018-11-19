@@ -50,7 +50,6 @@ class SearchPatternInCodeCsvFileOutputTest{
                 defaultBranch = "master",
                 fullName = fullName,
                 lastUpdateDate = Date(),
-                ownerTeam = null,
                 reason = null,
                 url = "http://hello",
                 searchResults= mapOf(Pair(SEARCH_NAME_TO_OUTPUT,searchResults)),

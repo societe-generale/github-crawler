@@ -23,7 +23,6 @@ class RepositoryEnricherTest {
             defaultBranch = "master",
             fullName = "orgName/someRepo",
             lastUpdateDate = Date(),
-            ownerTeam = null,
             reason = null,
             url="http://hello",
             excluded = false,

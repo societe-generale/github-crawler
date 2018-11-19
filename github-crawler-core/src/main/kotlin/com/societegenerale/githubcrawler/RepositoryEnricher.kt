@@ -5,6 +5,7 @@ import com.societegenerale.githubcrawler.model.Branch
 import com.societegenerale.githubcrawler.model.Repository
 import com.societegenerale.githubcrawler.remote.NoFileFoundException
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
+import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskToPerform
 import org.slf4j.LoggerFactory
 
 
@@ -116,6 +117,16 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub){
         return indicatorsToFetch.asSequence()
                 .map { GitHubCrawler.availableFileContentParsers.get(it.method)!!.parseFileContentForIndicator(fileContent, pathToFileToGetIndicatorsFrom, it) }
                 .reduce { acc, item -> acc + item }
+
+    }
+
+    fun performMiscTasks(repo: Repository, miscRepositoryTasks: List<RepoTaskToPerform>): Repository {
+
+        miscRepositoryTasks.asSequence()
+                .map{ taskToPerform -> taskToPerform.perform(repo)  }
+
+
+        return repo
 
     }
 

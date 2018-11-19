@@ -3,10 +3,10 @@ package com.societegenerale.githubcrawler
 import com.societegenerale.githubcrawler.model.Repository
 import com.societegenerale.githubcrawler.model.SearchResult
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput
-import com.societegenerale.githubcrawler.ownership.OwnershipParser
 import com.societegenerale.githubcrawler.parsers.FileContentParser
 import com.societegenerale.githubcrawler.parsers.SearchResultParser
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
+import com.societegenerale.githubcrawler.repoTaskToPerform.ownership.OwnershipParser
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.env.Environment
@@ -119,7 +119,7 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
                 .map { repo -> repo.addGroups(environment.activeProfiles) }
                 .map { repo -> repositoryEnricher.identifyBranchesToParse(repo, gitHubCrawlerProperties.crawlAllBranches, organizationName) }
                 .map { repo -> repositoryEnricher.fetchIndicatorsValues(repo, gitHubCrawlerProperties) }
-                .map { repo -> repo.fetchOwner(ownershipParser) }
+                .map {repo -> repositoryEnricher.performMiscTasks(repo, gitHubCrawlerProperties.miscRepositoryTasks) }
                 .map { repo -> applySearchResultsOnRepo(gitHubCrawlerProperties, repo) }
                 .map { repo -> publish(repo) }
                 //calling collect to trigger the stream processing

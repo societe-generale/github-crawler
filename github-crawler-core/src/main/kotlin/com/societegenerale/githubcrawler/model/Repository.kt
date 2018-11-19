@@ -3,7 +3,6 @@ package com.societegenerale.githubcrawler.model
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.societegenerale.githubcrawler.RepositoryConfig
-import com.societegenerale.githubcrawler.ownership.OwnershipParser
 import feign.FeignException
 import org.slf4j.LoggerFactory
 import java.util.Date
@@ -42,7 +41,7 @@ data class Repository(val url: String,
                       @JsonIgnore
                       val searchResults: Map<String, Any> = HashMap(),
                       @JsonIgnore
-                      var ownerTeam: String? = null,
+                      var miscTasksResults: Map<Branch, Map<String, Any>> = HashMap(),
                       @JsonIgnore
                       var topics: List<String> = emptyList()
 ) {
@@ -103,11 +102,6 @@ data class Repository(val url: String,
 
     fun copyTagsFromRepoTopics(): Repository {
         return this.copy(tags = this.topics)
-    }
-
-    fun fetchOwner(ownershipParser: OwnershipParser) : Repository {
-        val repositoryOwner = ownershipParser.computeOwnershipFor(name, 150)
-        return this.copy(ownerTeam = repositoryOwner)
     }
 
     fun addGroups(groupsToSet: Array<out String>?): Repository {

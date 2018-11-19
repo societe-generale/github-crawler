@@ -1,4 +1,4 @@
-package com.societegenerale.githubcrawler.ownership
+package com.societegenerale.githubcrawler.repoTaskToPerform.ownership
 
 import org.slf4j.LoggerFactory
 
@@ -11,7 +11,7 @@ class NoOpOwnershipParser : OwnershipParser {
 
 
     constructor(){
-      log.info("Using "+NoOpOwnershipParser::class+" as a repository Ownership parser")
+      log.info("Using "+ NoOpOwnershipParser::class+" as a repository Ownership parser")
     }
 
     override fun computeOwnershipFor(repositoryFullName: String, lastCommitNumber: Int): String {

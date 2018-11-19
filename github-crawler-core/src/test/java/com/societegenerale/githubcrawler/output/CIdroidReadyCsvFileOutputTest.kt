@@ -50,7 +50,6 @@ class CIdroidReadyCsvFileOutputTest {
                 defaultBranch = "master",
                 fullName = fullName,
                 lastUpdateDate = Date(),
-                ownerTeam = null,
                 reason = null,
                 url = "http://hello",
                 indicators = indicators,

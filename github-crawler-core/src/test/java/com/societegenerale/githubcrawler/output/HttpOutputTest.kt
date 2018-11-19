@@ -49,7 +49,6 @@ class HttpOutputTest {
                 defaultBranch = "master",
                 fullName = "orgName/repoName1",
                 lastUpdateDate = Date(),
-                ownerTeam = null,
                 reason = null,
                 url = "http://hello",
                 branchesToParse = listOf(Branch("master"))

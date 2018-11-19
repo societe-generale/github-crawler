@@ -1,4 +1,4 @@
-package com.societegenerale.githubcrawler.ownership
+package com.societegenerale.githubcrawler.repoTaskToPerform.ownership
 
 
 interface OwnershipParser {

@@ -4,9 +4,9 @@ import com.google.common.collect.ImmutableList
 import com.jayway.awaitility.Awaitility.await
 import com.societegenerale.githubcrawler.model.Repository
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput
-import com.societegenerale.githubcrawler.ownership.NoOpOwnershipParser
 import com.societegenerale.githubcrawler.parsers.SimpleFilePathParser
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
+import com.societegenerale.githubcrawler.repoTaskToPerform.ownership.NoOpOwnershipParser
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test

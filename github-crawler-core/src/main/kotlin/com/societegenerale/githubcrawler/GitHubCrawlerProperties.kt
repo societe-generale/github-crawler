@@ -1,6 +1,7 @@
 package com.societegenerale.githubcrawler
 
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput
+import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskToPerform
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.context.properties.NestedConfigurationProperty
@@ -16,6 +17,7 @@ class GitHubCrawlerProperties(@NestedConfigurationProperty
                               var publishExcludedRepositories: Boolean = false,
                               var crawlAllBranches: Boolean = false,
                               var crawlInParallel: Boolean = true,
-                              val outputs: List<GitHubCrawlerOutput> = emptyList()
+                              val outputs: List<GitHubCrawlerOutput> = emptyList(),
+                              val miscRepositoryTasks: List<RepoTaskToPerform>  = emptyList()
                               )
 

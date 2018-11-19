@@ -6,11 +6,11 @@ import com.societegenerale.githubcrawler.GitHubCrawler
 import com.societegenerale.githubcrawler.GitHubCrawlerProperties
 import com.societegenerale.githubcrawler.RepositoryEnricher
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput
-import com.societegenerale.githubcrawler.ownership.NoOpOwnershipParser
-import com.societegenerale.githubcrawler.ownership.OwnershipParser
 import com.societegenerale.githubcrawler.parsers.FileContentParser
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
 import com.societegenerale.githubcrawler.remote.RemoteGitHubImpl
+import com.societegenerale.githubcrawler.repoTaskToPerform.ownership.NoOpOwnershipParser
+import com.societegenerale.githubcrawler.repoTaskToPerform.ownership.OwnershipParser
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
