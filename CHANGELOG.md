@@ -10,6 +10,7 @@
 - upgrade to Kotlin 1.3.10
 - upgrade to Spring Boot 2.1.0
 - BREAKING CHANGE - all properties are now under a github-crawler prefix
+- BREAKING CHANGE - issue #66 : renamed property name from "method" to "type"
 
 ### Deprecated
 

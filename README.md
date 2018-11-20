@@ -84,13 +84,13 @@ github-crawler:
         # name of the indicator that will be reported for that repository in the output
         - name: spring_boot_starter_parent_version
           # name of the method to find the value in the file, pointing to one of the implementation classes of FileContentParser
-          method: findDependencyVersionInXml
+          type: findDependencyVersionInXml
           # the parameters to the method, specific to each method type
           params:
             # findDependencyVersionInXml needs an artifactId as a parameter : it will find the version for that Maven artifact by doing a SAX parsing, even if the version is a ${variable} defined in <properties> section
             artifactId: spring-boot-starter-parent
         - name: spring_boot_dependencies_version
-          method: findDependencyVersionInXml
+          type: findDependencyVersionInXml
           params:
             artifactId: spring-boot-dependencies
       #another file to parse..
@@ -98,13 +98,13 @@ github-crawler:
         - name: docker_image_used
             # findFirstValueWithRegexpCapture needs a pattern as a parameter. The pattern needs to contain a group capture (see https://regexone.com/lesson/capturing_groups) 
             # the first match will be returned as the value for this indicator             
-          method: findFirstValueWithRegexpCapture
+          type: findFirstValueWithRegexpCapture
           params:
             pattern: ".*\\/(.*)\\s?"
     
       "[src/main/resources/application.yml]":
           - name: spring_application_name
-            method: findPropertyValueInYamlFile
+            type: findPropertyValueInYamlFile
             params:
               propertyName: "spring.application.name"
               
