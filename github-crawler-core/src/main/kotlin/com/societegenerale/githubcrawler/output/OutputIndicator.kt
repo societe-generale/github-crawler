@@ -14,8 +14,7 @@ data class OutputIndicator(val name: String,
                            val tags: List<String> = ArrayList(),
                            val groups: List<String> = ArrayList(),
                            val crawlerRunId: String,
-                           val miscTasksResults: Map<String,Any> = HashMap(),
-                           val topics:List<String> = emptyList()) {
+                           val miscTasksResults: Map<String,Any> = HashMap()) {
 
     val timestamp: String = ZonedDateTime.now().format(DateTimeFormatter.ISO_INSTANT)
 

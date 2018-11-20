@@ -14,6 +14,7 @@
 ### Deprecated
 
 ### Removed
+- issue #62 - removing topics field from OutputIndicator -> use tags instead
 
 ### Fixed
 - Kotlin compiler warnings
