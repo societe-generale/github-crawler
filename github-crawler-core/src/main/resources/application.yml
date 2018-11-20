@@ -21,12 +21,10 @@ github-crawler:
         artifactId: spring-boot-starter-parent
 
   miscRepositoryTasks:
-    searchesPerRepo:
-      consulCatalogWatch:
+    - name: "consulCatalogWatch"
+      type: "pathsForHitsOnRepoSearch"
+      params:
         queryString: "ConsulCatalogWatch"
-        method: path
-    findLastCommitDate: true
-
 
 logging:
   level:
