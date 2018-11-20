@@ -59,6 +59,6 @@ class PathsForHitsOnRepoSearchTest {
 
         val searchResultOnRepo=searchResult[Branch("master")].orEmpty().get("myTestSearch")
 
-        assertThat(searchResultOnRepo).isEqualTo("not found")
+        assertThat(searchResultOnRepo as List<String>).containsOnly("not found")
     }
 }
