@@ -15,6 +15,7 @@ class GitHubCrawlerProperties(@NestedConfigurationProperty
                               var publishExcludedRepositories: Boolean = false,
                               var crawlAllBranches: Boolean = false,
                               var crawlInParallel: Boolean = true,
+                              //even if we're not using it, declaring outputs here so that it shows in completion
                               val outputs: List<GitHubCrawlerOutput> = emptyList(),
                               val miscRepositoryTasks: List<TaskDefinition>  = ArrayList()
                               )

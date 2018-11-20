@@ -7,15 +7,12 @@ import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput;
 import com.societegenerale.githubcrawler.parsers.FileContentParser;
 import com.societegenerale.githubcrawler.remote.RemoteGitHub;
 import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskBuilder;
-import com.societegenerale.githubcrawler.repoTaskToPerform.ownership.NoOpOwnershipParser;
-import com.societegenerale.githubcrawler.repoTaskToPerform.ownership.OwnershipParser;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.env.Environment;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,12 +43,6 @@ public class TestConfig {
     }
 
     @Bean
-    public OwnershipParser dummyOwnershipParser()    {
-
-        return new NoOpOwnershipParser();
-    }
-
-    @Bean
     public GitHubMock gitHubMock() {
 
         return new GitHubMock();
@@ -74,7 +65,7 @@ public class TestConfig {
         }
 
         @Override
-        public void output(Repository analyzedRepository) throws IOException {
+        public void output(Repository analyzedRepository) {
             this.analyzedRepositories.put(analyzedRepository.getName(), analyzedRepository);
         }
 
@@ -83,7 +74,7 @@ public class TestConfig {
         }
 
         @Override
-        public void finalizeOutput() throws IOException {
+        public void finalizeOutput() {
             //do nothing
         }
     }

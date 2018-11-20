@@ -4,6 +4,7 @@ import com.societegenerale.githubcrawler.model.Branch
 import com.societegenerale.githubcrawler.model.Repository
 import com.societegenerale.githubcrawler.model.team.Membership
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
+import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskBuilder
 import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskToPerform
 import org.slf4j.LoggerFactory
 
@@ -11,7 +12,8 @@ import org.slf4j.LoggerFactory
 class RepoOwnershipComputer(private val githubClient: RemoteGitHub,
                             private val membershipParser: MembershipParser,
                             private val organizationName: String,
-                            private val lastCommitNumber: Int) : RepoTaskToPerform {
+                            private val lastCommitNumber: Int) : RepoTaskToPerform{
+
 
     companion object {
         private val log = LoggerFactory.getLogger(RepoOwnershipComputer::class.java)
@@ -59,9 +61,22 @@ class RepoOwnershipComputer(private val githubClient: RemoteGitHub,
                 .firstOrNull()?.key ?: UNDEFINED
 
         return hashMapOf(Pair(Branch(repository.defaultBranch), hashMapOf(Pair(INDICATOR_NAME, owner))))
-   
+
 
     }
 
+
+}
+
+class RepoOwnershipComputerBuilder(private val githubClient: RemoteGitHub,
+                                   private val membershipParser: MembershipParser,
+                                   private val organizationName: String,
+                                   private val lastCommitNumber: Int) : RepoTaskBuilder  {
+
+    override val type="repositoryOwnershipComputation"
+
+    override fun buildTask(name: String, params : Map<String,String>) : RepoTaskToPerform{
+        return RepoOwnershipComputer(githubClient, membershipParser, organizationName, lastCommitNumber)
+    }
 
 }

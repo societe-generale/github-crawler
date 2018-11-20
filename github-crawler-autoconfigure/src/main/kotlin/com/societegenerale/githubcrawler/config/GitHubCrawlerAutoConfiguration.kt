@@ -10,9 +10,6 @@ import com.societegenerale.githubcrawler.parsers.FileContentParser
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
 import com.societegenerale.githubcrawler.remote.RemoteGitHubImpl
 import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskBuilder
-import com.societegenerale.githubcrawler.repoTaskToPerform.ownership.NoOpOwnershipParser
-import com.societegenerale.githubcrawler.repoTaskToPerform.ownership.OwnershipParser
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -21,7 +18,7 @@ import org.springframework.core.convert.ConversionService
 import org.springframework.core.env.Environment
 
 @Configuration
-@Import(GitHubCrawlerParserConfig::class,GitHubCrawlerOutputConfig::class)
+@Import(GitHubCrawlerParserConfig::class,GitHubCrawlerOutputConfig::class,GitHubCrawlerMiscTasksConfig::class)
 @EnableConfigurationProperties(GitHubCrawlerProperties::class)
 open class GitHubCrawlerAutoConfiguration {
 
@@ -34,7 +31,6 @@ open class GitHubCrawlerAutoConfiguration {
 
     @Bean
     open fun crawler(remoteGitHub: RemoteGitHub,
-                     ownershipParser: OwnershipParser,
                      output: List<GitHubCrawlerOutput>,
                      gitHubCrawlerProperties: GitHubCrawlerProperties,
                      environment : Environment,
@@ -60,13 +56,6 @@ open class GitHubCrawlerAutoConfiguration {
     open fun remoteGitHub(gitHubCrawlerProperties: GitHubCrawlerProperties): RemoteGitHub {
 
         return RemoteGitHubImpl(gitHubCrawlerProperties.githubConfig.apiUrl,gitHubCrawlerProperties.githubConfig.crawlUsersRepoInsteadOfOrgasRepos,gitHubCrawlerProperties.githubConfig.oauthToken)
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(OwnershipParser::class)
-    open fun dummyOwnershipParser(): OwnershipParser {
-
-        return NoOpOwnershipParser()
     }
 
 }

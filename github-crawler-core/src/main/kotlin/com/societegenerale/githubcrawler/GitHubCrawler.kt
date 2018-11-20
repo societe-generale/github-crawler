@@ -81,15 +81,19 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
         log.info("--> ${availableFileContentParsers.size} available parser(s)..")
 
         log.info("${gitHubCrawlerProperties.miscRepositoryTasks.size} task(s) to create...")
-        log.info("${taskBuilders.size} taskBuilder(s) available...")
+        val availableTaskBuilderTypes=taskBuilders.map { task -> task.type }.joinToString(separator = ", ")
+        log.info("${taskBuilders.size} taskBuilder(s) available : $availableTaskBuilderTypes")
 
         gitHubCrawlerProperties.miscRepositoryTasks.forEach{
 
             val matchingTaskBuilder=taskBuilders.find { taskBuilder -> taskBuilder.type.equals(it.type) }
-            //TODO what should we do if builder not found ?
 
-            tasksToPerform.add(matchingTaskBuilder!!.buildTask(it.name,it.params))
-
+            if(matchingTaskBuilder==null){
+                log.warn("task with type ${it.type} couldn't be found in list of available task builders")
+            }
+            else {
+                tasksToPerform.add(matchingTaskBuilder.buildTask(it.name, it.params))
+            }
         }
 
         log.info("--> ${tasksToPerform.size} task(s) to perform have been built..")
