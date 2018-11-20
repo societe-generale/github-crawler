@@ -135,7 +135,7 @@ public class GitHubCrawlerIT {
 		assertThat(params).hasSize(1);
 		assertThat(params.get("artifactId")).isEqualTo("spring-boot-starter-parent");
 
-		assertThat(crawler.getGitHubCrawlerProperties().getSearchesPerRepo()).hasSize(1);
+		assertThat(crawler.getGitHubCrawlerProperties().getMiscRepositoryTasks()).hasSize(1);
 	}
 
 	@Test

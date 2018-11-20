@@ -5,20 +5,15 @@ import com.societegenerale.githubcrawler.model.Repository
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
 
 
-class CountHitsOnRepoSearch(private val remoteGitHub: RemoteGitHub,
+class CountHitsOnRepoSearch(private val name : String,
+                            private val remoteGitHub: RemoteGitHub,
                             private val searchQuery: String) : RepoTaskToPerform {
 
-    override fun perform(repository: Repository): Repository {
+    override fun perform(repository: Repository): Map<Branch, Map<String, Any>> {
 
         val nbHitsMatching= remoteGitHub.fetchCodeSearchResult(repository, searchQuery).totalCount.toString()
 
-        val existingMiscTasksResults=repository.miscTasksResults.toMutableMap()
-
-        val existingMiscTasksResultsForDefaultBranch=existingMiscTasksResults[Branch(repository.defaultBranch)].orEmpty()
-
-        existingMiscTasksResultsForDefaultBranch.plus(Pair(repository.defaultBranch,nbHitsMatching))
-
-        return repository.copy(miscTasksResults = existingMiscTasksResults)
+        return hashMapOf(Pair(Branch(repository.defaultBranch), hashMapOf(Pair(name,nbHitsMatching))))
 
     }
 
@@ -31,7 +26,7 @@ class CountHitsOnRepoSearchBuilder(private val remoteGitHub: RemoteGitHub) : Rep
 
     override fun buildTask(name: String, params : Map<String,String>) : RepoTaskToPerform{
 
-        return PathsForHitsOnRepoSearch(name, params["queryString"]!!,remoteGitHub)
+        return CountHitsOnRepoSearch(name, remoteGitHub, params["queryString"]!!)
 
     }
 

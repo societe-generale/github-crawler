@@ -37,9 +37,9 @@ class PathsForHitsOnRepoSearchTest {
         `when`(mockRemoteGithub.fetchCodeSearchResult(repoToSearch, "someSearch"))
                 .thenReturn(SearchResult(mockSearchResults.size,mockSearchResults))
 
-        val repoWithSearchResult = pathsForHitsOnRepoSearch.perform(repoToSearch)
+        val searchResult = pathsForHitsOnRepoSearch.perform(repoToSearch)
 
-        val searchResultOnRepo=repoWithSearchResult.miscTasksResults[Branch("master")].orEmpty().get(testTaskName)
+        val searchResultOnRepo=searchResult[Branch("master")].orEmpty().get(testTaskName)
 
         assertThat(searchResultOnRepo).isInstanceOf(List::class.java)
 
@@ -55,9 +55,9 @@ class PathsForHitsOnRepoSearchTest {
         `when`(mockRemoteGithub.fetchCodeSearchResult(repoToSearch, "someSearch"))
                 .thenReturn(SearchResult(0, emptyList()))
 
-        val repoWithSearchResult = pathsForHitsOnRepoSearch.perform(repoToSearch)
+        val searchResult = pathsForHitsOnRepoSearch.perform(repoToSearch)
 
-        val searchResultOnRepo=repoWithSearchResult.miscTasksResults[Branch("master")].orEmpty().get("myTestSearch")
+        val searchResultOnRepo=searchResult[Branch("master")].orEmpty().get("myTestSearch")
 
         assertThat(searchResultOnRepo).isEqualTo("not found")
     }
