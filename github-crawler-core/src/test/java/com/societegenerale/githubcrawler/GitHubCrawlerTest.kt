@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList
 import com.jayway.awaitility.Awaitility.await
 import com.societegenerale.githubcrawler.model.Repository
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput
-import com.societegenerale.githubcrawler.ownership.NoOpOwnershipParser
 import com.societegenerale.githubcrawler.parsers.SimpleFilePathParser
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
 import org.assertj.core.api.Assertions.assertThat
@@ -19,28 +18,28 @@ import java.util.*
 
 class GitHubCrawlerTest {
 
-    val mockRemoteGitHub: RemoteGitHub = mock(RemoteGitHub::class.java)
-    val ownershipParser = NoOpOwnershipParser()
-    val output = InMemoryGitHubCrawlerOutput()
-    val outputs: List<GitHubCrawlerOutput> = arrayListOf(output)
-    val repositoryEnricher = RepositoryEnricher(mockRemoteGitHub)
+    private val mockRemoteGitHub: RemoteGitHub = mock(RemoteGitHub::class.java)
 
-    val fileToParse="pom.xml"
-    val indicator=IndicatorDefinition("indicName","findFilePath")
+    private val output = InMemoryGitHubCrawlerOutput()
+    private val outputs: List<GitHubCrawlerOutput> = arrayListOf(output)
+    private val repositoryEnricher = RepositoryEnricher(mockRemoteGitHub)
 
-    val fileContentParsers=listOf(SimpleFilePathParser())
+    private val fileToParse="pom.xml"
+    private val indicator=IndicatorDefinition("indicName","findFilePath")
 
-    val gitHubCrawlerProperties = GitHubCrawlerProperties(githubConfig= GithubConfig(), indicatorsToFetchByFile = mapOf(Pair(FileToParse(fileToParse, null), listOf(indicator))))
-    val mockEnvironment = mock(Environment::class.java)
-    val organizationName = "myOrg"
-    val mockConfigValidator = mock(ConfigValidator::class.java)
+    private val fileContentParsers=listOf(SimpleFilePathParser())
 
-    lateinit var gitHubCrawler: GitHubCrawler
+    private val gitHubCrawlerProperties = GitHubCrawlerProperties(githubConfig= GithubConfig(), indicatorsToFetchByFile = mapOf(Pair(FileToParse(fileToParse, null), listOf(indicator))))
+    private val mockEnvironment = mock(Environment::class.java)
+    private val organizationName = "myOrg"
+    private val mockConfigValidator = mock(ConfigValidator::class.java)
+
+    private lateinit var gitHubCrawler: GitHubCrawler
 
     @Before
     fun setUp() {
 
-        gitHubCrawler = GitHubCrawler(mockRemoteGitHub, ownershipParser, outputs, repositoryEnricher, gitHubCrawlerProperties, mockEnvironment, organizationName, mockConfigValidator,fileContentParsers)
+        gitHubCrawler = GitHubCrawler(mockRemoteGitHub, outputs, repositoryEnricher, gitHubCrawlerProperties, mockEnvironment, organizationName, mockConfigValidator,fileContentParsers)
 
         `when`(mockRemoteGitHub.fetchRepositories(organizationName)).thenReturn(setOf(
                 Repository(url = "url1", fullName = "fullRepo1", name = "repo1", defaultBranch = "master", creationDate = Date(), lastUpdateDate = Date(), topics = listOf("topic1a", "topic1b")),

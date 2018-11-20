@@ -20,11 +20,6 @@ open class GitHubCrawlerParserConfig {
         return FirstMatchingRegexpParser()
     }
 
-    @Bean
-    open fun countSearchResultParser(): CountSearchResultParser {
-
-        return CountSearchResultParser()
-    }
 
     @Bean
     open fun simpleFilePathParser(): SimpleFilePathParser {
@@ -43,13 +38,6 @@ open class GitHubCrawlerParserConfig {
 
         return CountXmlElementsParser()
     }
-
-    @Bean
-    open fun pathSearchResultParser(): ItemPathSearchResultParser{
-
-        return ItemPathSearchResultParser()
-    }
-
 
 }
 

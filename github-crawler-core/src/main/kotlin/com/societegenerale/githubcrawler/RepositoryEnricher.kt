@@ -5,6 +5,7 @@ import com.societegenerale.githubcrawler.model.Branch
 import com.societegenerale.githubcrawler.model.Repository
 import com.societegenerale.githubcrawler.remote.NoFileFoundException
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
+import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskToPerform
 import org.slf4j.LoggerFactory
 
 
@@ -58,6 +59,7 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub){
 
     fun fetchIndicatorsValues(repository: Repository,gitHubCrawlerPropertiesByFile: GitHubCrawlerProperties): Repository {
 
+        //TODO this check should be removed
         if (repository.excluded) {
             return repository
         }
@@ -118,5 +120,32 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub){
                 .reduce { acc, item -> acc + item }
 
     }
+
+    fun performMiscTasks(repo: Repository, miscRepositoryTasks: List<RepoTaskToPerform>): Repository {
+
+        val resultsCollector=repo.miscTasksResults.toMutableMap()
+
+        //TODO rewrite this in a functional Kotlin way, to reduce maps
+        miscRepositoryTasks.forEach{
+            val miscRepoTaskResult=it.perform(repo)
+
+            for ((branch, value) in miscRepoTaskResult) {
+
+                if(resultsCollector[branch]==null){
+                    resultsCollector[branch]=value
+                }
+
+                else{
+                    val existingValuesForBranch=resultsCollector[branch]!!.toMutableMap()
+                    existingValuesForBranch.putAll(value)
+
+                    resultsCollector[branch]=existingValuesForBranch
+                }
+            }
+        }
+
+        return repo.copy(miscTasksResults = resultsCollector)
+    }
+
 
 }

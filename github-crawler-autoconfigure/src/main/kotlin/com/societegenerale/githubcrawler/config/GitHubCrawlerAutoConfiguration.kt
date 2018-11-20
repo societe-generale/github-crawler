@@ -6,12 +6,10 @@ import com.societegenerale.githubcrawler.GitHubCrawler
 import com.societegenerale.githubcrawler.GitHubCrawlerProperties
 import com.societegenerale.githubcrawler.RepositoryEnricher
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput
-import com.societegenerale.githubcrawler.ownership.NoOpOwnershipParser
-import com.societegenerale.githubcrawler.ownership.OwnershipParser
 import com.societegenerale.githubcrawler.parsers.FileContentParser
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
 import com.societegenerale.githubcrawler.remote.RemoteGitHubImpl
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskBuilder
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -20,7 +18,7 @@ import org.springframework.core.convert.ConversionService
 import org.springframework.core.env.Environment
 
 @Configuration
-@Import(GitHubCrawlerParserConfig::class,GitHubCrawlerOutputConfig::class)
+@Import(GitHubCrawlerParserConfig::class,GitHubCrawlerOutputConfig::class,GitHubCrawlerMiscTasksConfig::class)
 @EnableConfigurationProperties(GitHubCrawlerProperties::class)
 open class GitHubCrawlerAutoConfiguration {
 
@@ -33,17 +31,17 @@ open class GitHubCrawlerAutoConfiguration {
 
     @Bean
     open fun crawler(remoteGitHub: RemoteGitHub,
-                     ownershipParser: OwnershipParser,
                      output: List<GitHubCrawlerOutput>,
                      gitHubCrawlerProperties: GitHubCrawlerProperties,
                      environment : Environment,
                      configValidator: ConfigValidator,
-                     fileContentParsers: List<FileContentParser>
+                     fileContentParsers: List<FileContentParser>,
+                     repoTasksBuilder: List<RepoTaskBuilder>
                      ): GitHubCrawler {
 
         val repositoryEnricher = RepositoryEnricher(remoteGitHub)
 
-        return GitHubCrawler(remoteGitHub, ownershipParser, output, repositoryEnricher,gitHubCrawlerProperties,environment,gitHubCrawlerProperties.githubConfig.organizationName,configValidator,fileContentParsers)
+        return GitHubCrawler(remoteGitHub, output, repositoryEnricher,gitHubCrawlerProperties,environment,gitHubCrawlerProperties.githubConfig.organizationName,configValidator,fileContentParsers,repoTasksBuilder)
     }
 
     @Bean
@@ -58,13 +56,6 @@ open class GitHubCrawlerAutoConfiguration {
     open fun remoteGitHub(gitHubCrawlerProperties: GitHubCrawlerProperties): RemoteGitHub {
 
         return RemoteGitHubImpl(gitHubCrawlerProperties.githubConfig.apiUrl,gitHubCrawlerProperties.githubConfig.crawlUsersRepoInsteadOfOrgasRepos,gitHubCrawlerProperties.githubConfig.oauthToken)
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(OwnershipParser::class)
-    open fun dummyOwnershipParser(): OwnershipParser {
-
-        return NoOpOwnershipParser()
     }
 
 }

@@ -3,6 +3,7 @@ package com.societegenerale.githubcrawler;
 import com.societegenerale.githubcrawler.config.GitHubCrawlerAutoConfiguration;
 import com.societegenerale.githubcrawler.config.TestConfig;
 import com.societegenerale.githubcrawler.mocks.GitHubMock;
+import com.societegenerale.githubcrawler.model.Branch;
 import com.societegenerale.githubcrawler.model.Repository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.AfterClass;
@@ -134,7 +135,7 @@ public class GitHubCrawlerIT {
 		assertThat(params).hasSize(1);
 		assertThat(params.get("artifactId")).isEqualTo("spring-boot-starter-parent");
 
-		assertThat(crawler.getGitHubCrawlerProperties().getSearchesPerRepo()).hasSize(1);
+		assertThat(crawler.getGitHubCrawlerProperties().getMiscRepositoryTasks()).hasSize(1);
 	}
 
 	@Test
@@ -313,8 +314,8 @@ public class GitHubCrawlerIT {
 
 		actualRepositories.stream().forEach( repo -> {
 
-			assertThat(repo.getSearchResults()).hasSize(1);
-			assertThat(repo.getSearchResults().get("nbOfMetricsInPomXml")).isEqualTo("2");
+			assertThat(repo.getMiscTasksResults()).hasSize(1);
+			assertThat(repo.getMiscTasksResults().get(new Branch("master")).get("nbOfMetricsInPomXml")).isEqualTo("2");
 
 		});
 	}

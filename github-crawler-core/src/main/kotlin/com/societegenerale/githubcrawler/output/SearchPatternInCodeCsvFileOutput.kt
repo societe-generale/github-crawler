@@ -1,5 +1,6 @@
 package com.societegenerale.githubcrawler.output
 
+import com.societegenerale.githubcrawler.model.Branch
 import com.societegenerale.githubcrawler.model.Repository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -22,7 +23,7 @@ class SearchPatternInCodeCsvFileOutput (private val searchNameToOutput: String) 
 
         val sb=StringBuilder()
 
-        val searchItemPaths=analyzedRepository.searchResults.get(searchNameToOutput)
+        val searchItemPaths=analyzedRepository.miscTasksResults[Branch(analyzedRepository.defaultBranch)].orEmpty().get(searchNameToOutput)
 
         if(searchItemPaths is List<*>){
 

@@ -18,7 +18,7 @@ class FileOutputTest{
     @Before
     fun cleanUp(){
 
-        val resources = resolver.getResources("file:somePrfix*.txt")
+        val resources = resolver.getResources("file:target/somePrfix*.txt")
 
         for(existingFile in resources){
             val fileToDeletePath = Paths.get(existingFile.uri)
@@ -31,7 +31,7 @@ class FileOutputTest{
     @Test
     fun shouldOutputFileAsExpected(){
 
-        val fileOutput = FileOutput("somePrfix")
+        val fileOutput = FileOutput("target/somePrfix")
 
         val repoToOutput1 = Repository(name = "repo1",
                                         creationDate = Date(),
@@ -39,7 +39,6 @@ class FileOutputTest{
                                         defaultBranch = "master",
                                         fullName = "orgName/repoName1",
                                         lastUpdateDate = Date(),
-                                        ownerTeam = null,
                                         reason = null,
                                         url="http://hello"
                                         )
@@ -50,7 +49,6 @@ class FileOutputTest{
                 defaultBranch = "master",
                 fullName = "orgName/repoName2",
                 lastUpdateDate = Date(),
-                ownerTeam = null,
                 reason = null,
                 url="http://hello2"
         )
@@ -58,7 +56,7 @@ class FileOutputTest{
         fileOutput.output(repoToOutput1)
         fileOutput.output(repoToOutput2)
 
-        val resources = resolver.getResources("file:somePrfix*.txt") // yields empty array
+        val resources = resolver.getResources("file:target/somePrfix*.txt") // yields empty array
 
         assertThat(resources).hasSize(1)
 
@@ -70,14 +68,10 @@ class FileOutputTest{
         assertThat(lines[0]).startsWith("OUTPUT FOR GitHub crawler - ");
 
         assertThat(lines[1]).startsWith("Repository(url=http://hello, name=repo1, defaultBranch=master, creationDate=")
-        assertThat(lines[1]).contains(", excluded=false, config=null, reason=null, skipped=false, fullName=orgName/repoName1, indicators={}, branchesToParse=[], tags=[], groups=[], crawlerRunId=NO_CRAWLER_RUN_ID_DEFINED, searchResults={}, ownerTeam=null, topics=[])")
+        assertThat(lines[1]).contains(", excluded=false, config=null, reason=null, skipped=false, fullName=orgName/repoName1, indicators={}, branchesToParse=[], tags=[], groups=[], crawlerRunId=NO_CRAWLER_RUN_ID_DEFINED, miscTasksResults={}, topics=[])")
 
         assertThat(lines[2]).startsWith("Repository(url=http://hello2, name=repo2, defaultBranch=master, creationDate=")
-        assertThat(lines[2]).endsWith(", excluded=false, config=null, reason=null, skipped=false, fullName=orgName/repoName2, indicators={}, branchesToParse=[], tags=[], groups=[], crawlerRunId=NO_CRAWLER_RUN_ID_DEFINED, searchResults={}, ownerTeam=null, topics=[])")
-
-
-
-
+        assertThat(lines[2]).endsWith(", excluded=false, config=null, reason=null, skipped=false, fullName=orgName/repoName2, indicators={}, branchesToParse=[], tags=[], groups=[], crawlerRunId=NO_CRAWLER_RUN_ID_DEFINED, miscTasksResults={}, topics=[])")
 
     }
 

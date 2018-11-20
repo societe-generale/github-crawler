@@ -25,11 +25,14 @@ github-crawler:
           params:
             pattern: "FROM\\s.*\\/(.*)\\s?.*"
 
+  misc-repository-tasks:
+      - name: "nbOfMetricsInPomXml"
+        type: "countHitsOnRepoSearch"
+        params:
+          queryString: "q=metrics+extension:xml"
 
-  searchesPerRepo:
-    nbOfMetricsInPomXml:
-        queryString: "q=metrics+extension:xml"
-        method: count
+
+
 #
 #debug: true
 #

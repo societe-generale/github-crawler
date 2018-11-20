@@ -1,4 +1,4 @@
-package com.societegenerale.githubcrawler.ownership
+package com.societegenerale.githubcrawler.repoTaskToPerform.ownership
 
 import com.societegenerale.githubcrawler.model.team.Membership
 import com.societegenerale.githubcrawler.remote.RemoteGitHub

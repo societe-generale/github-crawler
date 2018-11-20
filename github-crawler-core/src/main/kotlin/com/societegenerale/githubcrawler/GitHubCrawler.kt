@@ -1,12 +1,11 @@
 package com.societegenerale.githubcrawler
 
 import com.societegenerale.githubcrawler.model.Repository
-import com.societegenerale.githubcrawler.model.SearchResult
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput
-import com.societegenerale.githubcrawler.ownership.OwnershipParser
 import com.societegenerale.githubcrawler.parsers.FileContentParser
-import com.societegenerale.githubcrawler.parsers.SearchResultParser
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
+import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskBuilder
+import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskToPerform
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.env.Environment
@@ -14,9 +13,9 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.stream.Collectors.toList
+import kotlin.collections.ArrayList
 
 class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
-                    private val ownershipParser: OwnershipParser,
                     private val output: List<GitHubCrawlerOutput>,
                     private val repositoryEnricher: RepositoryEnricher,
                     private val gitHubCrawlerProperties: GitHubCrawlerProperties,
@@ -24,20 +23,18 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
                     private val organizationName: String,
                     private val configValidator: ConfigValidator,
                     @Autowired
-                    private val fileContentParsers: List<FileContentParser> = emptyList()) {
+                    private val fileContentParsers: List<FileContentParser> = emptyList(),
+                    @Autowired
+                    private val taskBuilders: List<RepoTaskBuilder> = emptyList()) {
 
     companion object {
         const val NO_CRAWLER_RUN_ID_DEFINED: String = "NO_CRAWLER_RUN_ID_DEFINED"
         val availableFileContentParsers = HashMap<String, FileContentParser>()
-        val availableSearchResultParsers = HashMap<String, SearchResultParser>()
+        val tasksToPerform = ArrayList<RepoTaskToPerform>()
     }
 
     val log = LoggerFactory.getLogger(this.javaClass)
 
-
-
-    @Autowired
-    private val searchResultParsers: List<SearchResultParser> = emptyList()
 
     @Throws(IOException::class)
     fun crawl() {
@@ -48,7 +45,7 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
             throw IllegalStateException("There are some config validation errors - please double check the config. \n" + configValidationErrors.joinToString(separator = "\n", prefix = "\t - "))
         }
 
-        if (availableFileContentParsers.isEmpty() || searchResultParsers.isEmpty()) {
+        if (availableFileContentParsers.isEmpty() || tasksToPerform.isEmpty()) {
             initParsersConfig()
         }
 
@@ -83,20 +80,28 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
         }
         log.info("--> ${availableFileContentParsers.size} available parser(s)..")
 
-        //TODO fail fast if availableFileContentParsers is empty
+        log.info("${gitHubCrawlerProperties.miscRepositoryTasks.size} task(s) to create...")
+        val availableTaskBuilderTypes=taskBuilders.map { task -> task.type }.joinToString(separator = ", ")
+        log.info("${taskBuilders.size} taskBuilder(s) available : $availableTaskBuilderTypes")
 
-        searchResultParsers.forEach {
-            log.info("adding ${it.getNameInConfig()} in the map of available search result parsers..")
-            availableSearchResultParsers.put(it.getNameInConfig(), it)
+        gitHubCrawlerProperties.miscRepositoryTasks.forEach{
+
+            val matchingTaskBuilder=taskBuilders.find { taskBuilder -> taskBuilder.type.equals(it.type) }
+
+            if(matchingTaskBuilder==null){
+                log.warn("task with type ${it.type} couldn't be found in list of available task builders")
+            }
+            else {
+                tasksToPerform.add(matchingTaskBuilder.buildTask(it.name, it.params))
+            }
         }
-        log.info("--> ${availableSearchResultParsers.size} available parser(s)..")
+
+        log.info("--> ${tasksToPerform.size} task(s) to perform have been built..")
 
     }
 
     @Throws(IOException::class)
     private fun fetchAndParseRepoContent(repositoriesFromOrga: Set<Repository>) {
-
-        //TODO control better the number of threads
 
         log.info("active Spring profiles that we'll use as group attribute :")
         environment.activeProfiles.asIterable().forEach({ it -> log.info("- $it") })
@@ -119,8 +124,7 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
                 .map { repo -> repo.addGroups(environment.activeProfiles) }
                 .map { repo -> repositoryEnricher.identifyBranchesToParse(repo, gitHubCrawlerProperties.crawlAllBranches, organizationName) }
                 .map { repo -> repositoryEnricher.fetchIndicatorsValues(repo, gitHubCrawlerProperties) }
-                .map { repo -> repo.fetchOwner(ownershipParser) }
-                .map { repo -> applySearchResultsOnRepo(gitHubCrawlerProperties, repo) }
+                .map {repo -> repositoryEnricher.performMiscTasks(repo, tasksToPerform) }
                 .map { repo -> publish(repo) }
                 //calling collect to trigger the stream processing
                 .collect(toList())
@@ -132,26 +136,7 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
         return repo;
     }
 
-    /**
-     * Not able to implement the search call to GitHub using Feignclient, as the parameters follow a not very standard pattern.
-     * So implementing the call with a regular restTemplate
-     */
-    private fun applySearchResultsOnRepo(gitHubCrawlerProperties: GitHubCrawlerProperties, repo: Repository): Repository {
 
-        val searchResults = gitHubCrawlerProperties.searchesPerRepo.asIterable()
-                .map { (searchName, searchParam) -> Triple(searchName, searchParam, remoteGitHub.fetchCodeSearchResult(repo, searchParam.queryString)) }
-                .map { (searchName, searchParam, searchResult) -> Pair(searchName, parseSearchResult(searchParam, searchResult)) }
-                .toMap()
-
-        return repo.copy(searchResults = searchResults)
-    }
-
-    private fun parseSearchResult(searchParam: SearchParam, searchResult: SearchResult): Any {
-
-        val parser = availableSearchResultParsers.get(searchParam.method);
-
-        return parser!!.parse(searchResult)
-    }
 
     private fun publish(repo: Repository): Repository {
 

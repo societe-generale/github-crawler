@@ -4,17 +4,15 @@ import com.societegenerale.githubcrawler.*;
 import com.societegenerale.githubcrawler.mocks.GitHubMock;
 import com.societegenerale.githubcrawler.model.Repository;
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput;
-import com.societegenerale.githubcrawler.ownership.NoOpOwnershipParser;
-import com.societegenerale.githubcrawler.ownership.OwnershipParser;
 import com.societegenerale.githubcrawler.parsers.FileContentParser;
 import com.societegenerale.githubcrawler.remote.RemoteGitHub;
+import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.env.Environment;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,23 +29,17 @@ public class TestConfig {
 
     @Bean
     public GitHubCrawler crawler(RemoteGitHub remoteGitHub,
-            OwnershipParser ownershipParser,
             List<GitHubCrawlerOutput> output,
             GitHubCrawlerProperties gitHubCrawlerProperties,
             Environment environment,
             String organizationName,
             ConfigValidator configValidator,
-            List<FileContentParser> fileContentParsers) {
+            List<FileContentParser> fileContentParsers,
+            List<RepoTaskBuilder> tasksBuilders) {
 
         RepositoryEnricher repositoryEnricher = new RepositoryEnricher(remoteGitHub);
 
-        return new GitHubCrawler(remoteGitHub, ownershipParser, output, repositoryEnricher, gitHubCrawlerProperties, environment,organizationName,configValidator,fileContentParsers);
-    }
-
-    @Bean
-    public OwnershipParser dummyOwnershipParser()    {
-
-        return new NoOpOwnershipParser();
+        return new GitHubCrawler(remoteGitHub, output, repositoryEnricher, gitHubCrawlerProperties, environment,organizationName,configValidator,fileContentParsers,tasksBuilders);
     }
 
     @Bean
@@ -73,7 +65,7 @@ public class TestConfig {
         }
 
         @Override
-        public void output(Repository analyzedRepository) throws IOException {
+        public void output(Repository analyzedRepository) {
             this.analyzedRepositories.put(analyzedRepository.getName(), analyzedRepository);
         }
 
@@ -82,7 +74,7 @@ public class TestConfig {
         }
 
         @Override
-        public void finalizeOutput() throws IOException {
+        public void finalizeOutput() {
             //do nothing
         }
     }
