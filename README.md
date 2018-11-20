@@ -29,15 +29,13 @@ You can easily exclude repositories from the analysis, configure the files and p
 Several output types are available in [this package](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/output/) :
 - console is the default and will be used if no output is configured
 - a simple "raw" file output
-- a CI-droid ready CSV (or Json) file output, to run locally and copy/paste in CI-droid bulk update UI (UI implementation is in progress)
 - HTTP output, which enables you to POST the results to an endpoint like ElasticSearch, for easy analysis in Kibana
+- some specific "CI-droid oriented" outputs, to easily "pipe" the crawler output to CI-droid
 
 
 ## Configuration on crawler side 
 
-Several outputs can be configured at the same time. You can define as many indicators to fetch as required. 
-
-Below configuration shows how parsers are invoked for each indicator, thanks to the ```method``` attribute.
+Below configuration shows how outputs, indicators and actions are configured under the ```github-crawler``` prefix.
 
 ```yaml
 github-crawler:
@@ -109,27 +107,24 @@ github-crawler:
             method: findPropertyValueInYamlFile
             params:
               propertyName: "spring.application.name"
+              
+# We can also define a list of miscellaneous actions to perform : this includes things like various searches, ownership computation
+
+    misc-repository-tasks:
+       - name: "nbOfMetricsInPomXml"
+       #will return the number of hits returned by a search using queryString, for each repo
+         type: "countHitsOnRepoSearch"
+         params:
+           queryString: "q=metrics+extension:xml"
+       - name: "pathsWhere_ConsulCatalogWatch_IsFound"
+       #will return the paths for each hit on th search using queryString, for each repo
+         type: "pathsForHitsOnRepoSearch"
+         params:
+           queryString: "q=ConsulCatalogWatch"          
 ```
 
-## Link with [CI-droid](https://github.com/societe-generale/ci-droid)
 
-[CI-droid](https://github.com/societe-generale/ci-droid) is another of our tools, that can help you perform the same actions (modifying a pom.xml, replacing a string by another) in N resources, in X repositories. When there are dozens of resources to update, it can be cumbersome to prepare the message. GitHub crawler can help here, with below config :
 
-```yaml
-    outputs:
-      ciDroidJsonReadyFile:
-        # this should be an indicator defined in indicatorsToFetchByFile section
-        indicatorsToOutput: "pomFilePath" 
-
-    indicatorsToFetchByFile:
-      "[pom.xml]":
-          - name: "pomFilePath"
-            method: findFilePath
-```
-
-this will generate a file containing all the pom.xml found in the repositories (and in the branches also if ```crawlAllBranches``` is set to true), in the format that CI-droid expect. 
-
-All you need to do is then to copy/paste the records you want into the CI-droid bulk action Json message.
 
 ## Configuration on repository side 
 
