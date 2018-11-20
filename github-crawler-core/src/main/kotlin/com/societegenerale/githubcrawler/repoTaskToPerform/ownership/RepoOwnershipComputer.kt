@@ -39,9 +39,6 @@ class RepoOwnershipComputer(private val githubClient: RemoteGitHub,
             }
         }
 
-        val existingMiscTasksResults = repository.miscTasksResults.toMutableMap()
-
-
         if (memberIdToTeamName.isEmpty()) {
             log.info("Membership is empty, unable to compute repository owner...")
 
