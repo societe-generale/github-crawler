@@ -17,7 +17,7 @@ class PathsForHitsOnRepoSearch( private val taskName: String,
                 searchResult.items.map { i -> i.path }
             }
             else{
-                "not found"
+                listOf("not found")
             }
 
 
