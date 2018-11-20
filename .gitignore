@@ -30,3 +30,6 @@ target/
 *.iws
 *.iml
 *.ipr
+
+## some tests generate .csv files
+*.csv
