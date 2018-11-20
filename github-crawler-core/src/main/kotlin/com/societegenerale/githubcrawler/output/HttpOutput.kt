@@ -24,8 +24,7 @@ class HttpOutput(private val targetUrl: String,
                     analyzedRepository.tags,
                     analyzedRepository.groups,
                     analyzedRepository.crawlerRunId,
-                    analyzedRepository.miscTasksResults[branch] ?: emptyMap(),
-                    analyzedRepository.topics)
+                    analyzedRepository.miscTasksResults[branch] ?: emptyMap())
 
             val response : ResponseEntity<String>
 
