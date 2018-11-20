@@ -4,6 +4,7 @@ import com.societegenerale.githubcrawler.model.Repository
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput
 import com.societegenerale.githubcrawler.parsers.FileContentParser
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
+import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskBuilder
 import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskToPerform
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,6 +13,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.stream.Collectors.toList
+import kotlin.collections.ArrayList
 
 class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
                     private val output: List<GitHubCrawlerOutput>,
@@ -23,12 +25,12 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
                     @Autowired
                     private val fileContentParsers: List<FileContentParser> = emptyList(),
                     @Autowired
-                    private val tasksToPerform: List<RepoTaskToPerform> = emptyList()) {
+                    private val taskBuilders: List<RepoTaskBuilder> = emptyList()) {
 
     companion object {
         const val NO_CRAWLER_RUN_ID_DEFINED: String = "NO_CRAWLER_RUN_ID_DEFINED"
         val availableFileContentParsers = HashMap<String, FileContentParser>()
-        val availableTasksToPerform = HashMap<String, RepoTaskToPerform>()
+        val tasksToPerform = ArrayList<RepoTaskToPerform>()
     }
 
     val log = LoggerFactory.getLogger(this.javaClass)
@@ -43,7 +45,7 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
             throw IllegalStateException("There are some config validation errors - please double check the config. \n" + configValidationErrors.joinToString(separator = "\n", prefix = "\t - "))
         }
 
-        if (availableFileContentParsers.isEmpty() || availableTasksToPerform.isEmpty()) {
+        if (availableFileContentParsers.isEmpty() || tasksToPerform.isEmpty()) {
             initParsersConfig()
         }
 
@@ -78,11 +80,19 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
         }
         log.info("--> ${availableFileContentParsers.size} available parser(s)..")
 
-        tasksToPerform.forEach {
-            log.info("adding ${it.javaClass} in the map of available search result parsers..")
-            availableTasksToPerform.put(it.javaClass.name, it)
+        log.info("${gitHubCrawlerProperties.miscRepositoryTasks.size} task(s) to create...")
+        log.info("${taskBuilders.size} taskBuilder(s) available...")
+
+        gitHubCrawlerProperties.miscRepositoryTasks.forEach{
+
+            val matchingTaskBuilder=taskBuilders.find { taskBuilder -> taskBuilder.type.equals(it.type) }
+            //TODO what should we do if builder not found ?
+
+            tasksToPerform.add(matchingTaskBuilder!!.buildTask(it.name,it.params))
+
         }
-        log.info("--> ${availableTasksToPerform.size} available task(s) to perform..")
+
+        log.info("--> ${tasksToPerform.size} task(s) to perform have been built..")
 
     }
 
@@ -110,7 +120,7 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
                 .map { repo -> repo.addGroups(environment.activeProfiles) }
                 .map { repo -> repositoryEnricher.identifyBranchesToParse(repo, gitHubCrawlerProperties.crawlAllBranches, organizationName) }
                 .map { repo -> repositoryEnricher.fetchIndicatorsValues(repo, gitHubCrawlerProperties) }
-                .map {repo -> repositoryEnricher.performMiscTasks(repo, gitHubCrawlerProperties.miscRepositoryTasks) }
+                .map {repo -> repositoryEnricher.performMiscTasks(repo, tasksToPerform) }
                 .map { repo -> publish(repo) }
                 //calling collect to trigger the stream processing
                 .collect(toList())

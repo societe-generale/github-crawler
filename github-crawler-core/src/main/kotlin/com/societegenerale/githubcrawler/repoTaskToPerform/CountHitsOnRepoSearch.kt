@@ -23,3 +23,16 @@ class CountHitsOnRepoSearch(private val remoteGitHub: RemoteGitHub,
     }
 
 }
+
+class CountHitsOnRepoSearchBuilder(private val remoteGitHub: RemoteGitHub) : RepoTaskBuilder  {
+
+    override val type="countHitsOnRepoSearch"
+
+
+    override fun buildTask(name: String, params : Map<String,String>) : RepoTaskToPerform{
+
+        return PathsForHitsOnRepoSearch(name, params["queryString"]!!,remoteGitHub)
+
+    }
+
+}

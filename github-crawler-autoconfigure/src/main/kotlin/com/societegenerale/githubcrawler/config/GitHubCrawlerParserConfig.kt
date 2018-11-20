@@ -2,8 +2,9 @@ package com.societegenerale.githubcrawler.config
 
 
 import com.societegenerale.githubcrawler.parsers.*
-import com.societegenerale.githubcrawler.repoTaskToPerform.PathsForHitsOnRepoSearch
-import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskToPerform
+import com.societegenerale.githubcrawler.remote.RemoteGitHub
+import com.societegenerale.githubcrawler.repoTaskToPerform.CountHitsOnRepoSearchBuilder
+import com.societegenerale.githubcrawler.repoTaskToPerform.PathsForHitsOnRepoSearchBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -42,15 +43,15 @@ open class GitHubCrawlerParserConfig {
     }
 
     @Bean
-    open fun pathSearchResultParser(): ItemPathSearchResultParser{
+    open fun countHitsOnRepoSearchBuilder(remoteGitHub: RemoteGitHub): CountHitsOnRepoSearchBuilder{
 
-        return ItemPathSearchResultParser()
+        return CountHitsOnRepoSearchBuilder(remoteGitHub)
     }
 
     @Bean
-    open fun pathsForHitsOnRepoSearch(): RepoTaskToPerform {
+    open fun pathsForHitsOnRepoSearchBuilder(remoteGitHub: RemoteGitHub): PathsForHitsOnRepoSearchBuilder {
 
-        return PathsForHitsOnRepoSearch()
+        return PathsForHitsOnRepoSearchBuilder(remoteGitHub)
     }
 
 

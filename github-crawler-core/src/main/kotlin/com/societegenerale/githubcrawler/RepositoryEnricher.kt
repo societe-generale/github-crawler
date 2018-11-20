@@ -59,6 +59,7 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub){
 
     fun fetchIndicatorsValues(repository: Repository,gitHubCrawlerPropertiesByFile: GitHubCrawlerProperties): Repository {
 
+        //TODO this check should be removed
         if (repository.excluded) {
             return repository
         }

@@ -9,6 +9,7 @@ import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput
 import com.societegenerale.githubcrawler.parsers.FileContentParser
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
 import com.societegenerale.githubcrawler.remote.RemoteGitHubImpl
+import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskBuilder
 import com.societegenerale.githubcrawler.repoTaskToPerform.ownership.NoOpOwnershipParser
 import com.societegenerale.githubcrawler.repoTaskToPerform.ownership.OwnershipParser
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
@@ -38,12 +39,13 @@ open class GitHubCrawlerAutoConfiguration {
                      gitHubCrawlerProperties: GitHubCrawlerProperties,
                      environment : Environment,
                      configValidator: ConfigValidator,
-                     fileContentParsers: List<FileContentParser>
+                     fileContentParsers: List<FileContentParser>,
+                     repoTasksBuilder: List<RepoTaskBuilder>
                      ): GitHubCrawler {
 
         val repositoryEnricher = RepositoryEnricher(remoteGitHub)
 
-        return GitHubCrawler(remoteGitHub, output, repositoryEnricher,gitHubCrawlerProperties,environment,gitHubCrawlerProperties.githubConfig.organizationName,configValidator,fileContentParsers)
+        return GitHubCrawler(remoteGitHub, output, repositoryEnricher,gitHubCrawlerProperties,environment,gitHubCrawlerProperties.githubConfig.organizationName,configValidator,fileContentParsers,repoTasksBuilder)
     }
 
     @Bean

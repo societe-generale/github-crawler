@@ -5,9 +5,9 @@ import com.societegenerale.githubcrawler.model.Repository
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
 
 
-class PathsForHitsOnRepoSearch(private val taskName: String,
-                               private val searchQuery: String,
-                               private val remoteGitHub: RemoteGitHub) : RepoTaskToPerform {
+class PathsForHitsOnRepoSearch( private val taskName: String,
+                                private val searchQuery: String,
+                                private val remoteGitHub: RemoteGitHub) : RepoTaskToPerform {
 
     override fun perform(repository: Repository): Repository {
 
@@ -29,6 +29,19 @@ class PathsForHitsOnRepoSearch(private val taskName: String,
         updatedMiscTasksResults.put(Branch(repository.defaultBranch),existingMiscTasksResultsForDefaultBranch)
 
         return repository.copy(miscTasksResults = updatedMiscTasksResults)
+
+    }
+
+}
+
+class PathsForHitsOnRepoSearchBuilder(private val remoteGitHub: RemoteGitHub) : RepoTaskBuilder  {
+
+    override val type="pathsForHitsOnRepoSearch"
+
+
+    override fun buildTask(name: String, params : Map<String,String>) : RepoTaskToPerform{
+
+        return PathsForHitsOnRepoSearch(name, params["searchQuery"]!!,remoteGitHub)
 
     }
 
