@@ -1,46 +1,19 @@
 package com.societegenerale.githubcrawler.config;
 
-import com.societegenerale.githubcrawler.*;
+import com.societegenerale.githubcrawler.GitHubCrawlerProperties;
 import com.societegenerale.githubcrawler.mocks.GitHubMock;
 import com.societegenerale.githubcrawler.model.Repository;
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput;
-import com.societegenerale.githubcrawler.parsers.FileContentParser;
-import com.societegenerale.githubcrawler.remote.RemoteGitHub;
-import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.env.Environment;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Configuration
 @EnableConfigurationProperties(GitHubCrawlerProperties.class)
 public class TestConfig {
-
-    @Bean
-    public ConversionService conversionService() {
-
-        return new FileToParseConversionService();
-    }
-
-    @Bean
-    public GitHubCrawler crawler(RemoteGitHub remoteGitHub,
-            List<GitHubCrawlerOutput> output,
-            GitHubCrawlerProperties gitHubCrawlerProperties,
-            Environment environment,
-            String organizationName,
-            ConfigValidator configValidator,
-            List<FileContentParser> fileContentParsers,
-            List<RepoTaskBuilder> tasksBuilders) {
-
-        RepositoryEnricher repositoryEnricher = new RepositoryEnricher(remoteGitHub);
-
-        return new GitHubCrawler(remoteGitHub, output, repositoryEnricher, gitHubCrawlerProperties, environment,organizationName,configValidator,fileContentParsers,tasksBuilders);
-    }
 
     @Bean
     public GitHubMock gitHubMock() {
