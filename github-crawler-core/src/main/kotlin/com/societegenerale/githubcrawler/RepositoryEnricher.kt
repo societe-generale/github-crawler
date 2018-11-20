@@ -116,7 +116,7 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub){
     private fun parseIndicatorsFromFileContent(fileContent: String, pathToFileToGetIndicatorsFrom:String, indicatorsToFetch: List<IndicatorDefinition>): Map<String, String> {
 
         return indicatorsToFetch.asSequence()
-                .map { GitHubCrawler.availableFileContentParsers.get(it.method)!!.parseFileContentForIndicator(fileContent, pathToFileToGetIndicatorsFrom, it) }
+                .map { GitHubCrawler.availableFileContentParsers.get(it.type)!!.parseFileContentForIndicator(fileContent, pathToFileToGetIndicatorsFrom, it) }
                 .reduce { acc, item -> acc + item }
 
     }

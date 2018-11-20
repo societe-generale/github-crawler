@@ -16,7 +16,7 @@ github-crawler:
   indicatorsToFetchByFile:
     "[pom.xml]":
     - name: spring_boot_starter_parent_version
-      method: findDependencyVersionInXml
+      type: findDependencyVersionInXml
       params:
         artifactId: spring-boot-starter-parent
 

@@ -129,7 +129,7 @@ public class GitHubCrawlerIT {
 		IndicatorDefinition pomXmlIndicatorDefinition1 = crawler.getGitHubCrawlerProperties().getIndicatorsToFetchByFile().get(pomXmlFile).get(0);
 		assertThat(pomXmlIndicatorDefinition1).isNotNull();
 		assertThat(pomXmlIndicatorDefinition1.getName()).isEqualTo("spring_boot_starter_parent_version");
-		assertThat(pomXmlIndicatorDefinition1.getMethod()).isEqualTo("findDependencyVersionInXml");
+		assertThat(pomXmlIndicatorDefinition1.getType()).isEqualTo("findDependencyVersionInXml");
 
 		Map params = pomXmlIndicatorDefinition1.getParams();
 		assertThat(params).hasSize(1);
