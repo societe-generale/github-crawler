@@ -5,6 +5,11 @@ import com.societegenerale.githubcrawler.model.Repository
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
 
 
+/**
+ * This task will perform a search on the repository (using Github search API), and return an indicator with the provided name, <b>and the number of hits returned by the search</b>.
+ *
+ * Note : It will NOT perform the search in each branch of the repository
+ */
 class CountHitsOnRepoSearch(private val name : String,
                             private val remoteGitHub: RemoteGitHub,
                             private val searchQuery: String) : RepoTaskToPerform {

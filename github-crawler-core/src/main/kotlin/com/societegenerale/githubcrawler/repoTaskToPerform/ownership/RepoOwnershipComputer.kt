@@ -9,6 +9,10 @@ import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskToPerform
 import org.slf4j.LoggerFactory
 
 
+/**
+ * This task will compute the repository ownership, based on who performed the last X commits, following a specific algorithm. It can be useful when "common" repositories are modified by several teams, but you still need to define an owner for the repository.
+ *
+ */
 class RepoOwnershipComputer(private val githubClient: RemoteGitHub,
                             private val membershipParser: MembershipParser,
                             private val organizationName: String,

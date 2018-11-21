@@ -5,6 +5,11 @@ import com.societegenerale.githubcrawler.model.Repository
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
 
 
+/**
+ * This task will perform a search on the repository (using Github search API), and return an indicator with the provided name, <b>and the list of items' paths (relative to that repository) that matched the search</b>.
+ *
+ * Note : It will NOT perform the search in each branch of the repository
+ */
 class PathsForHitsOnRepoSearch( private val taskName: String,
                                 private val searchQuery: String,
                                 private val remoteGitHub: RemoteGitHub) : RepoTaskToPerform {
