@@ -24,12 +24,10 @@ interface RemoteGitHub {
     @Throws(NoFileFoundException::class)
     fun fetchFileContent(repositoryFullName: String, branchName: String, fileToFetch: String): String
 
-    fun fetchCommits(organizationName: String,
-                     repositoryFullName: String,
+    fun fetchCommits(repositoryFullName: String,
                      perPage: Int): Set<Commit>
 
-    fun fetchCommit(organizationName: String,
-                    repositoryFullName: String,
+    fun fetchCommit(repositoryFullName: String,
                     commitSha: String): DetailedCommit
 
     fun fetchTeams(organizationName: String): Set<Team>

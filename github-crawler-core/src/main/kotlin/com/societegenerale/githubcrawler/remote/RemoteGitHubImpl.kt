@@ -275,10 +275,10 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
 
     }
 
-    override fun fetchCommits(organizationName: String, repositoryFullName: String, perPage: Int): Set<Commit> {
+    override fun fetchCommits(repositoryFullName: String, perPage: Int): Set<Commit> {
 
         return try {
-                internalGitHubClient.fetchCommits(organizationName, repositoryFullName, perPage)
+                internalGitHubClient.fetchCommits(repositoryFullName, perPage)
             }
             catch (e: GitHubResponseDecoder.GithubException) {
                 log.warn("not able to fetch commits for repo $repositoryFullName",e)
@@ -287,8 +287,8 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
 
     }
 
-    override fun fetchCommit(organizationName: String, repositoryFullName: String, commitSha: String): DetailedCommit {
-        return internalGitHubClient.fetchCommit(organizationName, repositoryFullName, commitSha)
+    override fun fetchCommit(repositoryFullName: String, commitSha: String): DetailedCommit {
+        return internalGitHubClient.fetchCommit(repositoryFullName, commitSha)
     }
 
     override fun fetchTeams(organizationName: String): Set<Team> {
@@ -351,15 +351,13 @@ private interface InternalGitHubClient {
                         @Param("branchName") branchName: String,
                         @Param("fileToFetch") fileToFetch: String): FileOnRepository
 
-    @RequestLine("GET /repos/{organizationName}/{repositoryFullName}/commits")
-    fun fetchCommits(@Param("organizationName") organizationName: String,
-                     @Param("repositoryFullName") repositoryFullName: String,
+    @RequestLine("GET /repos/{repositoryFullName}/commits")
+    fun fetchCommits(@Param("repositoryFullName") repositoryFullName: String,
                      @Param("per_page") perPage: Int): Set<Commit>
 
 
-    @RequestLine("GET /repos/{organizationName}/{repositoryFullName}/commits/{commitSha}")
-    fun fetchCommit(@Param("organizationName") organizationName: String,
-                    @Param("repositoryFullName") repositoryFullName: String,
+    @RequestLine("GET /repos/{repositoryFullName}/commits/{commitSha}")
+    fun fetchCommit(@Param("repositoryFullName") repositoryFullName: String,
                     @Param("commitSha") commitSha: String): DetailedCommit
 
     @RequestLine("GET /orgs/{organizationName}/teams")
@@ -411,7 +409,7 @@ internal class GitHubResponseDecoder : Decoder {
             if (type.typeName == FileOnRepository::class.java.name) {
                 throw NoFileFoundFeignException("no file found on repository")
             } else {
-                throw NoFileFoundFeignException("problem while fetching content, of unknown type")
+                throw NoFileFoundFeignException("problem while fetching content, of unknown type ${type.typeName}")
             }
         }
         else {

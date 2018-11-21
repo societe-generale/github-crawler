@@ -38,8 +38,8 @@ class OwnershipParserImpl(private val githubClient: RemoteGitHub, private val me
             return UNDEFINED
         }
 
-        val commits = githubClient.fetchCommits(organizationName, repositoryFullName, lastCommitNumber)
-        val commitsWithStats = commits.map { (sha) -> githubClient.fetchCommit(organizationName, repositoryFullName, sha) }
+        val commits = githubClient.fetchCommits(repositoryFullName, lastCommitNumber)
+        val commitsWithStats = commits.map { (sha) -> githubClient.fetchCommit(repositoryFullName, sha) }
         log.debug("${commitsWithStats.size} fetched for $organizationName and $repositoryFullName (with max fetch to $lastCommitNumber)")
         return commitsWithStats
                 .filter { it.author != null }

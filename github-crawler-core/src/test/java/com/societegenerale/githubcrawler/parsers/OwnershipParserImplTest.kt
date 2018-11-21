@@ -35,23 +35,23 @@ class OwnershipParserImplTest {
 
         doReturn(setOf(Commit("1"), Commit("2"), Commit("3")))
                 .`when`(githubClient)
-                .fetchCommits(organizationName, repositoryFullName, lastCommitNumber)
+                .fetchCommits(repositoryFullName, lastCommitNumber)
 
         doReturn(DetailedCommit("1", Author("12", "userFive"), CommitStats(500)))
                 .`when`(githubClient)
-                .fetchCommit(organizationName, repositoryFullName, "1")
+                .fetchCommit(repositoryFullName, "1")
         doReturn(DetailedCommit("2", Author("13", "UserFour"), CommitStats(450)))
                 .`when`(githubClient)
-                .fetchCommit(organizationName, repositoryFullName, "2")
+                .fetchCommit(repositoryFullName, "2")
         doReturn(DetailedCommit("3", Author("14", "UserThree"), CommitStats(49)))
                 .`when`(githubClient)
-                .fetchCommit(organizationName, repositoryFullName, "3")
+                .fetchCommit(repositoryFullName, "3")
 
         //When
         val teamOwner: String = OwnershipParserImpl(githubClient, membershipParser, organizationName).computeOwnershipFor( repositoryFullName, lastCommitNumber)
 
         //Then
-        verify(githubClient).fetchCommits(organizationName, repositoryFullName, lastCommitNumber)
+        verify(githubClient).fetchCommits(repositoryFullName, lastCommitNumber)
         assertThat(teamOwner).isEqualTo("Stark")
     }
 

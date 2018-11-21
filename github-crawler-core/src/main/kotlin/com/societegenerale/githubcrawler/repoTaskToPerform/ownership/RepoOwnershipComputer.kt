@@ -45,8 +45,8 @@ class RepoOwnershipComputer(private val githubClient: RemoteGitHub,
             return hashMapOf(Pair(Branch(repository.defaultBranch), hashMapOf(Pair(INDICATOR_NAME, UNDEFINED))))
         }
 
-        val commits = githubClient.fetchCommits(organizationName, repository.fullName, lastCommitNumber)
-        val commitsWithStats = commits.map { (sha) -> githubClient.fetchCommit(organizationName, repository.fullName, sha) }
+        val commits = githubClient.fetchCommits(repository.fullName, lastCommitNumber)
+        val commitsWithStats = commits.map { (sha) -> githubClient.fetchCommit(repository.fullName, sha) }
         log.debug("${commitsWithStats.size} fetched for $organizationName and $repository.fullName (with max fetch to $lastCommitNumber)")
         val owner = commitsWithStats
                 .filter { it.author != null }
