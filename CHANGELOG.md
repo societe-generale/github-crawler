@@ -19,6 +19,7 @@
 
 ### Fixed
 - Kotlin compiler warnings
+- issue #41 - fetching commits on a repo was failing
 
 
 ## [1.0.11] - 2018-10-26
