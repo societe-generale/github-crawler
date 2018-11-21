@@ -3,16 +3,30 @@
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+
+## [1.1.0] - 2018-11-21 - BREAKING CHANGES
+
+### Added
 - optional _withTags_ property on ciDroidJsonReadyFile output
 - properties auto-completion in IDE
+- new output available : SearchPatternInCodeCsvFileOutput
+- new action available : PathsForHitsOnRepoSearch
 
 ### Changed
 - upgrade to Kotlin 1.3.10
 - upgrade to Spring Boot 2.1.0
 - BREAKING CHANGE - all properties are now under a github-crawler prefix
-- BREAKING CHANGE - issue #66 : renamed property name from "method" to "type"
-
-### Deprecated
+- BREAKING CHANGE - introducing misc-repository-tasks in config : searches need to be moved there 
+- BREAKING CHANGE - issue #66 : in config, renamed property name from "method" to "type"
 
 ### Removed
 - issue #62 - removing topics field from OutputIndicator -> use tags instead
