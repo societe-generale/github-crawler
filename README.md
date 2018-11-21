@@ -20,7 +20,14 @@ Github crawler will be able to report very useful information in few seconds !**
 
 ## Getting started 
 
-TODO
+If you want to provide your own configuration without any code customisation, then you can simply : 
+- download the latest -exec jar from [Maven](http://repo1.maven.org/maven2/com/societegenerale/github-crawler/github-crawler-starter/)
+- place your config file (say _application.yml_) next to the jar - see [below](README.md#Configuration on crawler side)
+- run from command line :
+
+```bash
+java -jar github-crawler-exec.jar --spring.config.location=./
+ ```
 
 
 ## How does it work ?
@@ -175,7 +182,7 @@ Some parsers are provided [here](https://github.com/societe-generale/github-craw
 
 see javadoc in each class for details
 
-## Miscellaneous tasks to perform
+## Miscellaneous tasks to perform 
 
 We sometimes need to get information on repositories, that is not found in the files it contains : we need to perform a "task" on each repository. As of v1.1.0, these are the task types available out of the box  :
 
@@ -188,7 +195,23 @@ see javadoc in each class for details
 
 ## Outputs
 
-The different available outputs are available in [this package](https://github.com/societe-generale/github-crawler/tree/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/output)
+Available default outputs are available in this [package](https://github.com/societe-generale/github-crawler/tree/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/output). 
+
+Each of them can be enabled at startup time through configuration. Have a look at [GitHubCrawlerOutputConfig](https://github.com/societe-generale/github-crawler/blob/master/github-crawler-autoconfigure/src/main/kotlin/com/societegenerale/githubcrawler/config/GitHubCrawlerOutputConfig.kt) to see which property activates which output : we use Spring ```@ConditionalOnProperty``` to decide which output to instantiate, depending on what we've configured under ```github-crawler.outputs```
+
+As of v1.1.0, there are 2 "general purpose" outputs available : 
+- [FileOutput](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/output/FileOutput.kt)
+- [HttpOutput](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/output/HttpOutput.kt)
+
+there are 3 "specific purpose" outputs available (see javadoc for more infos):
+- [CIdroidReadyCsvFileOutput](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/output/CIdroidReadyCsvFileOutput.kt)
+- [CIdroidReadyJsonFileOutput](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/output/CIdroidReadyJsonFileOutput.kt)
+- [SearchPatternInCodeCsvFileOutput](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/output/SearchPatternInCodeCsvFileOutput.kt)
+
+
+default output is [ConsoleOutput](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/output/ConsoleOutput.kt) 
+
+#### example using HTTP output, pointing to ElasticSearch with Kibana on top
 
 when running the crawler with HTTP output to push indicators in ElasticSearch, this is the kind of data you'll get 
 
@@ -230,27 +253,6 @@ Assuming you have a property file as defined above, all you need to do in your I
 3. run GitHubCrawlerApplication, passing _myOwn_ as profile 
 
 ![](/docs/images/runningFromIDE.png)
-
-
-## Running the crawler from the packaged -exec jar, from the command line :
-
-As mentioned above, we also package the starter as a standalone -exec jar (from v1.0.3 onward), available in [Maven Central](http://repo1.maven.org/maven2/com/societegenerale/github-crawler/github-crawler-starter/), so all you have to do is to fetch it and execute it with the property file(s) that you need. 
-
-Have a look at below very simple script :
-1. get the jar from Maven central (or place the jar you've built locally)
-2. place your yml config files along with the jar
-3. run the jar with your config files (--spring.config.location parameter) and the proper profile (--spring.profiles.active)
-
---> it should work and output will be available according to your configuration
-
-```bash
-#!/usr/bin/env bash
-crawlerVersion="1.1.0"
-wget --output-document github-crawler-exec.jar --no-check-certificate http://repo1.maven.org/maven2/com/societegenerale/github-crawler/github-crawler-starter/${crawlerVersion}/github-crawler-starter-${crawlerVersion}-exec.jar
-$JAVA_HOME/bin/java -jar github-crawler-exec.jar --spring.config.location=./ --spring.profiles.active=myOwn
-```
-
-Above script assumes that you have property file(s) in same directory as the script itself (_--spring.config.location=./_) and that one of them is declaring a _myOwn_ Spring Boot profile
 
 
 ## Extending the crawler (and contributing to it ?)
