@@ -18,6 +18,11 @@ These are all simple questions that sometimes take hours to answer, with always 
 Github crawler aims at automating the information gathering, by crawling an organization's repositories through GitHub API. **Even if your organization has hundreds of repositories,
 Github crawler will be able to report very useful information in few seconds !** 
 
+## Getting started 
+
+TODO
+
+
 ## How does it work ?
 
 Github crawler is a Spring Boot command line application, written in Kotlin.
@@ -123,9 +128,6 @@ github-crawler:
            queryString: "q=ConsulCatalogWatch"          
 ```
 
-
-
-
 ## Configuration on repository side 
 
 While the global configuration is defined along with github crawler, we have the possibility to override it at the repository level. 
@@ -162,24 +164,39 @@ You may want to "tag" some repos, to be able to filter easily on them when brows
 GitHub provides "topics" that are very easy to edit, which are actually similar to "tags".
 GithubCrawler crawls through repository and attaches tags information with all the repositories for which topics have been configured.
 
-## Parsers
+## File content parsers
 
-Some parsers are provided [here](https://github.com/societe-generale/github-crawler/tree/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers). There are 2 types of parsers and you can 
-easily add your own implementation by implementing one of the 2 interfaces (see javadoc for details) :
+Some parsers are provided [here](https://github.com/societe-generale/github-crawler/tree/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers). As of v1.1.0, available parser types out of the box are :
 
-- [FileContentParser](https://github.com/societe-generale/github-crawler/blob/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers/FileContentParser.kt)
-- [SearchResultParser](https://github.com/societe-generale/github-crawler/blob/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers/SearchResultParser.kt)
+- [countMatchingXmlElements](https://github.com/societe-generale/github-crawler/tree/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers/CountXmlElementsParser.kt)
+- [findFirstValueWithRegexpCapture](https://github.com/societe-generale/github-crawler/tree/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers/FirstMatchingRegexpParser.kt)
+- [findDependencyVersionInXml](https://github.com/societe-generale/github-crawler/tree/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers/PomXmlParserForDependencyVersion.kt)
+- [findFilePath](https://github.com/societe-generale/github-crawler/tree/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers/SimpleFilePathParser.kt) 
+
+see javadoc in each class for details
+
+## Miscellaneous tasks to perform
+
+We sometimes need to get information on repositories, that is not found in the files it contains : we need to perform a "task" on each repository. As of v1.1.0, these are the task types available out of the box  :
+
+- [countHitsOnRepoSearch](https://github.com/societe-generale/github-crawler/tree/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/repoTaskToPerform/CountHitsOnRepoSearch.kt) 
+- [pathsForHitsOnRepoSearch](https://github.com/societe-generale/github-crawler/tree/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/repoTaskToPerform/PathsForHitsOnRepoSearch.kt)
+- [repositoryOwnershipComputation](https://github.com/societe-generale/github-crawler/tree/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/repoTaskToPerform/ownership/RepoOwnershipComputer.kt)
+
+see javadoc in each class for details
 
 
 ## Outputs
 
-when running the crawler with above config and using HTTP output to push indicators in ElasticSearch, this is the kind of data you'll get 
+The different available outputs are available in [this package](https://github.com/societe-generale/github-crawler/tree/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/output)
 
-- different values for the same indicator, fetched by findFirstValueWithRegexpCapture method : 
+when running the crawler with HTTP output to push indicators in ElasticSearch, this is the kind of data you'll get 
+
+- different values for the same indicator, fetched with ```findFirstValueWithRegexpCapture``` parser: 
 
 ![](/docs/images/kibanaOutput1.png)
 
-- different values for the same indicator, fetched by findDependencyVersionInXml method : 
+- different values for the same indicator, fetched with ```findDependencyVersionInXml``` parser : 
 
 ![](/docs/images/kibanaOutput2.png)
 
@@ -199,7 +216,7 @@ Once you have this data, you can quickly do any dashboard you want, like here, w
 At build time, we produce several jars :
 
 - a _starter-exec_ jar, bigger because self-contained. If you don't need to extend it, just take this jar and run it from command line with your config
-- much smaller _regular_ jars (following [Spring Boot recommendations](https://github.com/spring-projects/spring-boot/wiki/Building-On-Spring-Boot), that contains just the compiled code : these are the jar you need to declare as a dependency if you want to extend Github crawler on your side. 
+- much smaller _regular_ jars (following [Spring Boot recommendations](https://github.com/spring-projects/spring-boot/wiki/Building-On-Spring-Boot), that contains just the compiled code : this is the jar you need to declare as a dependency if you want to extend Github crawler on your side. 
 
 
 ## Running the crawler from your IDE
@@ -228,8 +245,8 @@ Have a look at below very simple script :
 
 ```bash
 #!/usr/bin/env bash
-crawlerVersion="1.0.3"
-wget -P github-crawler-exec.jar http://repo1.maven.org/maven2/com/societegenerale/github-crawler/github-crawler-starter/${crawlerVersion}/github-crawler-starter-${crawlerVersion}-exec.jar --no-check-certificate
+crawlerVersion="1.1.0"
+wget --output-document github-crawler-exec.jar --no-check-certificate http://repo1.maven.org/maven2/com/societegenerale/github-crawler/github-crawler-starter/${crawlerVersion}/github-crawler-starter-${crawlerVersion}-exec.jar
 $JAVA_HOME/bin/java -jar github-crawler-exec.jar --spring.config.location=./ --spring.profiles.active=myOwn
 ```
 
