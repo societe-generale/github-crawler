@@ -173,12 +173,12 @@ GithubCrawler crawls through repository and attaches tags information with all t
 
 ## File content parsers
 
-Some parsers are provided [here](https://github.com/societe-generale/github-crawler/tree/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers). As of v1.1.0, available parser types out of the box are :
+Some parsers are provided [here](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers). As of v1.1.0, available parser types out of the box are :
 
-- [countMatchingXmlElements](https://github.com/societe-generale/github-crawler/tree/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers/CountXmlElementsParser.kt)
-- [findFirstValueWithRegexpCapture](https://github.com/societe-generale/github-crawler/tree/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers/FirstMatchingRegexpParser.kt)
-- [findDependencyVersionInXml](https://github.com/societe-generale/github-crawler/tree/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers/PomXmlParserForDependencyVersion.kt)
-- [findFilePath](https://github.com/societe-generale/github-crawler/tree/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers/SimpleFilePathParser.kt) 
+- [countMatchingXmlElements](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers/CountXmlElementsParser.kt)
+- [findFirstValueWithRegexpCapture](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers/FirstMatchingRegexpParser.kt)
+- [findDependencyVersionInXml](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers/PomXmlParserForDependencyVersion.kt)
+- [findFilePath](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers/SimpleFilePathParser.kt) 
 
 see javadoc in each class for details
 
@@ -186,16 +186,16 @@ see javadoc in each class for details
 
 We sometimes need to get information on repositories, that is not found in the files it contains : we need to perform a "task" on each repository. As of v1.1.0, these are the task types available out of the box  :
 
-- [countHitsOnRepoSearch](https://github.com/societe-generale/github-crawler/tree/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/repoTaskToPerform/CountHitsOnRepoSearch.kt) 
-- [pathsForHitsOnRepoSearch](https://github.com/societe-generale/github-crawler/tree/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/repoTaskToPerform/PathsForHitsOnRepoSearch.kt)
-- [repositoryOwnershipComputation](https://github.com/societe-generale/github-crawler/tree/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/repoTaskToPerform/ownership/RepoOwnershipComputer.kt)
+- [countHitsOnRepoSearch](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/repoTaskToPerform/CountHitsOnRepoSearch.kt) 
+- [pathsForHitsOnRepoSearch](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/repoTaskToPerform/PathsForHitsOnRepoSearch.kt)
+- [repositoryOwnershipComputation](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/repoTaskToPerform/ownership/RepoOwnershipComputer.kt)
 
 see javadoc in each class for details
 
 
 ## Outputs
 
-Available default outputs are available in this [package](https://github.com/societe-generale/github-crawler/tree/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/output). 
+Available default outputs are available in this [package](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/output). 
 
 Each of them can be enabled at startup time through configuration. Have a look at [GitHubCrawlerOutputConfig](https://github.com/societe-generale/github-crawler/blob/master/github-crawler-autoconfigure/src/main/kotlin/com/societegenerale/githubcrawler/config/GitHubCrawlerOutputConfig.kt) to see which property activates which output : we use Spring ```@ConditionalOnProperty``` to decide which output to instantiate, depending on what we've configured under ```github-crawler.outputs```
 
