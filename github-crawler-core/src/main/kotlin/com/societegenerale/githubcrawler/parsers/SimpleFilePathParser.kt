@@ -2,10 +2,8 @@ package com.societegenerale.githubcrawler.parsers
 
 import com.societegenerale.githubcrawler.IndicatorDefinition
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Component
 import java.util.*
 
-@Component
 
 /**
  * This parser is a bit special - it ignores the file content, and just returns the file path as an indicator value.

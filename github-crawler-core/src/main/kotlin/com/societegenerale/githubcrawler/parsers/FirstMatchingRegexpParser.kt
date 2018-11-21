@@ -2,11 +2,10 @@ package com.societegenerale.githubcrawler.parsers
 
 import com.societegenerale.githubcrawler.IndicatorDefinition
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Component
 import java.util.*
 import java.util.regex.Pattern
 
-@Component
+
 class FirstMatchingRegexpParser : FileContentParser {
 
     companion object {

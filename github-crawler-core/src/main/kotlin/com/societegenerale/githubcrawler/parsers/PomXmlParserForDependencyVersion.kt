@@ -2,7 +2,6 @@ package com.societegenerale.githubcrawler.parsers
 
 import com.societegenerale.githubcrawler.IndicatorDefinition
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Component
 import org.xml.sax.Attributes
 import org.xml.sax.InputSource
 import org.xml.sax.SAXException
@@ -12,7 +11,7 @@ import java.io.StringReader
 import java.util.*
 import javax.xml.parsers.SAXParserFactory
 
-@Component
+
 class PomXmlParserForDependencyVersion : FileContentParser {
 
     companion object {
