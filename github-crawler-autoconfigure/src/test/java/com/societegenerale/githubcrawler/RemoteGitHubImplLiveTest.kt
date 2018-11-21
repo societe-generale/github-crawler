@@ -25,7 +25,7 @@ class RemoteGitHubImplLiveTest {
 
         val remoteGitHubForUser = RemoteGitHubImpl("https://api.github.com", false,null);
 
-        val commits=remoteGitHubForUser.fetchCommits("myOrga","myRepo",150)
+        val commits=remoteGitHubForUser.fetchCommits("myOrga/myRepo",150)
 
         assertThat(commits).isEmpty()
     }
