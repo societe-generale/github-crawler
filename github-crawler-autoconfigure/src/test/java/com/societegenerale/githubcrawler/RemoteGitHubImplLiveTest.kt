@@ -23,7 +23,7 @@ class RemoteGitHubImplLiveTest {
     @Test
     fun shouldFetchCommits() {
 
-        val remoteGitHubForUser = RemoteGitHubImpl("https://api.github.com", false,null);
+        val remoteGitHubForUser = RemoteGitHubImpl("https://api.github.com", false,"someToken");
 
         val commits=remoteGitHubForUser.fetchCommits("myOrga/myRepo",150)
 
