@@ -22,7 +22,7 @@ Github crawler will be able to report very useful information in few seconds !**
 
 If you want to provide your own configuration without any code customisation, then you can simply : 
 - download the latest -exec jar from [Maven](http://repo1.maven.org/maven2/com/societegenerale/github-crawler/github-crawler-starter/)
-- place your config file (say _application.yml_) next to the jar - see [below](README.md#Configuration on crawler side)
+- place your config file (say _application.yml_) next to the jar - see [below](README.md#Configuration-on-crawler-side)
 - run from command line :
 
 ```bash
