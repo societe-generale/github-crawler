@@ -4,11 +4,9 @@ import com.societegenerale.githubcrawler.IndicatorDefinition
 import org.dom4j.Document
 import org.dom4j.io.SAXReader
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Component
 import org.xml.sax.InputSource
 import java.io.StringReader
 
-@Component
 class CountXmlElementsParser : FileContentParser {
 
     companion object {

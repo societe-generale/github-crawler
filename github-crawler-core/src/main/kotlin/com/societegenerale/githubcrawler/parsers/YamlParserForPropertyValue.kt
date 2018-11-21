@@ -2,11 +2,9 @@ package com.societegenerale.githubcrawler.parsers
 
 import com.societegenerale.githubcrawler.IndicatorDefinition
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Component
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.scanner.ScannerException
 
-@Component
 class YamlParserForPropertyValue : FileContentParser {
 
     companion object {
