@@ -128,9 +128,7 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub){
                                                   .asSequence().flatMap {it.asSequence()}
                                                   .groupBy({ it.key }, { it.value }) //now having a Map<Branch,List<Pair<String, Any>>>
 
-                                                  .mapValues{// mapping the values, to get a Map<String,Any> of results associated to a given Branch
-                                                        valuesForBranch -> valuesForBranch.value.map{it.first to it.second}.toMap()
-                                                    }
+                                                  .mapValues{it.value.toMap()}// mapping the values, to get a Map<String,Any> of results associated to a given Branch
 
         return repo.copy(miscTasksResults = allActionsResults)
     }
