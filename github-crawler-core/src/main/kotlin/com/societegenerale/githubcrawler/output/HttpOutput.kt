@@ -7,6 +7,9 @@ import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 
 
+/**
+ * This output will make a POST to the configured targetUrl, using the analyzed repository as a payload. If the analyzed repository has indicators for X branches, we'll post the indicators for each branch individually (so X times)
+ */
 class HttpOutput(private val targetUrl: String,
                  private val restTemplate: RestTemplate) : GitHubCrawlerOutput {
 

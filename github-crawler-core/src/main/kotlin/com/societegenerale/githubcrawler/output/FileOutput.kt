@@ -10,8 +10,10 @@ import java.nio.file.StandardOpenOption
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class FileOutput @Throws(IOException::class)
-constructor(filenamePrefix: String) : GitHubCrawlerOutput {
+/**
+ * the most basic output : will output each analyzed repository in a text file, using toString() on the repository
+ */
+class FileOutput (filenamePrefix: String) : GitHubCrawlerOutput {
 
     val log = LoggerFactory.getLogger(this.javaClass)
 

@@ -14,9 +14,12 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class CIdroidReadyJsonFileOutput @Throws(IOException::class)
-
-constructor(val indicatorsToOutput: List<String>, val withTags: Boolean=false) : GitHubCrawlerOutput {
+/**
+ * This is a specific output, when targeting to pipe the crawler output into CI-droid. CI-droid exposes a "bulk-actions API" that accepts an action to perform on a list of resources (that can be on many repositories).
+ *
+ * When using this output, we try to generate the list of resources, in a format as close as possible as the one expected by CI-droid, so that we don't need any re-processing and can directly copy-paste the content in the list of the resources in the json payload we're posting on the API.
+ */
+class CIdroidReadyJsonFileOutput (val indicatorsToOutput: List<String>, val withTags: Boolean=false) : GitHubCrawlerOutput {
 
     val log = LoggerFactory.getLogger(this.javaClass)
 
@@ -71,7 +74,7 @@ constructor(val indicatorsToOutput: List<String>, val withTags: Boolean=false) :
 
     private fun appendOtherIndicatorsIfAny(sb: StringBuilder, actualIndicators: Map<String, String>) {
         if (indicatorsToOutput.size > 1) {
-            //if there are others, we output them but they probbaly won't be processed given their name
+            //if there are others, we output them but they probably won't be processed given their name
             for (i in 1..indicatorsToOutput.size - 1) {
                 sb.append("\"otherIndicator$i\": \"").append(actualIndicators.get(indicatorsToOutput[i])).append("\",")
             }

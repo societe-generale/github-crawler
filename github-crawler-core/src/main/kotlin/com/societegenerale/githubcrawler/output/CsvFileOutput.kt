@@ -11,6 +11,9 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
+/**
+ * Abstract class for csv file outputs - taking care of creating the file, writing the header, and closing at the end.
+ */
 abstract class CsvFileOutput(initParam : Any) : GitHubCrawlerOutput{
 
     abstract fun getCsvHeaderFrom(initParam : Any):String
