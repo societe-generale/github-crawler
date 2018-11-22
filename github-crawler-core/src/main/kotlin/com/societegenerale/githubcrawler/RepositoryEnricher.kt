@@ -123,29 +123,26 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub){
 
     fun performMiscTasks(repo: Repository, miscRepositoryTasks: List<RepoTaskToPerform>): Repository {
 
-        val resultsCollector=repo.miscTasksResults.toMutableMap()
+        val listOfresults=miscRepositoryTasks.map { task -> task.perform(repo) }
 
-        //TODO rewrite this in a functional Kotlin way, to reduce maps
-        miscRepositoryTasks.forEach{
-            val miscRepoTaskResult=it.perform(repo)
+        // we now have a list of task results, each task result being a Map<Branch,Map<String, String>> (key being the indicator name, value being its value)
 
-            for ((branch, value) in miscRepoTaskResult) {
+        val resultAsMapWithProperKey=listOfresults.groupBy{it-> it.keys.first()}
 
-                if(resultsCollector[branch]==null){
-                    resultsCollector[branch]=value
-                }
+        // we now have Map<Branch,List<Map<String, String>>>...
 
-                else{
-                    val existingValuesForBranch=resultsCollector[branch]!!.toMutableMap()
-                    existingValuesForBranch.putAll(value)
 
-                    resultsCollector[branch]=existingValuesForBranch
-                }
-            }
+        val resultAsMapWithProperKeyAndProperValue=resultAsMapWithProperKey.mapValues{
+
+            valuesForBranch -> valuesForBranch.value.map { resMap -> resMap.entries.first().value }
+                                                    .associate { it.keys.first() to it.getValue(it.keys.first()) }
         }
 
-        return repo.copy(miscTasksResults = resultsCollector)
+        //we now have a Map<Branch,Map<String, String>> , as expected
+
+        return repo.copy(miscTasksResults = resultAsMapWithProperKeyAndProperValue)
     }
+
 
 
 }
