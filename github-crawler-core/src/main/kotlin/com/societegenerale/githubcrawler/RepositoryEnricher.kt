@@ -124,11 +124,13 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub){
     fun performMiscTasks(repo: Repository, miscRepositoryTasks: List<RepoTaskToPerform>): Repository {
 
         val allActionsResults=miscRepositoryTasks.map { task -> task.perform(repo) } //executing all tasks -> getting a List<Map<Branch,Pair<String, Any>>>
-                                .groupBy{it-> it.keys.first()} //grouping by Branch -> getting a Map<Branch,List<Pair<String, Any>>>
-                                .mapValues{// mapping the values, to get a Map<String,Any>
-                                    valuesForBranch -> valuesForBranch.value.map{singleEntryResult -> singleEntryResult.values.first() }
-                                        .associate{it.first to it.second}
-                                }
+
+                                                  .asSequence().flatMap {it.asSequence()}
+                                                  .groupBy({ it.key }, { it.value }) //now having a Map<Branch,List<Pair<String, Any>>>
+
+                                                  .mapValues{// mapping the values, to get a Map<String,Any> of results associated to a given Branch
+                                                        valuesForBranch -> valuesForBranch.value.map{it.first to it.second}.toMap()
+                                                    }
 
         return repo.copy(miscTasksResults = allActionsResults)
     }
