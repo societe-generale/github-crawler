@@ -60,7 +60,25 @@ class RepositoryEnricherTest {
         assertThat(resultForBranch1["search1"]).isEqualTo("value1a")
     }
 
+    @Test
+    fun shouldMergeMiscTaskResults_withSomeMultiBranchResults() {
 
+        val tasksToPerform = listOf(DummyActionToPerform(hashMapOf(Pair(masterBranch, Pair("search1","value1")))),
+                                    DummyActionToPerform(hashMapOf(Pair(masterBranch, Pair("search2","value2")),
+                                                                   Pair(branch1,Pair("search1","value1a") ))))
+
+
+        val repoAfterProcessing=repositoryEnricher.performMiscTasks(repository,tasksToPerform)
+
+        val resultForMasterBranch=repoAfterProcessing.miscTasksResults[masterBranch]!!
+        assertThat(resultForMasterBranch.keys).hasSize(2)
+        assertThat(resultForMasterBranch["search1"]).isEqualTo("value1")
+        assertThat(resultForMasterBranch["search2"]).isEqualTo("value2")
+
+        val resultForBranch1=repoAfterProcessing.miscTasksResults[branch1]!!
+        assertThat(resultForBranch1.keys).hasSize(1)
+        assertThat(resultForBranch1["search1"]).isEqualTo("value1a")
+    }
 
 
 
