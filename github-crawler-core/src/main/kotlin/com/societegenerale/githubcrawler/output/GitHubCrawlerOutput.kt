@@ -4,6 +4,14 @@ import com.societegenerale.githubcrawler.model.Repository
 import java.io.IOException
 
 
+/**
+ * Once a repository has been analyzed, it will passed to one or several GitHubCrawlerOutput(s).
+ *
+ * GitHubCrawlerOutput are activated at start-up time, based on properties in config file.
+ *
+ * @see GitHubCrawlerOutputConfig
+ *
+ */
 interface GitHubCrawlerOutput {
 
     @Throws(IOException::class)

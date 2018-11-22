@@ -21,7 +21,7 @@ Github crawler will be able to report very useful information in few seconds !**
 ## Getting started 
 
 If you want to provide your own configuration without any code customisation, then you can simply : 
-- download the latest -exec jar from [Maven](http://repo1.maven.org/maven2/com/societegenerale/github-crawler/github-crawler-starter/)
+- download the latest github-crawler-starter -exec jar from [Maven](http://repo1.maven.org/maven2/com/societegenerale/github-crawler/github-crawler-starter/)
 - place your config file (say _application.yml_) next to the jar - see [below](README.md#Configuration-on-crawler-side)
 - run from command line :
 
@@ -29,6 +29,7 @@ If you want to provide your own configuration without any code customisation, th
 java -jar github-crawler-exec.jar --spring.config.location=./
  ```
 
+(more examples are available in sections below, ie how to run from IDE and how to extend github crawler, and in this [repository](https://github.com/vincent-fuchs/my-custom-github-crawler/))
 
 ## How does it work ?
 
@@ -78,6 +79,10 @@ github-crawler:
     
     # by default, we'll crawl only the repositories' default branch. But in some cases, you may want to crawl all branches
     crawlAllBranches: true
+    
+    #by default, we'll crawl repositories in parallel. However, especially when facing an issue, crawling sequentially can help identifying the issue faster.
+    #therefore, providing the option to switch between parallel and sequential processing
+    crawl-in-parallel: true
     
     # default output is console - it will be configured automatically if no output is defined
     # the crawler takes a list of output, so you can configure several
@@ -287,9 +292,4 @@ public class PersonalGitHubCrawlerApplication implements CommandLineRunner {
 - add your own config or classes, the Spring Boot way : if you add your own, implementing the recognized interfaces for output or parsing, then Spring Boot will use them ! 
 see [here](https://github.com/vincent-fuchs/my-custom-github-crawler/blob/0e48dd7961b6b625802a2e1eb6b2fc4f8c4d5cdb/src/main/java/com/github/vincent_fuchs/output/CustomOutput.java) or [here](https://github.com/vincent-fuchs/my-custom-github-crawler/blob/ec7ed9a74f91b31794b8a0afb1196553434b1567/src/main/java/com/github/vincent_fuchs/parsers/MyOwnParser.java) for examples
 
-
-
-## Test strategy
-
-We follow a strict test driven strategy for the implementation. Contributions are welcome, but you'll need to submit decent tests along with your changes for them to be accepted. 
-Browse the tests to get an idea of what level of test is expected.
+- see the javadoc in [FileContentParser](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers/FileContentParser.kt) , [RepoTaskToPerform](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/repoTaskToPerform/RepoTaskToPerform.kt), [GitHubCrawlerOutput](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/output/GitHubCrawlerOutput.kt) which are the main extension points.
