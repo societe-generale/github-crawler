@@ -123,24 +123,14 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub){
 
     fun performMiscTasks(repo: Repository, miscRepositoryTasks: List<RepoTaskToPerform>): Repository {
 
-        val listOfresults=miscRepositoryTasks.map { task -> task.perform(repo) }
+        val allActionsResults=miscRepositoryTasks.map { task -> task.perform(repo) } //executing all tasks -> getting a List<Map<Branch,Pair<String, Any>>>
+                                .groupBy{it-> it.keys.first()} //grouping by Branch -> getting a Map<Branch,List<Pair<String, Any>>>
+                                .mapValues{// mapping the values, to get a Map<String,Any>
+                                    valuesForBranch -> valuesForBranch.value.map{singleEntryResult -> singleEntryResult.values.first() }
+                                        .associate{it.first to it.second}
+                                }
 
-        // we now have a list of task results, each task result being a Map<Branch,Map<String, String>> (key being the indicator name, value being its value)
-
-        val resultAsMapWithProperKey=listOfresults.groupBy{it-> it.keys.first()}
-
-        // we now have Map<Branch,List<Map<String, String>>>...
-
-
-        val resultAsMapWithProperKeyAndProperValue=resultAsMapWithProperKey.mapValues{
-
-            valuesForBranch -> valuesForBranch.value.map { resMap -> resMap.entries.first().value }
-                                                    .associate { it.keys.first() to it.getValue(it.keys.first()) }
-        }
-
-        //we now have a Map<Branch,Map<String, String>> , as expected
-
-        return repo.copy(miscTasksResults = resultAsMapWithProperKeyAndProperValue)
+        return repo.copy(miscTasksResults = allActionsResults)
     }
 
 

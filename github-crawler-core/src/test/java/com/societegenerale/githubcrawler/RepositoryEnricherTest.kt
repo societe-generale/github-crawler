@@ -17,6 +17,7 @@ class RepositoryEnricherTest {
     private val repositoryEnricher = RepositoryEnricher(mockRemoteGitHub)
 
     private val masterBranch=Branch("master")
+    private val branch1=Branch("branch1")
 
     val repository = Repository(name = "someRepo",
             creationDate = Date(),
@@ -41,14 +42,11 @@ class RepositoryEnricherTest {
     }
 
     @Test
-    fun shouldMergeMiscTaskResultsAsExpected() {
+    fun shouldMergeMiscTaskResults_eachResultIsOnSingleBranch() {
 
-        val masterBranch=Branch("master")
-        val branch1=Branch("branch1")
-
-        val tasksToPerform= listOf(DummyActionToPerform(mapOf(Pair(masterBranch, mapOf(Pair("search1","value1"))))),
-                                   DummyActionToPerform(mapOf(Pair(masterBranch, mapOf(Pair("search2","value2"))))),
-                                   DummyActionToPerform(mapOf(Pair(branch1, mapOf(Pair("search1","value1a"))))))
+        val tasksToPerform= listOf(DummyActionToPerform(hashMapOf(Pair(masterBranch, Pair("search1","value1")))),
+                                   DummyActionToPerform(hashMapOf(Pair(masterBranch, Pair("search2","value2")))),
+                                   DummyActionToPerform(hashMapOf(Pair(branch1, Pair("search1","value1a")))))
 
         val repoAfterProcessing=repositoryEnricher.performMiscTasks(repository,tasksToPerform)
 
@@ -62,9 +60,15 @@ class RepositoryEnricherTest {
         assertThat(resultForBranch1["search1"]).isEqualTo("value1a")
     }
 
-    class DummyActionToPerform(val resultToReturn : Map<Branch, Map<String, Any>>): RepoTaskToPerform{
 
-        override fun perform(repository: Repository): Map<Branch, Map<String, Any>> {
+
+
+
+
+
+    class DummyActionToPerform(val resultToReturn : Map<Branch, Pair<String, Any>>): RepoTaskToPerform{
+
+        override fun perform(repository: Repository): Map<Branch, Pair<String, Any>> {
            return resultToReturn
         }
     }

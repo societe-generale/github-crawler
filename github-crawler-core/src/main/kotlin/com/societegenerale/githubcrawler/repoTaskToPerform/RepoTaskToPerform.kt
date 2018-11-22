@@ -24,6 +24,6 @@ interface RepoTaskToPerform {
      * - If they do, then the action will be performed on each branch, and the (indicatorName,indicatorValue) pair will be stored as a value in the map, for each branch
      *
      */
-    fun perform(repository: Repository): Map<Branch, Map<String, Any>>
+    fun perform(repository: Repository): Map<Branch, Pair<String, Any>>
 
 }
