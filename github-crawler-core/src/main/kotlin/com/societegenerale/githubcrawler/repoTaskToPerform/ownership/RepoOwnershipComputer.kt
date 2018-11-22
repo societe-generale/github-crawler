@@ -33,7 +33,7 @@ class RepoOwnershipComputer(private val githubClient: RemoteGitHub,
     private var isParserInitiated: Boolean = false
 
 
-    override fun perform(repository: Repository): Map<Branch, Map<String, Any>> {
+    override fun perform(repository: Repository): Map<Branch, Pair<String, Any>> {
 
         //TODO see if we can make this an init block - currently, problem for tests, because it requires a remote server to be available
         // to fetch teams...  and the OwnershipParserImpl is instanciated (as part of the whole config) BEFORE the fake remote webserver is available
@@ -47,7 +47,7 @@ class RepoOwnershipComputer(private val githubClient: RemoteGitHub,
         if (memberIdToTeamName.isEmpty()) {
             log.info("Membership is empty, unable to compute repository owner...")
 
-            return hashMapOf(Pair(Branch(repository.defaultBranch), hashMapOf(Pair(INDICATOR_NAME, UNDEFINED))))
+            return hashMapOf(Pair(Branch(repository.defaultBranch), Pair(INDICATOR_NAME, UNDEFINED)))
         }
 
         val commits = githubClient.fetchCommits(repository.fullName, lastCommitNumber)
@@ -62,7 +62,7 @@ class RepoOwnershipComputer(private val githubClient: RemoteGitHub,
                 .sortedByDescending { it.value }
                 .firstOrNull()?.key ?: UNDEFINED
 
-        return hashMapOf(Pair(Branch(repository.defaultBranch), hashMapOf(Pair(INDICATOR_NAME, owner))))
+        return hashMapOf(Pair(Branch(repository.defaultBranch), Pair(INDICATOR_NAME, owner)))
 
 
     }

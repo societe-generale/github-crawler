@@ -123,29 +123,18 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub){
 
     fun performMiscTasks(repo: Repository, miscRepositoryTasks: List<RepoTaskToPerform>): Repository {
 
-        val resultsCollector=repo.miscTasksResults.toMutableMap()
+        val allActionsResults=miscRepositoryTasks.map { task -> task.perform(repo) } //executing all tasks -> getting a List<Map<Branch,Pair<String, Any>>>
 
-        //TODO rewrite this in a functional Kotlin way, to reduce maps
-        miscRepositoryTasks.forEach{
-            val miscRepoTaskResult=it.perform(repo)
+                                                  .asSequence().flatMap {it.asSequence()}
+                                                  .groupBy({ it.key }, { it.value }) //now having a Map<Branch,List<Pair<String, Any>>>
 
-            for ((branch, value) in miscRepoTaskResult) {
+                                                  .mapValues{// mapping the values, to get a Map<String,Any> of results associated to a given Branch
+                                                        valuesForBranch -> valuesForBranch.value.map{it.first to it.second}.toMap()
+                                                    }
 
-                if(resultsCollector[branch]==null){
-                    resultsCollector[branch]=value
-                }
-
-                else{
-                    val existingValuesForBranch=resultsCollector[branch]!!.toMutableMap()
-                    existingValuesForBranch.putAll(value)
-
-                    resultsCollector[branch]=existingValuesForBranch
-                }
-            }
-        }
-
-        return repo.copy(miscTasksResults = resultsCollector)
+        return repo.copy(miscTasksResults = allActionsResults)
     }
+
 
 
 }

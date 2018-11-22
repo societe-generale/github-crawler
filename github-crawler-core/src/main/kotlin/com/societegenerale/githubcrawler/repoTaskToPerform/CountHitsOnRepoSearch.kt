@@ -14,11 +14,11 @@ class CountHitsOnRepoSearch(private val name : String,
                             private val remoteGitHub: RemoteGitHub,
                             private val searchQuery: String) : RepoTaskToPerform {
 
-    override fun perform(repository: Repository): Map<Branch, Map<String, Any>> {
+    override fun perform(repository: Repository): Map<Branch, Pair<String, Any>> {
 
         val nbHitsMatching= remoteGitHub.fetchCodeSearchResult(repository, searchQuery).totalCount.toString()
 
-        return hashMapOf(Pair(Branch(repository.defaultBranch), hashMapOf(Pair(name,nbHitsMatching))))
+        return hashMapOf(Pair(Branch(repository.defaultBranch), Pair(name,nbHitsMatching)))
 
     }
 

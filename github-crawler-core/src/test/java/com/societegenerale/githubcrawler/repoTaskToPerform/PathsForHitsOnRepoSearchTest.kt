@@ -39,13 +39,12 @@ class PathsForHitsOnRepoSearchTest {
 
         val searchResult = pathsForHitsOnRepoSearch.perform(repoToSearch)
 
-        val searchResultOnRepo=searchResult[Branch("master")].orEmpty().get(testTaskName)
+        val searchResultOnRepo=searchResult[Branch("master")] as Pair
 
-        assertThat(searchResultOnRepo).isInstanceOf(List::class.java)
+        val valueForBranch = searchResultOnRepo.second as List<*>
 
-        if (searchResultOnRepo is List<*>) {
-            assertThat(searchResultOnRepo).containsExactly("path1", "path2")
-        }
+        assertThat(valueForBranch).containsExactly("path1", "path2")
+
     }
 
 
@@ -57,8 +56,8 @@ class PathsForHitsOnRepoSearchTest {
 
         val searchResult = pathsForHitsOnRepoSearch.perform(repoToSearch)
 
-        val searchResultOnRepo=searchResult[Branch("master")].orEmpty().get("myTestSearch")
+        val searchResultOnRepo=searchResult[Branch("master")] as Pair
 
-        assertThat(searchResultOnRepo as List<String>).containsOnly("not found")
+        assertThat(searchResultOnRepo.second as List<String>).containsOnly("not found")
     }
 }

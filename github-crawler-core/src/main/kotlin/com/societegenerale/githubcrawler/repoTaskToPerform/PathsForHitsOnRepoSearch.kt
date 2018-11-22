@@ -14,7 +14,7 @@ class PathsForHitsOnRepoSearch( private val taskName: String,
                                 private val searchQuery: String,
                                 private val remoteGitHub: RemoteGitHub) : RepoTaskToPerform {
 
-    override fun perform(repository: Repository): Map<Branch, Map<String, Any>> {
+    override fun perform(repository: Repository): Map<Branch, Pair<String, Any>> {
 
         val searchResult= remoteGitHub.fetchCodeSearchResult(repository, searchQuery)
 
@@ -26,7 +26,7 @@ class PathsForHitsOnRepoSearch( private val taskName: String,
             }
 
 
-        return hashMapOf(Pair(Branch(repository.defaultBranch), hashMapOf(Pair(taskName,paths))))
+        return hashMapOf(Pair(Branch(repository.defaultBranch), Pair(taskName,paths)))
 
     }
 
