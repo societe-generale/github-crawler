@@ -39,6 +39,12 @@ open class GitHubCrawlerParserConfig {
         return CountXmlElementsParser()
     }
 
+    @Bean
+    open fun jsonPathParser(): JsonPathParser {
+
+        return JsonPathParser()
+    }
+
 }
 
 
