@@ -6,10 +6,15 @@ import com.societegenerale.githubcrawler.IndicatorDefinition
 import org.slf4j.LoggerFactory
 import java.util.*
 
-class NpmDependencyVersionParser : FileContentParser {
+/**
+ * Provided with a given jsonPath, will parse the Json file (a NPM package.json for example), and will return the value associated to the element, if found.
+ *
+ * @note : implementation uses https://github.com/json-path/JsonPath , so refer there if you have doubts on how to specify the jsonP
+ */
+class JsonPathParser : FileContentParser {
 
     companion object {
-        const val FIND_NPM_PACKAGE_VERSION_METHOD = "findNpmDependencyVersion"
+        const val FIND_NPM_PACKAGE_VERSION_METHOD = "findValueForJsonPath"
         const val JSON_PATH = "jsonPath"
         const val NOT_FOUND = "not found"
     }

@@ -1,16 +1,16 @@
 package com.societegenerale.githubcrawler.parsers
 
 import com.societegenerale.githubcrawler.IndicatorDefinition
-import com.societegenerale.githubcrawler.parsers.NpmDependencyVersionParser.Companion.JSON_PATH
+import com.societegenerale.githubcrawler.parsers.JsonPathParser.Companion.JSON_PATH
 import org.apache.commons.io.FileUtils
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.springframework.util.ResourceUtils
 
 
-class NpmDependencyVersionParserTest {
+class JsonPathParserTest {
 
-    val npmDependencyVersionParser = NpmDependencyVersionParser()
+    val npmDependencyVersionParser = JsonPathParser()
 
     val sampleNpmPackageJsonFile = FileUtils.readFileToString(ResourceUtils.getFile("classpath:sampleNpmPackage.json"), "UTF-8")
 
@@ -18,7 +18,7 @@ class NpmDependencyVersionParserTest {
     fun should_find_angular_version_when_defined() {
 
         var angularCoreVersionIndicator = IndicatorDefinition("angularCoreVersion",
-                                                     NpmDependencyVersionParser.FIND_NPM_PACKAGE_VERSION_METHOD,
+                                                     JsonPathParser.FIND_NPM_PACKAGE_VERSION_METHOD,
                                                      mapOf(Pair(JSON_PATH, "dependencies.@angular/core")))
 
         val result = npmDependencyVersionParser.parseFileContentForIndicator(sampleNpmPackageJsonFile, "", angularCoreVersionIndicator)
@@ -30,7 +30,7 @@ class NpmDependencyVersionParserTest {
     fun should_return_NOT_FOUND_when_value_not_found() {
 
         var someLibVersionIndicator = IndicatorDefinition("someLib",
-                NpmDependencyVersionParser.FIND_NPM_PACKAGE_VERSION_METHOD,
+                JsonPathParser.FIND_NPM_PACKAGE_VERSION_METHOD,
                 mapOf(Pair(JSON_PATH, "dependencies.@someLib")))
 
         val result = npmDependencyVersionParser.parseFileContentForIndicator(sampleNpmPackageJsonFile, "", someLibVersionIndicator)

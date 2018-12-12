@@ -40,9 +40,9 @@ open class GitHubCrawlerParserConfig {
     }
 
     @Bean
-    open fun npmDependencyVersionParser(): NpmDependencyVersionParser {
+    open fun npmDependencyVersionParser(): JsonPathParser {
 
-        return NpmDependencyVersionParser()
+        return JsonPathParser()
     }
 
 }
