@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Added
+- adding a JsonPath parser
 
 ### Changed
 
