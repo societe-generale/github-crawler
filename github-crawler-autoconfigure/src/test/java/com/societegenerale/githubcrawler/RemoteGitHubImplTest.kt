@@ -49,14 +49,14 @@ class RemoteGitHubImplTest {
     @Test
     fun shouldCallUsersOrOrgsDependingOnConfig() {
 
-        val remoteGitHubForUser = RemoteGitHubImpl("http://localhost:9900/api/v3", true, null);
+        val remoteGitHubForUser = RemoteGitHubImpl("http://localhost:9900/api/v3", true, "someToken");
         assertThat(githubMockServer.getNbHitsOnUserRepos()).isEqualTo(0);
         remoteGitHubForUser.validateRemoteConfig("someUser");
         assertThat(githubMockServer.getNbHitsOnUserRepos()).isEqualTo(1);
 
         githubMockServer.reset()
 
-        val remoteGitHubForOrg = RemoteGitHubImpl("http://localhost:9900/api/v3", false, null);
+        val remoteGitHubForOrg = RemoteGitHubImpl("http://localhost:9900/api/v3", false, "someToken");
         remoteGitHubForOrg.validateRemoteConfig("MyOrganization");
         assertThat(githubMockServer.getNbHitsOnUserRepos()).isEqualTo(0);
     }
@@ -64,7 +64,7 @@ class RemoteGitHubImplTest {
     @Test
     fun shouldReturnEmptySet_whenNoCommitsInrepo() {
 
-        val remoteGitHubForUser = RemoteGitHubImpl("http://localhost:9900/api/v3", true, null);
+        val remoteGitHubForUser = RemoteGitHubImpl("http://localhost:9900/api/v3", true, "someToken");
         githubMockServer.setReturnError409OnFetchCommits(true)
 
         var commits=remoteGitHubForUser.fetchCommits("MyOrganization/myRepo",150)
