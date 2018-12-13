@@ -3,7 +3,6 @@
 ## [Unreleased]
 
 ### Added
-- adding a JsonPath parser
 
 ### Changed
 
@@ -12,6 +11,14 @@
 ### Removed
 
 ### Fixed
+
+##  [1.1.1] - 2018-12-13
+
+### Added
+- adding a JsonPath parser
+
+### Fixed
+- issue #72 - checking that Oauth token is not blank
 
 
 ## [1.1.0] - 2018-11-21 - BREAKING CHANGES
