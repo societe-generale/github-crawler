@@ -1,6 +1,6 @@
 # GitHub crawler
 
-[![Build Status](https://travis-ci.org/societe-generale/github-crawler.svg?branch=master)](https://travis-ci.org/societe-generale/github-crawler) ![DepShield Badge](https://depshield.sonatype.org/badges/societe-generale/github-crawler/depshield.svg)
+[![Build Status](https://travis-ci.org/societe-generale/github-crawler.svg?branch=master)](https://travis-ci.org/societe-generale/github-crawler)
 
 ## Why can it be useful ?
 
@@ -178,11 +178,12 @@ GithubCrawler crawls through repository and attaches tags information with all t
 
 ## File content parsers
 
-Some parsers are provided [here](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers). As of v1.1.0, available parser types out of the box are :
+Some parsers are provided [here](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers). As of v1.1.1, available parser types out of the box are :
 
 - [countMatchingXmlElements](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers/CountXmlElementsParser.kt)
 - [findFirstValueWithRegexpCapture](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers/FirstMatchingRegexpParser.kt)
 - [findDependencyVersionInXml](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers/PomXmlParserForDependencyVersion.kt)
+- [findValueForJsonPath](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers/JsonPathParser.kt)
 - [findFilePath](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers/SimpleFilePathParser.kt) 
 
 see javadoc in each class for details
