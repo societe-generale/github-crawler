@@ -1,20 +1,18 @@
 package com.societegenerale.githubcrawler.output
 
-
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.Appender
-import com.nhaarman.mockito_kotlin.argumentCaptor
-import com.nhaarman.mockito_kotlin.eq
-import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.*
 import com.societegenerale.githubcrawler.model.Branch
 import com.societegenerale.githubcrawler.model.Repository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.mockito.Mockito.*
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
+import java.time.LocalDate
 import java.util.*
 
 
@@ -22,6 +20,18 @@ class HttpOutputTest {
 
     private val logger = LoggerFactory.getLogger(HttpOutput::class.java)
 
+    private val dummyRepo = Repository(name = "repo1",
+            creationDate = Date(),
+            config = null,
+            defaultBranch = "master",
+            fullName = "orgName/repoName1",
+            lastUpdateDate = Date(),
+            reason = null,
+            url = "http://hello",
+            branchesToParse = listOf(Branch("mast-r"))
+    )
+
+    private val mockRestTemplate: RestTemplate = mock()
 
     @Test
     fun shouldLogResponseBodyWhenErrorDuringPost() {
@@ -29,30 +39,16 @@ class HttpOutputTest {
         val root = LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME) as ch.qos.logback.classic.Logger
         val mockAppender: Appender<ILoggingEvent> = mock()
 
-        `when`(mockAppender.name).thenReturn("MOCK")
+        whenever(mockAppender.name).thenReturn("MOCK")
         root.addAppender(mockAppender)
-
-
-        val mockRestTemplate: RestTemplate = mock()
 
         val httpOutput = HttpOutput("http://localhost", mockRestTemplate)
 
-        `when`(mockRestTemplate.postForEntity(anyString(),
-                                              any(OutputIndicator::class.java),
-                                              eq(String::class.java)
+        whenever(mockRestTemplate.postForEntity(any<String>(),
+                                                any<OutputIndicator>(),
+                                                eq(String::class.java)
                                              )
               ).thenThrow(HttpClientErrorException(HttpStatus.BAD_REQUEST, "Bad Request details"))
-
-        val dummyRepo = Repository(name = "repo1",
-                creationDate = Date(),
-                config = null,
-                defaultBranch = "master",
-                fullName = "orgName/repoName1",
-                lastUpdateDate = Date(),
-                reason = null,
-                url = "http://hello",
-                branchesToParse = listOf(Branch("master"))
-        )
 
         //ACTION
         httpOutput.output(dummyRepo)
@@ -65,5 +61,44 @@ class HttpOutputTest {
             assertThat(matchingLogEvent ).`as`("can't find a log statement with expected message").isNotNull
         }
     }
+
+    @Test
+    fun shouldHitProperUrlWhenPlaceHolderProvided() {
+
+        val httpOutput = HttpOutput("http://localhost/{YYYY-MM}", mockRestTemplate, LocalDate.of(2019, 1, 25))
+
+        whenever(mockRestTemplate.postForEntity(any<String>(),
+                                                any<OutputIndicator>(),
+                                                eq(String::class.java))
+        ).thenReturn(ResponseEntity("content",HttpStatus.ACCEPTED))
+
+        //ACTION
+        httpOutput.output(dummyRepo)
+
+        verify(mockRestTemplate,times(1)).postForEntity(eq("http://localhost/2019-01"),
+                any<OutputIndicator>(),
+                eq(String::class.java)
+                )
+    }
+
+    @Test
+    fun shouldHitProperUrlWhen_no_placeHolderProvided() {
+
+        val httpOutput = HttpOutput("http://localhost/YYYY-MM", mockRestTemplate, LocalDate.of(2019, 1, 25))
+
+        whenever(mockRestTemplate.postForEntity(any<String>(),
+                any<OutputIndicator>(),
+                eq(String::class.java))
+        ).thenReturn(ResponseEntity("content",HttpStatus.ACCEPTED))
+
+        //ACTION
+        httpOutput.output(dummyRepo)
+
+        verify(mockRestTemplate,times(1)).postForEntity(eq("http://localhost/YYYY-MM"),
+                any<OutputIndicator>(),
+                eq(String::class.java)
+        )
+    }
+
 }
 
