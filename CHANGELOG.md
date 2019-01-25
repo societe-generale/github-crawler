@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Added
+- possibility to configure targetUrl with a date pattern (useful when POSTing to ElasticSearch)
 
 ### Changed
 
