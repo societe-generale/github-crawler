@@ -19,6 +19,7 @@
 
 ### Changed
 - Upgraded Jacoco to 0.8.3
+- Upgraded Spring Boot to 2.1.2
 
 ##  [1.1.1] - 2018-12-13
 
