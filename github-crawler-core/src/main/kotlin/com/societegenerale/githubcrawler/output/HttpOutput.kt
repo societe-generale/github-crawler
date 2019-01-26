@@ -64,6 +64,7 @@ class HttpOutput(targetUrl: String,
 
         return if(containsPlaceHolders(targetUrlFromProperties)){
 
+            //if pattern is not found, this will fail, which is OK - stacktrace will explain the error.
             val patternToReplace=Regex(".*\\{(.*)}.*").find(targetUrlFromProperties)!!.groupValues[1]
 
             val valueForPlaceHolder=currentLocalDate.format(DateTimeFormatter.ofPattern(patternToReplace))
