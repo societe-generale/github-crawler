@@ -3,7 +3,6 @@
 ## [Unreleased]
 
 ### Added
-- possibility to configure targetUrl with a date pattern (useful when POSTing to ElasticSearch)
 
 ### Changed
 
@@ -12,6 +11,14 @@
 ### Removed
 
 ### Fixed
+
+##  [1.1.2] - 2019-01-26
+
+### Added
+- possibility to configure targetUrl with a date pattern (useful when POSTing to ElasticSearch)
+
+### Changed
+- Upgraded Jacoco to 0.8.3
 
 ##  [1.1.1] - 2018-12-13
 
