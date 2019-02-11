@@ -31,7 +31,7 @@ data class Repository(val url: String,
                       @JsonIgnore
                       val indicators: Map<Branch, Map<String, String>> = HashMap(),
                       @JsonIgnore
-                      val branchesToParse: List<Branch> = emptyList(),
+                      val branchesToParse: Set<Branch> = emptySet(),
                       @JsonIgnore
                       val tags: List<String> = emptyList(),
                       @JsonIgnore

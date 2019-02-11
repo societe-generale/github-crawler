@@ -122,7 +122,7 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
                 .map { repo -> repo.copy(crawlerRunId = crawlerRunId) }
                 .map { repo -> repo.copyTagsFromRepoTopics() }
                 .map { repo -> repo.addGroups(environment.activeProfiles) }
-                .map { repo -> repositoryEnricher.identifyBranchesToParse(repo, gitHubCrawlerProperties.crawlAllBranches, organizationName) }
+                .map { repo -> repositoryEnricher.identifyBranchesToParse(repo, gitHubCrawlerProperties.crawlAllBranches) }
                 .map { repo -> repositoryEnricher.fetchIndicatorsValues(repo, gitHubCrawlerProperties) }
                 .map {repo -> repositoryEnricher.performMiscTasks(repo, tasksToPerform) }
                 .map { repo -> publish(repo) }

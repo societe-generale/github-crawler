@@ -13,17 +13,17 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub){
 
     val log = LoggerFactory.getLogger(this.javaClass)
 
-    fun identifyBranchesToParse(repository: Repository, crawlAllBranches: Boolean, orgaName: String): Repository {
+    fun identifyBranchesToParse(repository: Repository, crawlAllBranches: Boolean): Repository {
 
         if (crawlAllBranches) {
 
-            val branchesFound: List<Branch> = remoteGitHub.fetchRepoBranches(orgaName, repository.name);
+            val branchesFound = remoteGitHub.fetchRepoBranches(repository.fullName);
 
             val repoWithBranches = repository.copy(branchesToParse = branchesFound)
 
             return repoWithBranches
         } else {
-            return repository.copy(branchesToParse = listOf(Branch(repository.defaultBranch)))
+            return repository.copy(branchesToParse = setOf(Branch(repository.defaultBranch)))
         }
     }
 
