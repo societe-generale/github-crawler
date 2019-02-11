@@ -53,7 +53,7 @@ class CIdroidReadyCsvFileOutputTest {
                 reason = null,
                 url = "http://hello",
                 indicators = indicators,
-                branchesToParse = listOf(Branch("master"))
+                branchesToParse = setOf(Branch("master"))
         )
 
     }
