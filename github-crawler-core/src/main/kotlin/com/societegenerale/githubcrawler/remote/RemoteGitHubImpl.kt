@@ -208,14 +208,14 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
     }
 
 
-    override fun fetchRepoBranches(repoFullName: String): Set<Branch> {
+    override fun fetchRepoBranches(repositoryFullName: String): Set<Branch> {
 
-        return internalGitHubClient.fetchRepoBranches(repoFullName)
+        return internalGitHubClient.fetchRepoBranches(repositoryFullName)
 
     }
 
-    override fun fetchOpenPRs(repoFullName: String): Set<PullRequest> {
-        return internalGitHubClient.fetchOpenPRs(repoFullName)
+    override fun fetchOpenPRs(repositoryFullName: String): Set<PullRequest> {
+        return internalGitHubClient.fetchOpenPRs(repositoryFullName)
     }
 
     /**
@@ -301,12 +301,12 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
         return internalGitHubClient.fetchTeamsMembers(teamId)
     }
 
-    override fun fetchRepoConfig(repoFullName: String, defaultBranch: String): RepositoryConfig {
+    override fun fetchRepoConfig(repositoryFullName: String, defaultBranch: String): RepositoryConfig {
 
         val configFileOnRepository: FileOnRepository
 
         try {
-            configFileOnRepository = internalGitHubClient.fetchFileOnRepo(repoFullName, defaultBranch, REPO_LEVEL_CONFIG_FILE)
+            configFileOnRepository = internalGitHubClient.fetchFileOnRepo(repositoryFullName, defaultBranch, REPO_LEVEL_CONFIG_FILE)
         } catch (e: GitHubResponseDecoder.NoFileFoundFeignException) {
             return RepositoryConfig()
         }
