@@ -72,7 +72,7 @@ class CIdroidReadyJsonFileOutput (val indicatorsToOutput: List<String>, val with
 
     }
 
-    private fun appendOtherIndicatorsIfAny(sb: StringBuilder, actualIndicators: Map<String, String>) {
+    private fun appendOtherIndicatorsIfAny(sb: StringBuilder, actualIndicators: Map<String, Any>) {
         if (indicatorsToOutput.size > 1) {
             //if there are others, we output them but they probably won't be processed given their name
             for (i in 1..indicatorsToOutput.size - 1) {

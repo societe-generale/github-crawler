@@ -29,7 +29,7 @@ data class Repository(val url: String,
                       @JsonProperty("full_name")
                       val fullName: String,
                       @JsonIgnore
-                      val indicators: Map<Branch, Map<String, String>> = HashMap(),
+                      val indicators: Map<Branch, Map<String, Any>> = HashMap(),
                       @JsonIgnore
                       val branchesToParse: Set<Branch> = emptySet(),
                       @JsonIgnore
@@ -75,7 +75,7 @@ data class Repository(val url: String,
     }
 
 
-    fun getIndicatorsForBranch(branchName: String): Map<String, String> {
+    fun getIndicatorsForBranch(branchName: String): Map<String, Any> {
 
         return indicators.get(Branch(branchName)) ?: emptyMap()
 
