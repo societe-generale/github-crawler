@@ -42,6 +42,8 @@ class CIdroidReadyCsvFileOutput(val indicatorsToOutput: List<String>) : CsvFileO
 
         val result = LinkedHashMap<Branch, MutableMap<String, Any>>();
 
+        //TODO there's probably a better, more kotlin-esque way to merge the 2 maps..
+
         for ((key, value) in miscTasksResults) {
             result[key] = HashMap(value)
 
