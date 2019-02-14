@@ -48,7 +48,7 @@ class CIdroidReadyCsvFileOutput(val indicatorsToOutput: List<String>) : CsvFileO
             result[key] = HashMap(value)
 
             if (indicatorsFromFiles.keys.contains(key)) {
-                result[key]!!.putAll(indicatorsFromFiles[key]!!)
+                result[key]?.putAll(indicatorsFromFiles[key]!!)
             }
         }
 
