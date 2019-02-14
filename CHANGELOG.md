@@ -3,7 +3,6 @@
 ## [Unreleased]
 
 ### Added
-- issue #78 - now we can report the number of open PRs and branches for each repository
 
 ### Changed
 
@@ -12,6 +11,11 @@
 ### Removed
 
 ### Fixed
+
+##  [1.1.3] - 2019-02-14
+
+### Added
+- issue #78 - now we can report the number of open PRs and branches for each repository
 
 ##  [1.1.2] - 2019-01-26
 
