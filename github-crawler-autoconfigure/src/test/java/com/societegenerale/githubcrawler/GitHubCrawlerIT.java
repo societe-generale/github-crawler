@@ -194,7 +194,7 @@ public class GitHubCrawlerIT {
 
         for (Repository processedRepository : processedRepositories) {
 
-			Map<String, String> parsedIndicators = processedRepository.getIndicatorsForBranch(defaultBranch);
+			Map<String, Object> parsedIndicators = processedRepository.getIndicatorsForBranch(defaultBranch);
 
             if (processedRepository.getName().equals(repoWithPomXml)) {
 
@@ -230,7 +230,7 @@ public class GitHubCrawlerIT {
 
 		String indicatorName = "docker_image_used";
 
-		Optional<String> indicatorValueFoundInFilePostRedirection = processedRepositories.stream().filter(repo -> repo.getName().equals(repoWithConfig))
+		Optional<Object> indicatorValueFoundInFilePostRedirection = processedRepositories.stream().filter(repo -> repo.getName().equals(repoWithConfig))
 				.map(repo -> repo.getIndicatorsForBranch("master"))
 				.filter(indicators -> indicators.containsKey(indicatorName))
 				.map(indicators -> indicators.get(indicatorName))
@@ -262,7 +262,7 @@ public class GitHubCrawlerIT {
 
 			for (String branchName : existingBranches) {
 
-				Map<String, String> parsedIndicators = processedRepository.getIndicatorsForBranch(branchName);
+				Map<String, Object> parsedIndicators = processedRepository.getIndicatorsForBranch(branchName);
 
 				if (processedRepository.getName().equals(repoWithPomXml)) {
 

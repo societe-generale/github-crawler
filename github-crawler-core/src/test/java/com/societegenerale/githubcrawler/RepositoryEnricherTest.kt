@@ -28,7 +28,7 @@ class RepositoryEnricherTest {
             reason = null,
             url="http://hello",
             excluded = false,
-            branchesToParse = listOf(masterBranch)
+            branchesToParse = setOf(masterBranch)
     )
 
     @Test

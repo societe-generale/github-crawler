@@ -2,6 +2,7 @@ package com.societegenerale.githubcrawler.remote
 
 import com.societegenerale.githubcrawler.RepositoryConfig
 import com.societegenerale.githubcrawler.model.Branch
+import com.societegenerale.githubcrawler.model.PullRequest
 import com.societegenerale.githubcrawler.model.Repository
 import com.societegenerale.githubcrawler.model.SearchResult
 import com.societegenerale.githubcrawler.model.commit.Commit
@@ -9,15 +10,11 @@ import com.societegenerale.githubcrawler.model.commit.DetailedCommit
 import com.societegenerale.githubcrawler.model.team.Team
 import com.societegenerale.githubcrawler.model.team.TeamMember
 
-
 interface RemoteGitHub {
 
-    fun fetchRepoConfig(repoFullName: String, defaultBranch: String): RepositoryConfig
+    fun fetchRepoConfig(repositoryFullName: String, defaultBranch: String): RepositoryConfig
 
-
-    fun fetchRepoBranches(organizationName: String, repositoryName: String):
-    //TODO this should be a Set, not a List
-            List<Branch>
+    fun fetchRepoBranches(repositoryFullName: String): Set<Branch>
 
     fun fetchCodeSearchResult(repository: Repository, query: String): SearchResult
 
@@ -41,6 +38,8 @@ interface RemoteGitHub {
      */
     @Throws(NoReachableRepositories::class)
     fun validateRemoteConfig(organizationName: String)
+
+    fun fetchOpenPRs(repositoryFullName: String): Set<PullRequest>
 
 }
 

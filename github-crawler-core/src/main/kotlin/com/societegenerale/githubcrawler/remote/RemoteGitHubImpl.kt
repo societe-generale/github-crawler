@@ -9,10 +9,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.societegenerale.githubcrawler.RepositoryConfig
-import com.societegenerale.githubcrawler.model.Branch
-import com.societegenerale.githubcrawler.model.FileOnRepository
-import com.societegenerale.githubcrawler.model.Repository
-import com.societegenerale.githubcrawler.model.SearchResult
+import com.societegenerale.githubcrawler.model.*
 import com.societegenerale.githubcrawler.model.commit.Commit
 import com.societegenerale.githubcrawler.model.commit.DetailedCommit
 import com.societegenerale.githubcrawler.model.team.Team
@@ -47,6 +44,7 @@ import java.lang.reflect.Type
  */
 @Suppress("TooManyFunctions") // most of methods are one liners, implementing the methods declared in interface
 class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val usersReposInsteadOfOrgasRepos: Boolean = false, val oauthToken: String) : RemoteGitHub {
+
 
 
     companion object {
@@ -210,10 +208,14 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
     }
 
 
-    override fun fetchRepoBranches(organizationName: String, repositoryName: String): List<Branch> {
+    override fun fetchRepoBranches(repositoryFullName: String): Set<Branch> {
 
-        return internalGitHubClient.fetchRepoBranches(organizationName, repositoryName)
+        return internalGitHubClient.fetchRepoBranches(repositoryFullName)
 
+    }
+
+    override fun fetchOpenPRs(repositoryFullName: String): Set<PullRequest> {
+        return internalGitHubClient.fetchOpenPRs(repositoryFullName)
     }
 
     /**
@@ -299,12 +301,12 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
         return internalGitHubClient.fetchTeamsMembers(teamId)
     }
 
-    override fun fetchRepoConfig(repoFullName: String, defaultBranch: String): RepositoryConfig {
+    override fun fetchRepoConfig(repositoryFullName: String, defaultBranch: String): RepositoryConfig {
 
         val configFileOnRepository: FileOnRepository
 
         try {
-            configFileOnRepository = internalGitHubClient.fetchFileOnRepo(repoFullName, defaultBranch, REPO_LEVEL_CONFIG_FILE)
+            configFileOnRepository = internalGitHubClient.fetchFileOnRepo(repositoryFullName, defaultBranch, REPO_LEVEL_CONFIG_FILE)
         } catch (e: GitHubResponseDecoder.NoFileFoundFeignException) {
             return RepositoryConfig()
         }
@@ -342,9 +344,8 @@ class GitHubOauthTokenSetter(val oauthToken: String?) : RequestInterceptor {
 @Headers("Accept: application/json")
 private interface InternalGitHubClient {
 
-    @RequestLine("GET /repos/{organizationName}/{repositoryName}/branches")
-    fun fetchRepoBranches(@Param("organizationName") organizationName: String,
-                          @Param("repositoryName") repositoryName: String): List<Branch>
+    @RequestLine("GET /repos/{fullName}/branches")
+    fun fetchRepoBranches(@Param("fullName") fullName: String): Set<Branch>
 
     @RequestLine("GET /repos/{repositoryFullName}/contents/{fileToFetch}?ref={branchName}")
     fun fetchFileOnRepo(@Param("repositoryFullName") repositoryFullName: String,
@@ -365,6 +366,9 @@ private interface InternalGitHubClient {
 
     @RequestLine("GET /teams/{team}/members")
     fun fetchTeamsMembers(@Param("team") teamId: String): Set<TeamMember>
+
+    @RequestLine("GET /repos/{fullName}/pulls?state=open")
+    fun fetchOpenPRs(@Param("fullName") fullName: String): Set<PullRequest>
 
 
 }

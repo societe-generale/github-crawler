@@ -28,7 +28,7 @@ class HttpOutputTest {
             lastUpdateDate = Date(),
             reason = null,
             url = "http://hello",
-            branchesToParse = listOf(Branch("mast-r"))
+            branchesToParse = setOf(Branch("master"))
     )
 
     private val mockRestTemplate: RestTemplate = mock()

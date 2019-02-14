@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Added
+- issue #78 - now we can report the number of open PRs and branches for each repository
 
 ### Changed
 
