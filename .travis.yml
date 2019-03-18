@@ -12,7 +12,7 @@ env:
     - # ^^ GPG_PASSPHRASE
 
 jdk:
-  - oraclejdk8
+  - openjdk8
 script:
   - mvn verify
 
