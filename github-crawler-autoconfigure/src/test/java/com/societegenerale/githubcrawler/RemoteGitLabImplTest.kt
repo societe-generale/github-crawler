@@ -48,11 +48,10 @@ class RemoteGitLabImplTest {
         gitlabMockServer.reset()
     }
 
+    val remoteGitLab = RemoteGitLabImpl("http://localhost:"+GITLAB_MOCK_PORT+"/api/v4",  "someToken");
 
     @Test
     fun shouldGetRepositoriesForAgroup() {
-
-        val remoteGitLab = RemoteGitLabImpl("http://localhost:"+GITLAB_MOCK_PORT+"/api/v4", true, "someToken");
 
         val repositoriesForMyGroup=remoteGitLab.fetchRepositories("myGroup")
 
@@ -60,6 +59,14 @@ class RemoteGitLabImplTest {
 
     }
 
+    @Test
+    fun shouldGetWantedFileContent() {
+
+        val fileContent=remoteGitLab.fetchFileContent("myGroup","master","Dockerfile")
+
+        assertThat(fileContent).isNotBlank()
+
+    }
 
 
 

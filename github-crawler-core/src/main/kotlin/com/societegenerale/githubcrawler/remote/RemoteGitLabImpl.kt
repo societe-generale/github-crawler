@@ -50,7 +50,7 @@ import java.util.stream.Collectors.toSet
  *
  */
 @Suppress("TooManyFunctions") // most of methods are one liners, implementing the methods declared in interface
-class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val usersReposInsteadOfOrgasRepos: Boolean = false, val oauthToken: String) : RemoteGitHub {
+class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val oauthToken: String) : RemoteGitHub {
 
 
 
@@ -91,9 +91,7 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val user
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun fetchFileContent(repositoryFullName: String, branchName: String, fileToFetch: String): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+
 
     override fun fetchCommits(repositoryFullName: String, perPage: Int): Set<Commit> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -128,6 +126,17 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val user
         val gitlabRepositories = internalGitLabClient.fetchRepositoriesForGroupId(gitLabGroup.id)
 
         return gitlabRepositories.stream().map { gitLabRepo -> gitLabRepo.toRepository() }.collect(toSet())
+
+    }
+
+    override fun fetchFileContent(repositoryFullName: String, branchName: String, fileToFetch: String): String {
+
+        try {
+            return  internalGitLabClient.fetchFileOnRepo(repositoryFullName,branchName,fileToFetch)
+        } catch (e: GitLabResponseDecoder.NoFileFoundFeignException) {
+            //translating exception to a non Feign specific one
+            throw NoFileFoundException("can't find $fileToFetch in repo $repositoryFullName, in branch $branchName")
+        }
 
     }
 
@@ -175,25 +184,27 @@ private interface InternalGitLabClient {
     @RequestLine("GET /groups/{groupId}/projects")
     fun fetchRepositoriesForGroupId(@Param("groupId") groupId: Int): List<GitLabRepository>
 
-
+    @RequestLine("GET /projects/{repoId}/repository/files/{filePath}/raw?ref={branchName}")
+    fun fetchFileOnRepo(@Param("repoId") repositoryId: String,
+                        @Param("branchName") branchName: String,
+                        @Param("filePath") fileToFetch: String): String
 
 
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+internal data class GitLabFileOnRepository(val file_name: String, val content : String)
+
 internal class GiLabErrorDecoder : ErrorDecoder {
 
     override fun decode(methodKey: String?, response: feign.Response?): java.lang.Exception {
-
-        if (response?.status() == HttpStatus.CONFLICT.value()) {
-            throw GitLabResponseDecoder.GitLabException("problem while fetching content... conflict state as per HTTP 409 code")
-        }
 
         return errorStatus(methodKey, response);
     }
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class GitLabGroup(val id : Int,val name : String)
+internal data class GitLabGroup(val id : Int,val name : String)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class GitLabRepository (val id : Int,val web_url : String, val path : String, val path_with_namespace : String, val default_branch : String, val created_at : Date, val last_activity_at : Date, val tag_list : List<String>) {

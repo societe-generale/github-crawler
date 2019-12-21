@@ -52,7 +52,7 @@ public class GitLabMock implements RemoteServiceMock {
                     routes.get("/api/v4/groups?search=:groupName", (context,groupName) -> getGroups(groupName));
 
                     routes.get("/api/v4/groups/:groupId/projects", (context, groupId) -> getRepositories(groupId));
-                    routes.get("/projects/:repoId/repository/files/:file_path", (context, repoId, filePath) -> getFileContent(repoId, filePath));
+                    routes.get("/api/v4/projects/:repoId/repository/files/:filePath/raw?ref=:branchName", (context, repoId, filePath,branchName) -> getFileContent(repoId, filePath, branchName));
 
                 }
         ).start(GITLAB_MOCK_PORT);
@@ -62,8 +62,14 @@ public class GitLabMock implements RemoteServiceMock {
         return true;
     }
 
-    private String getFileContent(String repoId, String filePath) {
-        return null;
+    private Payload getFileContent(String repoId, String filePath, String branchName) throws IOException {
+
+        String dummyFile="sample_Dockerfile";
+
+        log.info("fetching file {} from repo {} on branch",filePath,repoId,branchName);
+        log.info("returning content of {}",dummyFile);
+
+        return new Payload("text/plain; charset=utf-8", FileUtils.readFileToString(ResourceUtils.getFile("classpath:"+dummyFile), "UTF-8"));
     }
 
     private Payload getGroups(String byGroupName) throws IOException {
