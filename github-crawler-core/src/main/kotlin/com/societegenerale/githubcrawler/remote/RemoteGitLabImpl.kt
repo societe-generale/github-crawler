@@ -1,5 +1,6 @@
 package com.societegenerale.githubcrawler.remote
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -36,6 +37,9 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
+import java.util.*
+import java.util.stream.Collectors.toList
+import java.util.stream.Collectors.toSet
 
 
 /**
@@ -74,51 +78,67 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val user
     val log = LoggerFactory.getLogger(this.javaClass)
 
     private val objectMapper = jacksonObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    override fun fetchRepoConfig(repositoryFullName: String, defaultBranch: String): RepositoryConfig {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun fetchRepoBranches(repositoryFullName: String): Set<Branch> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun fetchCodeSearchResult(repository: Repository, query: String): SearchResult {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun fetchFileContent(repositoryFullName: String, branchName: String, fileToFetch: String): String {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun fetchCommits(repositoryFullName: String, perPage: Int): Set<Commit> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun fetchCommit(repositoryFullName: String, commitSha: String): DetailedCommit {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun fetchTeams(organizationName: String): Set<Team> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun fetchTeamsMembers(teamId: String): Set<TeamMember> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun fetchRepositories(groupName: String): Set<Repository> {
+
+        val gitLabGroups = internalGitLabClient.fetchGroupByName(groupName)
+
+        if(gitLabGroups.isEmpty() ){
+            throw GitLabResponseDecoder.GitLabException("no GitLab group found for groupName $groupName, so can't find any repositories to crawl")
+        }
+
+        if(gitLabGroups.size > 1 ){
+            throw GitLabResponseDecoder.GitLabException("more than one GitLab group found for groupName $groupName : $gitLabGroups. PLease refine the groupName so that the search yields only one result")
+        }
+
+        val gitLabGroup= gitLabGroups[0]
+
+        val gitlabRepositories = internalGitLabClient.fetchRepositoriesForGroupId(gitLabGroup.id)
+
+        return gitlabRepositories.stream().map { gitLabRepo -> gitLabRepo.toRepository() }.collect(toSet())
+
+    }
 
     @Throws(NoReachableRepositories::class)
     override fun validateRemoteConfig(organizationName: String) {
-
-        val response = performFirstCall(organizationName, isConfigCall = true)
-
-        try {
-            extractRepositories(response)
-        } catch (e: JsonProcessingException) {
-            throw NoReachableRepositories("not able to parse response : ${response.body()}", e)
-        }
-
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    @Throws(NoReachableRepositories::class)
-    private fun performFirstCall(organizationName: String, isConfigCall: Boolean = false): Response {
-
-        val reposUrl = "$gitLabUrl/" + userOrOrg() + "/$organizationName/repos"
-
-        val requestBuilder = okhttp3.Request.Builder()
-                .url(reposUrl)
-                .header(ACCEPT, APPLICATION_GITHUB_MERCY_PREVIEW_JSON)
-
-        addOAuthTokenIfRequired(requestBuilder)
-
-        if (isConfigCall) {
-            requestBuilder.addHeader(CONFIG_VALIDATION_REQUEST_HEADER, "true")
-        }
-
-        val request = requestBuilder.build()
-
-        val response: Response
-
-        try {
-            response = httpClient.newCall(request).execute()
-
-            if (!response.isSuccessful) {
-                throw NoReachableRepositories("GET call to ${reposUrl} wasn't successful. Code : ${response.code()}, Message : ${response.message()}")
-            }
-        } catch (e: IOException) {
-            throw NoReachableRepositories("Unable to perform the request", e)
-        }
-
-        return response
+    override fun fetchOpenPRs(repositoryFullName: String): Set<PullRequest> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
 
     private fun addOAuthTokenIfRequired(requestBuilder: okhttp3.Request.Builder): Unit {
 
@@ -126,206 +146,6 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val user
             requestBuilder.addHeader("Authorization", "token " + oauthToken)
         }
 
-    }
-
-    private fun userOrOrg(): String {
-        return if (usersReposInsteadOfOrgasRepos) "users" else "orgs"
-    }
-
-    override fun fetchRepositories(organizationName: String): Set<Repository> {
-
-        val repositoriesFromOrga = HashSet<Repository>()
-
-        val response = performFirstCall(organizationName)
-
-        repositoriesFromOrga.addAll(extractRepositories(response))
-
-        var nextPageLink = getLinkToNextPageIfAny(response)
-
-        var pageNb = 1
-
-        while (nextPageLink != null) {
-
-            pageNb++
-
-
-            val nextPageRequestBuilder = okhttp3.Request.Builder()
-                    .url(nextPageLink)
-                    .header(ACCEPT, APPLICATION_GITHUB_MERCY_PREVIEW_JSON)
-
-            addOAuthTokenIfRequired(nextPageRequestBuilder)
-
-            val nextPageRequest = nextPageRequestBuilder.build()
-
-            val nextPageResponse = httpClient.newCall(nextPageRequest).execute()
-
-            val nextPageRepositories = extractRepositories(nextPageResponse)
-
-            log.info("nb of repositories in $organizationName organization, page {} : {}", pageNb, nextPageRepositories.size)
-
-            repositoriesFromOrga.addAll(nextPageRepositories)
-            log.info("total nb of repositories in $organizationName organization so far : {}", nextPageRepositories.size)
-
-            nextPageLink = getLinkToNextPageIfAny(nextPageResponse)
-
-        }
-
-        return repositoriesFromOrga
-    }
-
-    private fun extractRepositories(response: Response): Set<Repository> {
-
-        try {
-
-            val body = response.body()
-
-            if (body != null) {
-                return objectMapper.readValue(body.string())
-            } else {
-                log.warn("response is null : {}", response)
-                return emptySet()
-            }
-        } catch (e: JsonProcessingException) {
-            throw NoReachableRepositories("not able to parse response", e)
-        }
-    }
-
-    private fun getLinkToNextPageIfAny(response: Response): String? {
-
-        val linksFromHeader = response.header("link")
-
-        if (linksFromHeader != null) {
-
-            val links = linksFromHeader.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-
-            for (i in links.indices) {
-                val link = links[i]
-                if (link.contains("rel=\"next\"")) {
-
-                    return link.substring(link.indexOf("<") + 1, link.lastIndexOf(">"))
-                }
-            }
-        }
-        return null
-    }
-
-
-    override fun fetchRepoBranches(repositoryFullName: String): Set<Branch> {
-
-        return internalGitLabClient.fetchRepoBranches(repositoryFullName)
-
-    }
-
-    override fun fetchOpenPRs(repositoryFullName: String): Set<PullRequest> {
-        return internalGitLabClient.fetchOpenPRs(repositoryFullName)
-    }
-
-    /**
-     * Because the GitHub API is a bit strange here, with the not very standard filter on repository, we need to build the request manually
-     */
-    override fun fetchCodeSearchResult(repository: Repository, query: String): SearchResult {
-
-        val searchCodeUrl = HttpUrl.parse(gitLabUrl +buildQueryString(query,repository))!!.newBuilder().build().toString()
-
-        val requestBuilder = okhttp3.Request.Builder()
-                .url(searchCodeUrl)
-                .header(ACCEPT, APPLICATION_JSON)
-
-        addOAuthTokenIfRequired(requestBuilder)
-
-        val request = requestBuilder.build()
-
-        val response = httpClient.newCall(request).execute()
-
-        val responseAsString=response.body()?.string()
-        log.info("response : "+responseAsString)
-
-        return try {
-            objectMapper.readValue(responseAsString, SearchResult::class.java)
-        }
-        catch(e : JsonParseException){
-            log.warn("parsing error",e)
-            SearchResult(0, emptyList())
-        }
-    }
-
-    private fun buildQueryString(queryString: String, repo: Repository): String {
-        return "/search/code?q=$queryString repo:${repo.fullName}"
-    }
-
-    override fun fetchFileContent(repositoryFullName: String, branchName: String, fileToFetch: String): String {
-
-        val fileOnRepository: FileOnRepository
-
-        try {
-            fileOnRepository = internalGitLabClient.fetchFileOnRepo(repositoryFullName, branchName, fileToFetch)
-        } catch (e: GitHubResponseDecoder.NoFileFoundFeignException) {
-            //translating exception to a non Feign specific one
-            throw NoFileFoundException("can't find $fileToFetch in repo $repositoryFullName, in branch $branchName")
-        }
-
-        val requestBuilder = okhttp3.Request.Builder()
-                .url(fileOnRepository.downloadUrl)
-                .header(ACCEPT, APPLICATION_JSON)
-
-        addOAuthTokenIfRequired(requestBuilder)
-
-        val request = requestBuilder.build()
-
-        val response = httpClient.newCall(request).execute()
-
-
-        return response.body()?.string() ?: ""
-
-    }
-
-    override fun fetchCommits(repositoryFullName: String, perPage: Int): Set<Commit> {
-
-        return try {
-                internalGitLabClient.fetchCommits(repositoryFullName, perPage)
-            }
-            catch (e: GitHubResponseDecoder.GithubException) {
-                log.warn("not able to fetch commits for repo $repositoryFullName",e)
-                emptySet()
-            }
-
-    }
-
-    override fun fetchCommit(repositoryFullName: String, commitSha: String): DetailedCommit {
-        return internalGitLabClient.fetchCommit(repositoryFullName, commitSha)
-    }
-
-    override fun fetchTeams(organizationName: String): Set<Team> {
-        return internalGitLabClient.fetchTeams(organizationName)
-    }
-
-    override fun fetchTeamsMembers(teamId: String): Set<TeamMember> {
-        return internalGitLabClient.fetchTeamsMembers(teamId)
-    }
-
-    override fun fetchRepoConfig(repositoryFullName: String, defaultBranch: String): RepositoryConfig {
-
-        val configFileOnRepository: FileOnRepository
-
-        try {
-            configFileOnRepository = internalGitLabClient.fetchFileOnRepo(repositoryFullName, defaultBranch, REPO_LEVEL_CONFIG_FILE)
-        } catch (e: GitHubResponseDecoder.NoFileFoundFeignException) {
-            return RepositoryConfig()
-        }
-
-        val requestBuilder = okhttp3.Request.Builder()
-                .url(configFileOnRepository.downloadUrl)
-                .header(ACCEPT, APPLICATION_JSON)
-
-        addOAuthTokenIfRequired(requestBuilder)
-
-        val request = requestBuilder.build()
-
-        val response = httpClient.newCall(request).execute()
-
-        val decoder = GitHubResponseDecoder()
-
-        return decoder.decodeRepoConfig(response)
     }
 
 }
@@ -346,31 +166,15 @@ class GitLabOauthTokenSetter(val oauthToken: String?) : RequestInterceptor {
 @Headers("Accept: application/json")
 private interface InternalGitLabClient {
 
-    @RequestLine("GET /repos/{fullName}/branches")
-    fun fetchRepoBranches(@Param("fullName") fullName: String): Set<Branch>
-
-    @RequestLine("GET /repos/{repositoryFullName}/contents/{fileToFetch}?ref={branchName}")
-    fun fetchFileOnRepo(@Param("repositoryFullName") repositoryFullName: String,
-                        @Param("branchName") branchName: String,
-                        @Param("fileToFetch") fileToFetch: String): FileOnRepository
-
-    @RequestLine("GET /repos/{repositoryFullName}/commits")
-    fun fetchCommits(@Param("repositoryFullName") repositoryFullName: String,
-                     @Param("per_page") perPage: Int): Set<Commit>
 
 
-    @RequestLine("GET /repos/{repositoryFullName}/commits/{commitSha}")
-    fun fetchCommit(@Param("repositoryFullName") repositoryFullName: String,
-                    @Param("commitSha") commitSha: String): DetailedCommit
+    @RequestLine("GET /groups?search={groupName}")
+    fun fetchGroupByName(@Param("groupName") groupName: String): List<GitLabGroup>
 
-    @RequestLine("GET /orgs/{organizationName}/teams")
-    fun fetchTeams(@Param("organizationName") organizationName: String): Set<Team>
+    @RequestLine("GET /groups/:groupId/projects")
+    fun fetchRepositoriesForGroupId(@Param("groupId") groupId: Int): List<GitLabRepository>
 
-    @RequestLine("GET /teams/{team}/members")
-    fun fetchTeamsMembers(@Param("team") teamId: String): Set<TeamMember>
 
-    @RequestLine("GET /repos/{fullName}/pulls?state=open")
-    fun fetchOpenPRs(@Param("fullName") fullName: String): Set<PullRequest>
 
 
 }
@@ -380,10 +184,22 @@ internal class GiLabErrorDecoder : ErrorDecoder {
     override fun decode(methodKey: String?, response: feign.Response?): java.lang.Exception {
 
         if (response?.status() == HttpStatus.CONFLICT.value()) {
-            throw GitHubResponseDecoder.GithubException("problem while fetching content... conflict state as per HTTP 409 code")
+            throw GitLabResponseDecoder.GitLabException("problem while fetching content... conflict state as per HTTP 409 code")
         }
 
         return errorStatus(methodKey, response);
+    }
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class GitLabGroup(val id : Int,val name : String)
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class GitLabRepository (val id : Int,val name : String) {
+    fun toRepository(): Repository {
+
+        return  Repository(url = "url1", fullName = "fullRepo1", name = "repo1", defaultBranch = "master", creationDate = Date(), lastUpdateDate = Date(), topics = listOf("topic1a", "topic1b"))
+
     }
 }
 
