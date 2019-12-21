@@ -41,6 +41,7 @@ import java.time.LocalDateTime
 import java.util.*
 import java.util.stream.Collectors.toList
 import java.util.stream.Collectors.toSet
+import kotlin.collections.HashMap
 
 
 /**
@@ -65,12 +66,16 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
 
     private val httpClient = OkHttpClient()
 
+    // hack-ish way.. GitLab doesn't use repoName but repoId when retrieving repo details or files
+    // so initializing a Map when discovering the repos for the first time, to reuse later
+    private val repoNameToIdMapping = HashMap<String,Int>()
 
     val log = LoggerFactory.getLogger(this.javaClass)
 
     private val objectMapper = jacksonObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     override fun fetchRepoConfig(repositoryFullName: String, defaultBranch: String): RepositoryConfig {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        //TODO
+        return RepositoryConfig()
     }
 
     override fun fetchRepoBranches(repositoryFullName: String): Set<Branch> {
@@ -115,14 +120,23 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
 
         val gitlabRepositories = internalGitLabClient.fetchRepositoriesForGroupId(gitLabGroup.id)
 
-        return gitlabRepositories.stream().map { gitLabRepo -> gitLabRepo.toRepository() }.collect(toSet())
 
+
+        return gitlabRepositories.stream().map { gitLabRepo -> recordMapping(gitLabRepo) }.map { gitLabRepo -> gitLabRepo!!.toRepository() }.collect(toSet())
+
+    }
+
+    private fun recordMapping(gitLabRepo: GitLabRepository?): GitLabRepository? {
+
+        repoNameToIdMapping.put(gitLabRepo!!.path_with_namespace,gitLabRepo?.id)
+
+        return gitLabRepo
     }
 
     override fun fetchFileContent(repositoryFullName: String, branchName: String, fileToFetch: String): String {
 
         try {
-            return  internalGitLabClient.fetchFileOnRepo(repositoryFullName,branchName,fileToFetch)
+            return  internalGitLabClient.fetchFileOnRepo(repoNameToIdMapping.get(repositoryFullName)!!,branchName,fileToFetch)
         } catch (e: GitLabResponseDecoder.NoFileFoundFeignException) {
             //translating exception to a non Feign specific one
             throw NoFileFoundException("can't find $fileToFetch in repo $repositoryFullName, in branch $branchName")
@@ -132,7 +146,7 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
 
     @Throws(NoReachableRepositories::class)
     override fun validateRemoteConfig(organizationName: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        //TODO implement
     }
 
     override fun fetchOpenPRs(repositoryFullName: String): Set<PullRequest> {
@@ -164,7 +178,7 @@ private interface InternalGitLabClient {
     fun fetchRepositoriesForGroupId(@Param("groupId") groupId: Int): List<GitLabRepository>
 
     @RequestLine("GET /projects/{repoId}/repository/files/{filePath}/raw?ref={branchName}")
-    fun fetchFileOnRepo(@Param("repoId") repositoryId: String,
+    fun fetchFileOnRepo(@Param("repoId") repositoryId: Int,
                         @Param("branchName") branchName: String,
                         @Param("filePath") fileToFetch: String): String
 

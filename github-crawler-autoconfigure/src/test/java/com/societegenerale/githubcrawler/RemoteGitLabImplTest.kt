@@ -62,10 +62,24 @@ class RemoteGitLabImplTest {
     @Test
     fun shouldGetWantedFileContent() {
 
-        val fileContent=remoteGitLab.fetchFileContent("myGroup","master","Dockerfile")
+        remoteGitLab.fetchRepositories("myGroup")
+
+        val fileContent=remoteGitLab.fetchFileContent("h5bp/html5-boilerplate","master","Dockerfile")
 
         assertThat(fileContent).isNotBlank()
 
+    }
+
+    @Test
+    fun shouldQueryFileCOntentWithRepoIdINsteadOfRepoName() {
+
+        remoteGitLab.fetchRepositories("myGroup")
+
+        val fileContent=remoteGitLab.fetchFileContent("h5bp/html5-boilerplate","master","Dockerfile")
+
+        assertThat(fileContent).isNotBlank()
+
+        assertThat(gitlabMockServer.repoIdsForWhichFileHasBeenFetched).containsOnly("16")
     }
 
 

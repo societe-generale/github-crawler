@@ -9,11 +9,13 @@ import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput
 import com.societegenerale.githubcrawler.parsers.FileContentParser
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
 import com.societegenerale.githubcrawler.remote.RemoteGitHubImpl
+import com.societegenerale.githubcrawler.remote.RemoteGitLabImpl
 import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskBuilder
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
+import org.springframework.context.annotation.Profile
 import org.springframework.core.convert.ConversionService
 import org.springframework.core.env.Environment
 
@@ -53,9 +55,17 @@ open class GitHubCrawlerAutoConfiguration {
 
 
     @Bean
+    @Profile("!gitLab")
     open fun remoteGitHub(gitHubCrawlerProperties: GitHubCrawlerProperties): RemoteGitHub {
 
         return RemoteGitHubImpl(gitHubCrawlerProperties.githubConfig.apiUrl,gitHubCrawlerProperties.githubConfig.crawlUsersRepoInsteadOfOrgasRepos,gitHubCrawlerProperties.githubConfig.oauthToken)
+    }
+
+    @Bean
+    @Profile("gitLab")
+    open fun remoteGitLab(gitHubCrawlerProperties: GitHubCrawlerProperties): RemoteGitHub {
+
+        return RemoteGitLabImpl(gitHubCrawlerProperties.githubConfig.apiUrl,gitHubCrawlerProperties.githubConfig.oauthToken)
     }
 
 }

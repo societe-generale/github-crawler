@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.societegenerale.githubcrawler.model.team.Membership;
 import net.codestory.http.Context;
 import net.codestory.http.WebServer;
 import net.codestory.http.constants.HttpStatus;
@@ -35,6 +36,12 @@ public class GitLabMock implements RemoteServiceMock {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(GitLabMock.class);
 
     private static boolean hasStarted = false;
+
+    public List<String> getRepoIdsForWhichFileHasBeenFetched() {
+        return repoIdsForWhichFileHasBeenFetched;
+    }
+
+    private List<String> repoIdsForWhichFileHasBeenFetched = new ArrayList();
 
     public static boolean hasStarted() {
         return hasStarted;
@@ -63,6 +70,8 @@ public class GitLabMock implements RemoteServiceMock {
     }
 
     private Payload getFileContent(String repoId, String filePath, String branchName) throws IOException {
+
+        repoIdsForWhichFileHasBeenFetched.add(repoId);
 
         String dummyFile="sample_Dockerfile";
 
@@ -94,7 +103,7 @@ public class GitLabMock implements RemoteServiceMock {
 
     @Override
     public void reset() {
-
+        repoIdsForWhichFileHasBeenFetched.clear();
     }
 
 }
