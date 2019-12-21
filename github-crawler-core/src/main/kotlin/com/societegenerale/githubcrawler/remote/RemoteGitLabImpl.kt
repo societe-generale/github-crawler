@@ -50,17 +50,7 @@ import java.util.stream.Collectors.toSet
  *
  */
 @Suppress("TooManyFunctions") // most of methods are one liners, implementing the methods declared in interface
-class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val oauthToken: String) : RemoteGitHub {
-
-
-
-    companion object {
-        const val REPO_LEVEL_CONFIG_FILE = ".githubCrawler"
-        const val APPLICATION_JSON = "application/json"
-        const val ACCEPT = "accept"
-        const val CONFIG_VALIDATION_REQUEST_HEADER = "X-configValidationRequest"
-        const val APPLICATION_GITHUB_MERCY_PREVIEW_JSON = "application/vnd.github.mercy-preview+json"
-    }
+class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val privateToken: String) : RemoteGitHub {
 
     private val internalGitLabClient: InternalGitLabClient = Feign.builder()
             .client(ApacheHttpClient())
@@ -68,7 +58,7 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val oaut
             .decoder(GitLabResponseDecoder())
             .errorDecoder(GiLabErrorDecoder())
             .decode404()
-            .requestInterceptor(GitLabOauthTokenSetter(oauthToken))
+            .requestInterceptor(GitLabPrivateTokenSetter(privateToken))
             .logger(Slf4jLogger(RemoteGitLabImpl::class.java))
             .logLevel(Logger.Level.FULL)
             .target<InternalGitLabClient>(InternalGitLabClient::class.java, gitLabUrl)
@@ -149,23 +139,14 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val oaut
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-
-    private fun addOAuthTokenIfRequired(requestBuilder: okhttp3.Request.Builder): Unit {
-
-        if (oauthToken.isNotBlank()) {
-            requestBuilder.addHeader("Authorization", "token " + oauthToken)
-        }
-
-    }
-
 }
 
-class GitLabOauthTokenSetter(val oauthToken: String?) : RequestInterceptor {
+class GitLabPrivateTokenSetter(val privateToken: String?) : RequestInterceptor {
 
     override fun apply(requestTemplate: RequestTemplate?) {
 
-        if (requestTemplate != null && oauthToken != null) {
-            requestTemplate.header("Authorization", "token " + oauthToken)
+        if (requestTemplate != null && privateToken != null) {
+            requestTemplate.header("PRIVATE-TOKEN", privateToken)
         }
 
     }
@@ -175,8 +156,6 @@ class GitLabOauthTokenSetter(val oauthToken: String?) : RequestInterceptor {
 
 @Headers("Accept: application/json")
 private interface InternalGitLabClient {
-
-
 
     @RequestLine("GET /groups?search={groupName}")
     fun fetchGroupByName(@Param("groupName") groupName: String): List<GitLabGroup>
@@ -191,9 +170,6 @@ private interface InternalGitLabClient {
 
 
 }
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-internal data class GitLabFileOnRepository(val file_name: String, val content : String)
 
 internal class GiLabErrorDecoder : ErrorDecoder {
 
@@ -247,7 +223,7 @@ internal class GitLabResponseDecoder : Decoder {
 
         if (response.status() == HttpStatus.NOT_FOUND.value()) {
 
-            if (type.typeName == FileOnRepository::class.java.name) {
+            if (type.typeName == String::class.java.name) {
                 throw NoFileFoundFeignException("no file found on repository")
             } else {
                 throw NoFileFoundFeignException("problem while fetching content, of unknown type ${type.typeName}")
