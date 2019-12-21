@@ -37,6 +37,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
+import java.time.LocalDateTime
 import java.util.*
 import java.util.stream.Collectors.toList
 import java.util.stream.Collectors.toSet
@@ -171,7 +172,7 @@ private interface InternalGitLabClient {
     @RequestLine("GET /groups?search={groupName}")
     fun fetchGroupByName(@Param("groupName") groupName: String): List<GitLabGroup>
 
-    @RequestLine("GET /groups/:groupId/projects")
+    @RequestLine("GET /groups/{groupId}/projects")
     fun fetchRepositoriesForGroupId(@Param("groupId") groupId: Int): List<GitLabRepository>
 
 
@@ -195,10 +196,17 @@ internal class GiLabErrorDecoder : ErrorDecoder {
 data class GitLabGroup(val id : Int,val name : String)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class GitLabRepository (val id : Int,val name : String) {
+data class GitLabRepository (val id : Int,val web_url : String, val path : String, val path_with_namespace : String, val default_branch : String, val created_at : Date, val last_activity_at : Date, val tag_list : List<String>) {
+
     fun toRepository(): Repository {
 
-        return  Repository(url = "url1", fullName = "fullRepo1", name = "repo1", defaultBranch = "master", creationDate = Date(), lastUpdateDate = Date(), topics = listOf("topic1a", "topic1b"))
+        return  Repository(url = web_url,
+                           fullName = path_with_namespace,
+                           name = path,
+                           defaultBranch = default_branch,
+                           creationDate = created_at,
+                           lastUpdateDate = last_activity_at,
+                           topics = tag_list)
 
     }
 }

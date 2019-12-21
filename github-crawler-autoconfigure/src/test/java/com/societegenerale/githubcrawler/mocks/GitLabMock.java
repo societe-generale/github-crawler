@@ -51,7 +51,7 @@ public class GitLabMock implements RemoteServiceMock {
 
                     routes.get("/api/v4/groups?search=:groupName", (context,groupName) -> getGroups(groupName));
 
-                    routes.get("/groups/:groupId/projects", (context, groupId) -> getRepositories(groupId));
+                    routes.get("/api/v4/groups/:groupId/projects", (context, groupId) -> getRepositories(groupId));
                     routes.get("/projects/:repoId/repository/files/:file_path", (context, repoId, filePath) -> getFileContent(repoId, filePath));
 
                 }
@@ -74,9 +74,11 @@ public class GitLabMock implements RemoteServiceMock {
 
     }
 
-    private List getRepositories(String groupId) {
+    private Payload getRepositories(String groupId) throws IOException {
 
-        return null;
+        String repositoriesForGroup = FileUtils.readFileToString(ResourceUtils.getFile("classpath:gitLabRepositories.json"), "UTF-8");
+
+        return new Payload("application/json", repositoriesForGroup);
     }
 
     @Override
