@@ -1,14 +1,11 @@
 package com.societegenerale.githubcrawler.remote
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.core.JsonParseException
-import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.societegenerale.githubcrawler.RepositoryConfig
 import com.societegenerale.githubcrawler.model.*
 import com.societegenerale.githubcrawler.model.commit.Commit
@@ -22,24 +19,19 @@ import feign.codec.ErrorDecoder
 import feign.gson.GsonEncoder
 import feign.httpclient.ApacheHttpClient
 import feign.slf4j.Slf4jLogger
-import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
-import okhttp3.Response
 import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters
 import org.springframework.cloud.openfeign.support.ResponseEntityDecoder
 import org.springframework.cloud.openfeign.support.SpringDecoder
-
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
-import java.time.LocalDateTime
 import java.util.*
-import java.util.stream.Collectors.toList
 import java.util.stream.Collectors.toSet
 import kotlin.collections.HashMap
 
@@ -52,6 +44,10 @@ import kotlin.collections.HashMap
  */
 @Suppress("TooManyFunctions") // most of methods are one liners, implementing the methods declared in interface
 class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val privateToken: String) : RemoteGitHub {
+
+    companion object {
+        const val REPO_LEVEL_CONFIG_FILE = ".gitlabCrawler"
+    }
 
     private val internalGitLabClient: InternalGitLabClient = Feign.builder()
             .client(ApacheHttpClient())
@@ -73,10 +69,22 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
     val log = LoggerFactory.getLogger(this.javaClass)
 
     private val objectMapper = jacksonObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
     override fun fetchRepoConfig(repositoryFullName: String, defaultBranch: String): RepositoryConfig {
-        //TODO
-        return RepositoryConfig()
+
+        val configFileOnRepository: String
+
+        try {
+            configFileOnRepository = internalGitLabClient.fetchFileOnRepo(repoNameToIdMapping[repositoryFullName]!!, defaultBranch, RemoteGitLabImpl.REPO_LEVEL_CONFIG_FILE)
+        } catch (e: GitHubResponseDecoder.NoFileFoundFeignException) {
+            return RepositoryConfig()
+        }
+
+        val decoder = GitLabResponseDecoder()
+
+        return decoder.buildRepositoryConfig(configFileOnRepository)
     }
+
 
     override fun fetchRepoBranches(repositoryFullName: String): Set<Branch> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -222,16 +230,6 @@ internal class GitLabResponseDecoder : Decoder {
         repoConfigMapper.registerModule(KotlinModule())
     }
 
-    fun decodeRepoConfig(response: okhttp3.Response): RepositoryConfig {
-
-        val writer = StringWriter()
-        IOUtils.copy(response.body()?.byteStream(), writer, "UTF-8")
-        val responseAsString = writer.toString()
-
-        return parseRepositoryConfigResponse(responseAsString, response)
-    }
-
-
     @Throws(IOException::class)
     override fun decode(response: feign.Response, type: Type): Any {
 
@@ -263,7 +261,7 @@ internal class GitLabResponseDecoder : Decoder {
         }
     }
 
-    private fun parseRepositoryConfigResponse(responseAsString: String, response: okhttp3.Response): RepositoryConfig {
+    fun buildRepositoryConfig(responseAsString: String): RepositoryConfig {
         if (responseAsString.isEmpty()) {
             return RepositoryConfig()
         }
@@ -271,7 +269,7 @@ internal class GitLabResponseDecoder : Decoder {
         try {
             return repoConfigMapper.readValue(responseAsString, RepositoryConfig::class.java)
         } catch (e: IOException) {
-            throw Repository.RepoConfigException("unable to parse config for repo - content : \"" + response.body() + "\"", e)
+            throw Repository.RepoConfigException("unable to parse config for repo - content : \"$responseAsString\"", e)
         }
     }
 
