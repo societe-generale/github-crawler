@@ -75,7 +75,7 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
         val configFileOnRepository: String
 
         try {
-            configFileOnRepository = internalGitLabClient.fetchFileOnRepo(repoNameToIdMapping[repositoryFullName]!!, defaultBranch, RemoteGitLabImpl.REPO_LEVEL_CONFIG_FILE)
+            configFileOnRepository = internalGitLabClient.fetchFileOnRepo(repoNameToIdMapping[repositoryFullName]!!, defaultBranch, REPO_LEVEL_CONFIG_FILE)
         } catch (e: GitHubResponseDecoder.NoFileFoundFeignException) {
             return RepositoryConfig()
         }
@@ -127,8 +127,6 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
         val gitLabGroup= gitLabGroups[0]
 
         val gitlabRepositories = internalGitLabClient.fetchRepositoriesForGroupId(gitLabGroup.id)
-
-
 
         return gitlabRepositories.stream().map { gitLabRepo -> recordMapping(gitLabRepo) }.map { gitLabRepo -> gitLabRepo!!.toRepository() }.collect(toSet())
 
