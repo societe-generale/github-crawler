@@ -176,6 +176,31 @@ You may want to "tag" some repos, to be able to filter easily on them when brows
 GitHub provides "topics" that are very easy to edit, which are actually similar to "tags".
 GithubCrawler crawls through repository and attaches tags information with all the repositories for which topics have been configured.
 
+## Gitlab support
+
+From v1.1.4 onward, basic support for gitLab is available ! It all boils down to implementing a GitLab specific version of ```RemoteGitHub``` interface. Primary support is still for Github though, so not all the naming and config is aligned for GitLab (at least for now).
+
+### Running the crawler for Gitlab
+
+- run the application with proper Spring Boot profile, ie with ```-Dspring.profiles.active=gitLab``` on the command line
+- Since the crawler is still primarily for GitHub, the config properties haven't been adapted (yet ?) for Gitlab. So your config would look like : 
+
+```
+    github-crawler:
+      githubConfig:
+        apiUrl: https://gitlab.com/api/v4/
+
+        # your Gitlab personal access token
+        oauthToken: "5yL4_Y9hyC_YX9urZN_G"
+
+        # your Gitlab "group"
+        organizationName: myJavaProjects
+```
+
+Not all methods defined in [RemoteGitHub](https://github.com/societe-generale/github-crawler/blob/b86c7483e4f361211750f454d70ccdec135ad655/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/remote/RemoteGitHub.kt) interface may have been implemented for Gitlab : ```NotImplementedError``` would be thrown in that case. If you need them, you can implement them in ```RemoteGitLabImpl``` (and contribute them back through a pull request ?).
+
+Similarly, we may have added methods in the interface for some of our Gitlab specific use-cases : in that case, these methods may not have been implemented in the [Github version of the interface](https://github.com/societe-generale/github-crawler/blob/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/remote/RemoteGitHubImpl.kt) 
+ 
 ## File content parsers
 
 Some parsers are provided [here](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers). As of v1.1.1, available parser types out of the box are :
