@@ -20,7 +20,7 @@ import org.springframework.core.convert.ConversionService
 import org.springframework.core.env.Environment
 
 @Configuration
-@Import(GitHubCrawlerParserConfig::class,GitHubCrawlerOutputConfig::class,GitHubCrawlerMiscTasksConfig::class)
+@Import(GitHubCrawlerParserConfig::class,GitHubCrawlerOutputConfig::class,GitHubCrawlerMiscTasksConfig::class,GitHubConfiguration::class,GitLabConfiguration::class)
 @EnableConfigurationProperties(GitHubCrawlerProperties::class)
 open class GitHubCrawlerAutoConfiguration {
 
