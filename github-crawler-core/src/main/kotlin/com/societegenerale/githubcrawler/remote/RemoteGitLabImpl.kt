@@ -160,38 +160,6 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    @Throws(NoReachableRepositories::class)
-    private fun performFirstCall(organizationName: String, isConfigCall: Boolean = false): Response {
-
-        val reposUrl = "$gitHubUrl/" + userOrOrg() + "/$organizationName/repos"
-
-        val requestBuilder = okhttp3.Request.Builder()
-                .url(reposUrl)
-                .header(RemoteGitHubImpl.ACCEPT, RemoteGitHubImpl.APPLICATION_GITHUB_MERCY_PREVIEW_JSON)
-
-        addOAuthTokenIfRequired(requestBuilder)
-
-        if (isConfigCall) {
-            requestBuilder.addHeader(RemoteGitHubImpl.CONFIG_VALIDATION_REQUEST_HEADER, "true")
-        }
-
-        val request = requestBuilder.build()
-
-        val response: Response
-
-        try {
-            response = httpClient.newCall(request).execute()
-
-            if (!response.isSuccessful) {
-                throw NoReachableRepositories("GET call to ${reposUrl} wasn't successful. Code : ${response.code()}, Message : ${response.message()}")
-            }
-        } catch (e: IOException) {
-            throw NoReachableRepositories("Unable to perform the request", e)
-        }
-
-        return response
-    }
-
 }
 
 class GitLabPrivateTokenSetter(val privateToken: String?) : RequestInterceptor {
