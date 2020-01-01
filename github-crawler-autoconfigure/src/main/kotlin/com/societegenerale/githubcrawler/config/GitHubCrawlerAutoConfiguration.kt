@@ -53,19 +53,4 @@ open class GitHubCrawlerAutoConfiguration {
         return ConfigValidator(gitHubCrawlerProperties,remoteGitHub)
     }
 
-
-    @Bean
-    @Profile("!gitLab")
-    open fun remoteGitHub(gitHubCrawlerProperties: GitHubCrawlerProperties): RemoteGitHub {
-
-        return RemoteGitHubImpl(gitHubCrawlerProperties.githubConfig.apiUrl,gitHubCrawlerProperties.githubConfig.crawlUsersRepoInsteadOfOrgasRepos,gitHubCrawlerProperties.githubConfig.oauthToken)
-    }
-
-    @Bean
-    @Profile("gitLab")
-    open fun remoteGitLab(gitHubCrawlerProperties: GitHubCrawlerProperties): RemoteGitHub {
-
-        return RemoteGitLabImpl(gitHubCrawlerProperties.githubConfig.apiUrl,gitHubCrawlerProperties.githubConfig.oauthToken)
-    }
-
 }
