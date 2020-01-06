@@ -7,7 +7,10 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.societegenerale.githubcrawler.RepositoryConfig
-import com.societegenerale.githubcrawler.model.*
+import com.societegenerale.githubcrawler.model.Branch
+import com.societegenerale.githubcrawler.model.PullRequest
+import com.societegenerale.githubcrawler.model.Repository
+import com.societegenerale.githubcrawler.model.SearchResult
 import com.societegenerale.githubcrawler.model.commit.Commit
 import com.societegenerale.githubcrawler.model.commit.DetailedCommit
 import com.societegenerale.githubcrawler.model.team.Team
@@ -20,8 +23,6 @@ import feign.gson.GsonEncoder
 import feign.httpclient.ApacheHttpClient
 import feign.slf4j.Slf4jLogger
 import okhttp3.OkHttpClient
-import okhttp3.Response
-import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters
 import org.springframework.cloud.openfeign.support.ResponseEntityDecoder
@@ -30,7 +31,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import java.io.IOException
-import java.io.StringWriter
 import java.lang.reflect.Type
 import java.util.*
 import java.util.stream.Collectors.toSet
@@ -140,15 +140,29 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
         return gitLabRepo
     }
 
+    /**
+     * Not using Feign here, because GitLab requires to URL encode the characters like "/", which doesn't work well with Feign
+     * So using a regular, simple, HTTP request instead
+     */
     override fun fetchFileContent(repositoryFullName: String, branchName: String, fileToFetch: String): String {
 
-        try {
-            return  internalGitLabClient.fetchFileOnRepo(repoNameToIdMapping.get(repositoryFullName)!!,branchName,fileToFetch)
-        } catch (e: GitLabResponseDecoder.NoFileFoundFeignException) {
-            //translating exception to a non Feign specific one
-            throw NoFileFoundException("can't find $fileToFetch in repo $repositoryFullName, in branch $branchName")
-        }
+            val fetchFileUrl = gitLabUrl +"/projects/"+repoNameToIdMapping.get(repositoryFullName)+"/repository/files/"+fileToFetch+"/raw?ref="+branchName
 
+            val request = okhttp3.Request.Builder()
+                    .url(fetchFileUrl)
+                    .header("PRIVATE-TOKEN", privateToken)
+                    .build()
+
+            val response = httpClient.newCall(request).execute()
+
+            if(response.code()==HttpStatus.NOT_FOUND.value()){
+                throw NoFileFoundException("can't find $fileToFetch in repo $repositoryFullName, in branch $branchName")
+            }
+            else if (!response.isSuccessful) {
+                throw NoReachableRepositories("GET call to ${fetchFileUrl} wasn't successful. Code : ${response.code()}, Message : ${response.message()}")
+            }
+
+            return response.body()!!.string()
     }
 
     @Throws(NoReachableRepositories::class)
@@ -181,13 +195,14 @@ private interface InternalGitLabClient {
     @RequestLine("GET /groups?search={groupName}&sort=asc")
     fun fetchGroupByName(@Param("groupName") groupName: String): List<GitLabGroup>
 
-    @RequestLine("GET /groups/{groupId}/projects")
+    //retrieving the max per page (100) so that we don't have to implement pagination
+    @RequestLine("GET /groups/{groupId}/projects?per_page=100")
     fun fetchRepositoriesForGroupId(@Param("groupId") groupId: Int): List<GitLabRepository>
 
     @RequestLine("GET /projects/{repoId}/repository/files/{filePath}/raw?ref={branchName}")
     fun fetchFileOnRepo(@Param("repoId") repositoryId: Int,
                         @Param("branchName") branchName: String,
-                        @Param("filePath") fileToFetch: String): String
+                        @Param("filePath",encoded = false) fileToFetch: String): String
 
 
 }
