@@ -77,7 +77,7 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
 
         try {
             configFileOnRepository = internalGitLabClient.fetchFileOnRepo(repoNameToIdMapping[repositoryFullName]!!, defaultBranch, REPO_LEVEL_CONFIG_FILE)
-        } catch (e: GitHubResponseDecoder.NoFileFoundFeignException) {
+        } catch (e: GitLabResponseDecoder.NoFileFoundFeignException) {
             return RepositoryConfig()
         }
 
@@ -122,7 +122,7 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
         }
 
         if(gitLabGroups.size > 1 ){
-            throw GitLabResponseDecoder.GitLabException("more than one GitLab group found for groupName $groupName : $gitLabGroups. PLease refine the groupName so that the search yields only one result")
+            log.warn("more than one GitLab group found for groupName $groupName : $gitLabGroups. Using the first one to perform the crawling. Refine your search criteria if that's not what you expect")
         }
 
         val gitLabGroup= gitLabGroups[0]
@@ -178,7 +178,7 @@ class GitLabPrivateTokenSetter(val privateToken: String?) : RequestInterceptor {
 @Headers("Accept: application/json")
 private interface InternalGitLabClient {
 
-    @RequestLine("GET /groups?search={groupName}")
+    @RequestLine("GET /groups?search={groupName}&sort=asc")
     fun fetchGroupByName(@Param("groupName") groupName: String): List<GitLabGroup>
 
     @RequestLine("GET /groups/{groupId}/projects")
