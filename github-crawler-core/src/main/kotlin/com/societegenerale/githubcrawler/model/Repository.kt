@@ -1,12 +1,11 @@
 package com.societegenerale.githubcrawler.model
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.societegenerale.githubcrawler.RepositoryConfig
 import feign.FeignException
 import org.slf4j.LoggerFactory
-import java.util.Date
+import java.util.*
 import java.util.regex.Pattern
 import kotlin.collections.HashMap
 
@@ -15,15 +14,10 @@ data class Repository(val url: String,
                       val name: String,
                       @JsonProperty("default_branch")
                       val defaultBranch: String,
-
                       @JsonProperty("created_at")
-                      @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
                       val creationDate: Date,
-
                       @JsonProperty("updated_at")
-                      @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
                       val lastUpdateDate: Date,
-
                       @JsonIgnore
                       val excluded: Boolean = false,
                       @JsonIgnore
