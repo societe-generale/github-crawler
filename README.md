@@ -178,7 +178,7 @@ GithubCrawler crawls through repository and attaches tags information with all t
 
 ## Gitlab support
 
-From v1.1.4 onward, basic support for gitLab is available ! It all boils down to implementing a GitLab specific version of ```RemoteGitHub``` interface. Primary support is still for Github though, so not all the naming and config is aligned for GitLab (at least for now).
+From v1.2.0 onward, basic support for gitLab is available ! It all boils down to implementing a GitLab specific version of ```RemoteGitHub``` interface. Primary support is still for Github though, so not all the naming and config is aligned for GitLab (at least for now).
 
 ### Running the crawler for Gitlab
 
