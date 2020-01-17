@@ -18,9 +18,7 @@ public class GitLabMock implements RemoteServiceMock {
 
     private static boolean hasStarted = false;
 
-    public List<String> getRepoIdsForWhichFileHasBeenFetched() {
-        return repoIdsForWhichFileHasBeenFetched;
-    }
+    private WebServer gitLabWebServer;
 
     private List<String> repoIdsForWhichFileHasBeenFetched = new ArrayList();
 
@@ -28,7 +26,9 @@ public class GitLabMock implements RemoteServiceMock {
         return hasStarted;
     }
 
-    private WebServer gitLabWebServer;
+    public List<String> getRepoIdsForWhichFileHasBeenFetched() {
+        return repoIdsForWhichFileHasBeenFetched;
+    }
 
     @Override
     public boolean start() {
@@ -55,6 +55,8 @@ public class GitLabMock implements RemoteServiceMock {
 
     private Object getRepoSearchResults(String repoId, String searchedString) throws IOException {
 
+        log.info("performing a search for repoId {} with query string {}",repoId,searchedString);
+
         String searchResult = FileUtils.readFileToString(ResourceUtils.getFile("classpath:gitLabRepoSearchResults.json"), "UTF-8");
 
         return new Payload("application/json", searchResult);
@@ -75,6 +77,8 @@ public class GitLabMock implements RemoteServiceMock {
 
     private Payload getGroups(String byGroupName) throws IOException {
 
+        log.info("fetching groups for name {}",byGroupName);
+
         String groupListWIthOneElem = FileUtils.readFileToString(ResourceUtils.getFile("classpath:gitLabGroups.json"), "UTF-8");
 
         return new Payload("application/json", groupListWIthOneElem);
@@ -82,6 +86,8 @@ public class GitLabMock implements RemoteServiceMock {
     }
 
     private Payload getRepositories(String groupId) throws IOException {
+
+        log.info("get repositories for group {}",groupId);
 
         String repositoriesForGroup = FileUtils.readFileToString(ResourceUtils.getFile("classpath:gitLabRepositories.json"), "UTF-8");
 
