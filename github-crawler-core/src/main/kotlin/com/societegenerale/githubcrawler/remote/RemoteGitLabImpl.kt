@@ -13,6 +13,7 @@ import com.societegenerale.githubcrawler.model.commit.Commit
 import com.societegenerale.githubcrawler.model.commit.DetailedCommit
 import com.societegenerale.githubcrawler.model.team.Team
 import com.societegenerale.githubcrawler.model.team.TeamMember
+import com.societegenerale.githubcrawler.remote.RemoteGitLabImpl.Companion.PRIVATE_TOKEN_HEADER_KEY
 import feign.*
 import feign.FeignException.errorStatus
 import feign.codec.Decoder
@@ -46,6 +47,8 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
 
     companion object {
         const val REPO_LEVEL_CONFIG_FILE = ".gitlabCrawler"
+
+        const val PRIVATE_TOKEN_HEADER_KEY ="PRIVATE-TOKEN"
     }
 
     private val internalGitLabClient: InternalGitLabClient = Feign.builder()
@@ -97,7 +100,7 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
 
         val request = okhttp3.Request.Builder()
                 .url(repoSearchUrl)
-                .header("PRIVATE-TOKEN", privateToken)
+                .header(PRIVATE_TOKEN_HEADER_KEY, privateToken)
                 .build()
 
         val httpResponse=httpClient.newCall(request).execute()
@@ -163,7 +166,7 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
 
             val request = okhttp3.Request.Builder()
                     .url(fetchFileUrl)
-                    .header("PRIVATE-TOKEN", privateToken)
+                    .header(PRIVATE_TOKEN_HEADER_KEY, privateToken)
                     .build()
 
             val response = httpClient.newCall(request).execute()
@@ -194,7 +197,7 @@ class GitLabPrivateTokenSetter(val privateToken: String?) : RequestInterceptor {
     override fun apply(requestTemplate: RequestTemplate?) {
 
         if (requestTemplate != null && privateToken != null) {
-            requestTemplate.header("PRIVATE-TOKEN", privateToken)
+            requestTemplate.header(PRIVATE_TOKEN_HEADER_KEY, privateToken)
         }
 
     }
