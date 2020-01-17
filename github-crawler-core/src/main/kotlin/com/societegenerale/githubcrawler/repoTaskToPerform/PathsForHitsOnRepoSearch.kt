@@ -39,7 +39,7 @@ class PathsForHitsOnRepoSearchBuilder(private val remoteGitHub: RemoteGitHub) : 
 
     override fun buildTask(name: String, params : Map<String,String>) : RepoTaskToPerform{
 
-        return PathsForHitsOnRepoSearch(name, params["searchQuery"]!!,remoteGitHub)
+        return PathsForHitsOnRepoSearch(name, params["queryString"]!!,remoteGitHub)
 
     }
 
