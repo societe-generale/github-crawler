@@ -6,11 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.societegenerale.githubcrawler.RepositoryConfig
-import com.societegenerale.githubcrawler.model.Branch
-import com.societegenerale.githubcrawler.model.PullRequest
-import com.societegenerale.githubcrawler.model.Repository
-import com.societegenerale.githubcrawler.model.SearchResult
+import com.societegenerale.githubcrawler.model.*
 import com.societegenerale.githubcrawler.model.commit.Commit
 import com.societegenerale.githubcrawler.model.commit.DetailedCommit
 import com.societegenerale.githubcrawler.model.team.Team
@@ -93,8 +91,21 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun fetchCodeSearchResult(repository: Repository, query: String): SearchResult {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun fetchCodeSearchResult(repositoryFullName: String, searchString: String): SearchResult {
+
+        val repoSearchUrl = gitLabUrl +"/projects/"+repoNameToIdMapping.get(repositoryFullName)+"/search?scope=blobs&"+searchString
+
+        val request = okhttp3.Request.Builder()
+                .url(repoSearchUrl)
+                .header("PRIVATE-TOKEN", privateToken)
+                .build()
+
+        val httpResponse=httpClient.newCall(request).execute()
+
+        val gitlabSearchResult : List<GitLabSearchResultItem> = objectMapper.readValue(httpResponse.body()!!.string())
+
+        return SearchResult(gitlabSearchResult.size,gitlabSearchResult.map{ it -> it.toSearchResultItem()})
+
     }
 
 
@@ -207,6 +218,14 @@ private interface InternalGitLabClient {
                         @Param("filePath",encoded = false) fileToFetch: String): String
 
 
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+internal data class GitLabSearchResultItem(val basename : String, val startline : Long, val filename : String ) {
+
+    fun toSearchResultItem(): SearchResultItem {
+        return SearchResultItem(filename)
+    }
 }
 
 internal class GiLabErrorDecoder : ErrorDecoder {

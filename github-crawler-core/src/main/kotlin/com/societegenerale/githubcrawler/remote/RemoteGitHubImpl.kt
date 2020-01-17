@@ -221,9 +221,9 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
     /**
      * Because the GitHub API is a bit strange here, with the not very standard filter on repository, we need to build the request manually
      */
-    override fun fetchCodeSearchResult(repository: Repository, query: String): SearchResult {
+    override fun fetchCodeSearchResult(repositoryFullName: String, query: String): SearchResult {
 
-        val searchCodeUrl = HttpUrl.parse(gitHubUrl +buildQueryString(query,repository))!!.newBuilder().build().toString()
+        val searchCodeUrl = HttpUrl.parse(gitHubUrl +buildQueryString(query,repositoryFullName))!!.newBuilder().build().toString()
 
         val requestBuilder = okhttp3.Request.Builder()
                 .url(searchCodeUrl)
@@ -247,8 +247,8 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
         }
     }
 
-    private fun buildQueryString(queryString: String, repo: Repository): String {
-        return "/search/code?q=$queryString repo:${repo.fullName}"
+    private fun buildQueryString(queryString: String, repositoryFullName: String): String {
+        return "/search/code?q=$queryString repo:${repositoryFullName}"
     }
 
     override fun fetchFileContent(repositoryFullName: String, branchName: String, fileToFetch: String): String {

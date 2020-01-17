@@ -16,7 +16,7 @@ interface RemoteGitHub {
 
     fun fetchRepoBranches(repositoryFullName: String): Set<Branch>
 
-    fun fetchCodeSearchResult(repository: Repository, query: String): SearchResult
+    fun fetchCodeSearchResult(repositoryFullName: String, query: String): SearchResult
 
     @Throws(NoFileFoundException::class)
     fun fetchFileContent(repositoryFullName: String, branchName: String, fileToFetch: String): String

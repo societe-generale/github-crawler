@@ -1,10 +1,8 @@
 package com.societegenerale.githubcrawler
 
 import com.jayway.awaitility.Awaitility.await
-import com.societegenerale.githubcrawler.mocks.GitHubMock
 import com.societegenerale.githubcrawler.mocks.GitLabMock
 import com.societegenerale.githubcrawler.mocks.RemoteServiceMock.GITLAB_MOCK_PORT
-import com.societegenerale.githubcrawler.remote.RemoteGitHubImpl
 import com.societegenerale.githubcrawler.remote.RemoteGitLabImpl
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.AfterClass
@@ -71,7 +69,7 @@ class RemoteGitLabImplTest {
     }
 
     @Test
-    fun shouldQueryFileCOntentWithRepoIdINsteadOfRepoName() {
+    fun shouldQueryFileContentWithRepoIdInsteadOfRepoName() {
 
         remoteGitLab.fetchRepositories("myGroup")
 
@@ -82,6 +80,15 @@ class RemoteGitLabImplTest {
         assertThat(gitlabMockServer.repoIdsForWhichFileHasBeenFetched).containsOnly("16")
     }
 
+    @Test
+    fun shouldPerformRepoSearch() {
+
+        remoteGitLab.fetchRepositories("myGroup")
+
+        val searchResults=remoteGitLab.fetchCodeSearchResult("h5bp/html5-boilerplate","blabla")
+
+        assertThat(searchResults.totalCount).isEqualTo(2);
+    }
 
 
 }
