@@ -76,6 +76,8 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
         val configFileOnRepository: String
 
         try {
+
+            //TODO we should call fetchFileContent method instead, for consistency purpose
             configFileOnRepository = internalGitLabClient.fetchFileOnRepo(repoNameToIdMapping[repositoryFullName]!!, defaultBranch, REPO_LEVEL_CONFIG_FILE)
         } catch (e: GitLabResponseDecoder.NoFileFoundFeignException) {
             return RepositoryConfig()
