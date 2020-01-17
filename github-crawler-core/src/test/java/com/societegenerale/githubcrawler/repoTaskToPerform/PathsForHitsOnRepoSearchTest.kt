@@ -34,7 +34,7 @@ class PathsForHitsOnRepoSearchTest {
 
         val mockSearchResults = listOf(SearchResultItem("path1"), SearchResultItem("path2"))
 
-        `when`(mockRemoteGithub.fetchCodeSearchResult(repoToSearch, "someSearch"))
+        `when`(mockRemoteGithub.fetchCodeSearchResult(repoToSearch.fullName, "someSearch"))
                 .thenReturn(SearchResult(mockSearchResults.size,mockSearchResults))
 
         val searchResult = pathsForHitsOnRepoSearch.perform(repoToSearch)
@@ -51,7 +51,7 @@ class PathsForHitsOnRepoSearchTest {
     @Test
     fun shouldYield_NotFound_WhenNoMatch() {
 
-        `when`(mockRemoteGithub.fetchCodeSearchResult(repoToSearch, "someSearch"))
+        `when`(mockRemoteGithub.fetchCodeSearchResult(repoToSearch.fullName, "someSearch"))
                 .thenReturn(SearchResult(0, emptyList()))
 
         val searchResult = pathsForHitsOnRepoSearch.perform(repoToSearch)

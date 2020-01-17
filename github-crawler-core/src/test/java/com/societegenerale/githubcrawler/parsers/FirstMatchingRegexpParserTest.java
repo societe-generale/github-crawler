@@ -44,6 +44,20 @@ public class FirstMatchingRegexpParserTest {
     }
 
     @Test
+    public void shouldFindValueBasedOnRegexp_gradleVersion() throws Exception {
+
+        params.put(PATTERN, "(?m)^distributionUrl=.*\\/([^\\/\\s]+$)$");
+        firstMatchingRegexpToFind.setParams(params);
+
+        String fileContent = FileUtils.readFileToString(ResourceUtils.getFile("classpath:sample_gradleWrapper.properties"), "UTF-8");
+
+        Map<String, String> indicatorsFound = fileContentParser
+                .parseFileContentForIndicator(fileContent, StringUtils.EMPTY, firstMatchingRegexpToFind);
+
+        assertThat(indicatorsFound.get(indicatorName)).isEqualTo("gradle-3.3-bin.zip");
+    }
+
+    @Test
     public void shouldFindValueBasedOnRegexp2() throws Exception {
 
         params.put(PATTERN, "(?s).*dockerNode\\(image:'(.+?(?=')).*");
@@ -56,6 +70,7 @@ public class FirstMatchingRegexpParserTest {
 
         assertThat(indicatorsFound.get(indicatorName)).isEqualTo("myDtr.com/someOrg/someImageName:1.0");
     }
+
 
     @Test
     public void canFindDockerImageInDockerFile() throws Exception {

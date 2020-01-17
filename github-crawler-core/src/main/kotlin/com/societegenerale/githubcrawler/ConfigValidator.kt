@@ -35,6 +35,7 @@ class ConfigValidator(val properties : GitHubCrawlerProperties,
             remoteGitHub.validateRemoteConfig(organizationName)
         }
         catch(e : NoReachableRepositories){
+            //TODO make this GitLab ready..
             val errorMessage = "Not able to fetch repositories from the organization ${organizationName} on URL ${properties.githubConfig.apiUrl}. This could be due to several things :\n"+
                     "\t\t - URL should be the API URL. For github.com it's https://api.github.com, for Github Enterprise, it's usually https://myGHEserver/api/v3 (no trailing slash) \n"+
                     "\t\t - the organization doesn't exist\n"+

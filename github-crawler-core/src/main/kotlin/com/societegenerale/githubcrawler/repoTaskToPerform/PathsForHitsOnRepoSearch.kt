@@ -16,7 +16,7 @@ class PathsForHitsOnRepoSearch( private val taskName: String,
 
     override fun perform(repository: Repository): Map<Branch, Pair<String, Any>> {
 
-        val searchResult= remoteGitHub.fetchCodeSearchResult(repository, searchQuery)
+        val searchResult= remoteGitHub.fetchCodeSearchResult(repository.fullName, searchQuery)
 
         val paths=if(searchResult.totalCount>0){
                 searchResult.items.map { i -> i.path }
@@ -39,7 +39,7 @@ class PathsForHitsOnRepoSearchBuilder(private val remoteGitHub: RemoteGitHub) : 
 
     override fun buildTask(name: String, params : Map<String,String>) : RepoTaskToPerform{
 
-        return PathsForHitsOnRepoSearch(name, params["searchQuery"]!!,remoteGitHub)
+        return PathsForHitsOnRepoSearch(name, params["queryString"]!!,remoteGitHub)
 
     }
 

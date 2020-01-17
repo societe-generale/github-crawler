@@ -1,0 +1,20 @@
+[
+  {
+    "basename": "Dockerfile",
+    "data": "\nCOPY deploy/*.sh /opt/\nCOPY deploy/supervisord.conf /etc/\nCOPY build/libs/default-monitoring-batch-*.jar /opt/default-monitoring-batch.jar\n\n",
+    "filename": "Dockerfile",
+    "id": null,
+    "ref": "master",
+    "startline": 2,
+    "project_id": 417
+  },
+  {
+    "basename": "deploy/supervisord",
+    "data": "[supervisord]\nnodaemon=true\npidfile=/tmp/supervisord.pid\nlogfile=/tmp/supervisord.log\n\n[program:rails]\n",
+    "filename": "deploy/supervisord.conf",
+    "id": null,
+    "ref": "master",
+    "startline": 1,
+    "project_id": 417
+  }
+]
