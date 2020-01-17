@@ -4,7 +4,7 @@
 
     <groupId>com.societegenerale.github-crawler</groupId>
     <artifactId>github-crawler-autoconfigure</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>github-crawler-autoconfigure</name>
@@ -12,7 +12,7 @@
     <parent>
         <groupId>com.societegenerale.github-crawler</groupId>
         <artifactId>github-crawler-parent</artifactId>
-        <version>1.2.0</version>
+        <version>1.2.1-SNAPSHOT</version>
     </parent>
 
     <dependencies>
