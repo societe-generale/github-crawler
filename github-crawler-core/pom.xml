@@ -4,7 +4,7 @@
 
     <groupId>com.societegenerale.github-crawler</groupId>
     <artifactId>github-crawler-core</artifactId>
-    <version>1.1.4-SNAPSHOT</version>
+    <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
     <name>github-crawler-core</name>
