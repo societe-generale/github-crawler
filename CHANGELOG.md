@@ -12,6 +12,19 @@
 
 ### Fixed
 
+##  [1.2.0] - 2020-01-17
+
+### Added
+- PR #83 : Support for GitLab crawling ! see basic documentation in readme.md
+
+### Changed
+- BREAKING CHANGE : as part of GitLab implementation, did a minor refactoring changing the signature of fetchCodeSearchResult in RemoteGitHub
+- PR #81 : updated to Spring Boot 2.2.2 and Kotlin 1.3.60
+- PR #80 : now building using openjdk 8
+
+### Fixed
+- PR #84 : when results are pushed to HTTP output, serializing the timestamp in an easily  readable format 
+
 ##  [1.1.3] - 2019-02-14
 
 ### Added
