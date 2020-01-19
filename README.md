@@ -200,6 +200,11 @@ From v1.2.0 onward, basic support for gitLab is available ! It all boils down to
 Not all methods defined in [RemoteGitHub](https://github.com/societe-generale/github-crawler/blob/b86c7483e4f361211750f454d70ccdec135ad655/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/remote/RemoteGitHub.kt) interface may have been implemented for Gitlab : ```NotImplementedError``` would be thrown in that case. If you need them, you can implement them in ```RemoteGitLabImpl``` (and contribute them back through a pull request ?).
 
 Similarly, we may have added methods in the interface for some of our Gitlab specific use-cases : in that case, these methods may not have been implemented in the [Github version of the interface](https://github.com/societe-generale/github-crawler/blob/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/remote/RemoteGitHubImpl.kt) 
+
+### overriding config at repository level for Gitlab
+
+the same rules apply that for GitHub, but in a file named `.gitlabCrawler`
+
  
 ## File content parsers
 
