@@ -42,7 +42,7 @@ class CountXmlElementsParser : FileContentParser {
 
     private fun parseStringIntoDocument(documentToProcess: String): Document {
 
-        return SAXReader().read(InputSource(StringReader(documentToProcess)))
+        return SAXReader.createDefault().read(InputSource(StringReader(documentToProcess)))
 
     }
 
