@@ -4,11 +4,10 @@ import com.jayway.awaitility.Awaitility.await
 import com.societegenerale.githubcrawler.mocks.GitLabMock
 import com.societegenerale.githubcrawler.mocks.RemoteServiceMock.GITLAB_MOCK_PORT
 import com.societegenerale.githubcrawler.remote.RemoteGitLabImpl
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.AfterClass
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.*
 import org.junit.runner.RunWith
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
@@ -40,6 +39,8 @@ class RemoteGitLabImplTest {
         }
     }
 
+    @get:Rule
+    var coroutinesTestRule = CoroutineTestRule()
 
     @Before
     fun resetMockServer() {
@@ -81,11 +82,13 @@ class RemoteGitLabImplTest {
     }
 
     @Test
-    fun shouldPerformRepoSearch() {
+    fun shouldPerformRepoSearch() = runBlocking<Unit> {
 
         remoteGitLab.fetchRepositories("myGroup")
 
-        val searchResults=remoteGitLab.fetchCodeSearchResult("h5bp/html5-boilerplate","blabla")
+        val searchResults=remoteGitLab.fetchCodeSearchResultAsync("h5bp/html5-boilerplate","blabla",coroutinesTestRule.testDispatcherProvider)
+
+        Thread.sleep(2000)
 
         assertThat(searchResults.totalCount).isEqualTo(2);
     }

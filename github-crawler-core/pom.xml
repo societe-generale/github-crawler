@@ -99,6 +99,12 @@
         </dependency>
 
         <dependency>
+            <groupId>ru.gildor.coroutines</groupId>
+            <artifactId>kotlin-coroutines-okhttp</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.jayway.awaitility</groupId>
             <artifactId>awaitility</artifactId>
             <version>1.7.0</version>

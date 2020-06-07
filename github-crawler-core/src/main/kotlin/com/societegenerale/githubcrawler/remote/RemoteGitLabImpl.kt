@@ -7,6 +7,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.societegenerale.githubcrawler.DefaultDispatcherProvider
+import com.societegenerale.githubcrawler.DispatcherProvider
 import com.societegenerale.githubcrawler.RepositoryConfig
 import com.societegenerale.githubcrawler.model.*
 import com.societegenerale.githubcrawler.model.commit.Commit
@@ -21,7 +23,14 @@ import feign.codec.ErrorDecoder
 import feign.gson.GsonEncoder
 import feign.httpclient.ApacheHttpClient
 import feign.slf4j.Slf4jLogger
+import javafx.application.Application.launch
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters
 import org.springframework.cloud.openfeign.support.ResponseEntityDecoder
@@ -29,6 +38,7 @@ import org.springframework.cloud.openfeign.support.SpringDecoder
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import ru.gildor.coroutines.okhttp.await
 import java.io.IOException
 import java.lang.reflect.Type
 import java.util.*
@@ -94,21 +104,34 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    suspend fun fetchCodeSearchResultAsync(repositoryFullName: String, searchString: String,dispatchers: DispatcherProvider = DefaultDispatcherProvider()): SearchResult{
+        return withContext(dispatchers.default()) {
+            return@withContext fetchCodeSearchResult(repositoryFullName, searchString)
+        }
+
+    }
+
     override fun fetchCodeSearchResult(repositoryFullName: String, searchString: String): SearchResult {
 
         val repoSearchUrl = gitLabUrl +"/projects/"+repoNameToIdMapping.get(repositoryFullName)+"/search?scope=blobs&"+searchString
 
-        val request = okhttp3.Request.Builder()
+        val request = Request.Builder()
                 .url(repoSearchUrl)
                 .header(PRIVATE_TOKEN_HEADER_KEY, privateToken)
                 .build()
 
-        val httpResponse=httpClient.newCall(request).execute()
+        val httpResponse = GlobalScope.async {
+            makeHttpCall(request)
+        }
 
-        val gitlabSearchResult : List<GitLabSearchResultItem> = objectMapper.readValue(httpResponse.body()!!.string())
+        val gitlabSearchResult : List<GitLabSearchResultItem> = objectMapper.readValue(httpResponse.getCompleted().body()!!.string())
 
         return SearchResult(gitlabSearchResult.size,gitlabSearchResult.map{ it -> it.toSearchResultItem()})
 
+    }
+
+    suspend fun makeHttpCall(request : Request): Response {
+        return httpClient.newCall(request).await()
     }
 
 
