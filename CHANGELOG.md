@@ -12,6 +12,12 @@
 
 ### Fixed
 
+##  [1.2.1] - 2020-09-03
+
+### Added
+- Added RecentRepositoriesCsvFileOutput
+
+
 ##  [1.2.0] - 2020-01-17
 
 ### Added
