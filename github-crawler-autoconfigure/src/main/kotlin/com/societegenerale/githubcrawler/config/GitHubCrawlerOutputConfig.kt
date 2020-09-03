@@ -66,6 +66,15 @@ open class GitHubCrawlerOutputConfig {
         return SearchPatternInCodeCsvFileOutput(searchNameToOutput)
     }
 
+  @Bean
+  @ConditionalOnProperty(name = ["github-crawler.outputs.recentRepositoriesCsvFileOutput"])
+  @AutoConfigureOrder(value = 6)
+  @Throws(IOException::class)
+  open fun recentRepositoriesCsvFileOutput(): GitHubCrawlerOutput {
+
+    return RecentRepositoriesCsvFileOutput()
+  }
+
 
 
     @Bean
