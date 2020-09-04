@@ -1,6 +1,8 @@
 # GitHub crawler
 
 [![Build Status](https://travis-ci.org/societe-generale/github-crawler.svg?branch=master)](https://travis-ci.org/societe-generale/github-crawler)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.societegenerale.github-crawler/github-crawler-parent/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/com.societegenerale.github-crawler/github-crawler-parent)
+
 
 ## Why can it be useful ?
 
