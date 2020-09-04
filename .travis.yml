@@ -23,6 +23,8 @@ before_deploy:
   - release/createReleaseProperties.sh
   - echo $GPG_SECRET_KEYS | base64 --decode | gpg --import
   - echo $GPG_OWNERTRUST | base64 --decode | gpg --import-ownertrust
+  - gpg -v --keyserver hkp://p80.pool.sks-keyservers.net:80 --refresh-keys
+  - gpg -v --list-keys
 
 deploy:
   provider: script
