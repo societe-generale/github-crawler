@@ -1,21 +1,20 @@
 package com.societegenerale.githubcrawler.parsers;
 
-import com.societegenerale.githubcrawler.IndicatorDefinition;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.util.ResourceUtils;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import static com.societegenerale.githubcrawler.parsers.YamlParserForPropertyValue.FIND_PROPERTY_VALUE_IN_YAML;
 import static com.societegenerale.githubcrawler.parsers.YamlParserForPropertyValue.PROPERTY_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class YamlParserForPropertyValueTest {
+import com.societegenerale.githubcrawler.IndicatorDefinition;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.util.ResourceUtils;
+
+class YamlParserForPropertyValueTest {
 
     final String indicatorName = "someIndicatorName";
     String yamlFileSnippet;
@@ -24,7 +23,7 @@ public class YamlParserForPropertyValueTest {
 
     YamlParserForPropertyValue fileContentParser = new YamlParserForPropertyValue();
 
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
 
         yamlFileSnippet=
@@ -32,55 +31,55 @@ public class YamlParserForPropertyValueTest {
     }
 
     @Test
-    public void joinListAsStringIfValueIsList() {
+    void joinListAsStringIfValueIsList() {
 
         Map<String, String> indicatorsFound = parseSampleYamlForProperty("interesting.valueAsList");
 
-        assertThat(indicatorsFound.get(indicatorName)).isEqualTo("item1, item2");
+        assertThat(indicatorsFound).containsEntry(indicatorName,"item1, item2");
     }
 
     @Test
-    public void canFindAsimplePropertyValue() {
+    void canFindAsimplePropertyValue() {
 
         Map<String, String> indicatorsFound = parseSampleYamlForProperty("interesting.property");
 
-        assertThat(indicatorsFound.get(indicatorName)).isEqualTo("myExpectedValue");
+        assertThat(indicatorsFound).containsEntry(indicatorName,"myExpectedValue");
     }
 
     @Test
-    public void canFindAsimpleNestedPropertyValue() {
+    void canFindAsimpleNestedPropertyValue() {
 
         Map<String, String> indicatorsFound = parseSampleYamlForProperty("interesting.nested.property");
 
-        assertThat(indicatorsFound.get(indicatorName)).isEqualTo("myExpectedNestedValue");
+        assertThat(indicatorsFound).containsEntry(indicatorName,"myExpectedNestedValue");
     }
 
     @Test
-    public void canFindAbooleanProperty() {
+    void canFindAbooleanProperty() {
 
         Map<String, String> indicatorsFound = parseSampleYamlForProperty("boolean.property");
 
-        assertThat(indicatorsFound.get(indicatorName)).isEqualTo("true");
+        assertThat(indicatorsFound).containsEntry(indicatorName,"true");
     }
 
     @Test
-    public void canFindPropertyIfNotInFirstDocument() {
+    void canFindPropertyIfNotInFirstDocument() {
 
         Map<String, String> indicatorsFound = parseSampleYamlForProperty("server.ssl.key-store");
 
-        assertThat(indicatorsFound.get(indicatorName)).isEqualTo("hello");
+        assertThat(indicatorsFound).containsEntry(indicatorName,"hello");
     }
 
     @Test
-    public void canFindSemiNestedProperty() {
+    void canFindSemiNestedProperty() {
 
         Map<String, String> indicatorsFound = parseSampleYamlForProperty("interesting.semiNested.property");
 
-        assertThat(indicatorsFound.get(indicatorName)).isEqualTo("semiNestedValue");
+        assertThat(indicatorsFound).containsEntry(indicatorName,"semiNestedValue");
     }
 
     @Test
-    public void yieldsIssueWhileParsingIfError() throws IOException {
+    void yieldsIssueWhileParsingIfError() throws IOException {
 
         params.put(PROPERTY_NAME, "anything");
         pomXmlDependencyVersion.setParams(params);

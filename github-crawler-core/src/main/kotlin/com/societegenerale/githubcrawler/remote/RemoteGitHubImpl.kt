@@ -392,7 +392,7 @@ internal class GitHubResponseDecoder : Decoder {
 
     init {
         repoConfigMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        repoConfigMapper.registerModule(KotlinModule())
+        repoConfigMapper.registerModule(KotlinModule.Builder().build())
     }
 
     fun decodeRepoConfig(response: okhttp3.Response): RepositoryConfig {
@@ -429,7 +429,7 @@ internal class GitHubResponseDecoder : Decoder {
 
             log.debug("\t ... as a " + type.typeName)
 
-            val jacksonConverter = MappingJackson2HttpMessageConverter(ObjectMapper().registerModule(KotlinModule()))
+            val jacksonConverter = MappingJackson2HttpMessageConverter(ObjectMapper().registerModule(KotlinModule.Builder().build()))
             val objectFactory = { HttpMessageConverters(jacksonConverter) }
             return ResponseEntityDecoder(SpringDecoder(objectFactory)).decode(response, type)
 
@@ -444,13 +444,13 @@ internal class GitHubResponseDecoder : Decoder {
         try {
             return repoConfigMapper.readValue(responseAsString, RepositoryConfig::class.java)
         } catch (e: IOException) {
-            throw Repository.RepoConfigException("unable to parse config for repo - content : \"" + response.body() + "\"", e)
+            throw Repository.RepoConfigException(HttpStatus.BAD_REQUEST,"unable to parse config for repo - content : \"" + response.body() + "\"", e)
         }
     }
 
-    class NoFileFoundFeignException(message: String) : FeignException(message)
+    class NoFileFoundFeignException(message: String) : FeignException(HttpStatus.NOT_FOUND.value(),message)
 
-    class GithubException(message: String) : FeignException(message)
+    class GithubException(message: String) : FeignException(HttpStatus.INTERNAL_SERVER_ERROR.value(),message)
 
 }
 

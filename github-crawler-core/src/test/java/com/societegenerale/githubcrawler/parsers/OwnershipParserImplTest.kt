@@ -1,5 +1,6 @@
 package com.societegenerale.githubcrawler.parsers
 
+
 import com.societegenerale.githubcrawler.model.Author
 import com.societegenerale.githubcrawler.model.commit.Commit
 import com.societegenerale.githubcrawler.model.commit.CommitStats
@@ -11,7 +12,7 @@ import com.societegenerale.githubcrawler.remote.RemoteGitHub
 import com.societegenerale.githubcrawler.repoTaskToPerform.ownership.MembershipParser
 import com.societegenerale.githubcrawler.repoTaskToPerform.ownership.OwnershipParserImpl
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 
 class OwnershipParserImplTest {
@@ -66,7 +67,7 @@ class OwnershipParserImplTest {
         val teamOwner: String = OwnershipParserImpl(githubClient, membershipParser, organizationName).computeOwnershipFor(repositoryFullName, lastCommitNumber)
 
         //Then
-        verifyZeroInteractions(githubClient)
+        verifyNoInteractions(githubClient)
         assertThat(teamOwner).isEqualTo("Undefined")
     }
 

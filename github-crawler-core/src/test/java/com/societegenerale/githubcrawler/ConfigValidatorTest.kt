@@ -3,7 +3,7 @@ package com.societegenerale.githubcrawler
 import com.societegenerale.githubcrawler.remote.NoReachableRepositories
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 

@@ -5,17 +5,18 @@ import com.societegenerale.githubcrawler.mocks.GitLabMock
 import com.societegenerale.githubcrawler.mocks.RemoteServiceMock.GITLAB_MOCK_PORT
 import com.societegenerale.githubcrawler.remote.RemoteGitLabImpl
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.AfterClass
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.util.concurrent.TimeUnit.SECONDS
 
 
-@RunWith(SpringRunner::class)
+@ExtendWith(SpringExtension::class)
 @ActiveProfiles(profiles = arrayOf("test"))
 class RemoteGitLabImplTest {
 
@@ -23,7 +24,7 @@ class RemoteGitLabImplTest {
 
         val gitlabMockServer: GitLabMock = GitLabMock();
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun startMockServer() {
 
@@ -33,7 +34,7 @@ class RemoteGitLabImplTest {
                     .until{ assertThat(GitLabMock.hasStarted()) }
         }
 
-        @AfterClass
+        @AfterAll
         @JvmStatic
         fun shutDownMockGitLab() {
             gitlabMockServer.stop()
@@ -41,7 +42,7 @@ class RemoteGitLabImplTest {
     }
 
 
-    @Before
+    @BeforeEach
     fun resetMockServer() {
         gitlabMockServer.reset()
     }

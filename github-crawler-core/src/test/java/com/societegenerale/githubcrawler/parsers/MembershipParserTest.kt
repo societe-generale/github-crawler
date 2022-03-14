@@ -5,7 +5,7 @@ import com.societegenerale.githubcrawler.model.team.TeamMember
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
 import com.societegenerale.githubcrawler.repoTaskToPerform.ownership.MembershipParser
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
 

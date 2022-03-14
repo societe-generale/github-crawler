@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.societegenerale.githubcrawler.RepositoryConfig
 import feign.FeignException
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
 import java.util.*
 import java.util.regex.Pattern
-import kotlin.collections.HashMap
 
 
 data class Repository(val url: String,
@@ -113,9 +113,9 @@ data class Repository(val url: String,
 
     class RepoConfigException : FeignException {
 
-        constructor(message: String) : super(message)
+        constructor(statusCode: HttpStatus, message: String) : super(statusCode.value(),message)
 
-        constructor(message: String, cause: Throwable) : super(message, cause)
+        constructor(statusCode:HttpStatus, message: String, cause: Throwable) : super(statusCode.value(),message, cause)
     }
 
 }

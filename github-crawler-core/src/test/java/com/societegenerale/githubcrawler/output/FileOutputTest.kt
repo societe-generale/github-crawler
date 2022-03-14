@@ -3,8 +3,9 @@ package com.societegenerale.githubcrawler.output
 
 import com.societegenerale.githubcrawler.model.Repository
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+
+import org.junit.jupiter.api.Test
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -15,7 +16,7 @@ class FileOutputTest{
 
     var resolver = PathMatchingResourcePatternResolver(this.javaClass.classLoader);
 
-    @Before
+    @BeforeEach
     fun cleanUp(){
 
         val resources = resolver.getResources("file:target/somePrfix*.txt")
