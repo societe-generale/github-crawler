@@ -4,7 +4,7 @@ import com.societegenerale.githubcrawler.IndicatorDefinition
 import com.societegenerale.githubcrawler.parsers.CountXmlElementsParser.Companion.XPATH_TO_MATCH
 import org.apache.commons.io.FileUtils
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.springframework.util.ResourceUtils
 
 class CountXmlElementsParserTest {

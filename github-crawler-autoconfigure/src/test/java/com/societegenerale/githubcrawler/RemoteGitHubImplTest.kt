@@ -4,17 +4,17 @@ import com.jayway.awaitility.Awaitility.await
 import com.societegenerale.githubcrawler.mocks.GitHubMock
 import com.societegenerale.githubcrawler.remote.RemoteGitHubImpl
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.AfterClass
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.util.concurrent.TimeUnit.SECONDS
 
-
-@RunWith(SpringRunner::class)
+@ExtendWith(SpringExtension::class)
 @ActiveProfiles(profiles = arrayOf("test"))
 class RemoteGitHubImplTest {
 
@@ -22,7 +22,7 @@ class RemoteGitHubImplTest {
 
         val githubMockServer: GitHubMock = GitHubMock();
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun startMockServer() {
 
@@ -32,7 +32,7 @@ class RemoteGitHubImplTest {
                     .until{ assertThat(GitHubMock.hasStarted()) }
         }
 
-        @AfterClass
+        @AfterAll
         @JvmStatic
         fun shutDownMockGithub() {
             githubMockServer.stop()
@@ -40,7 +40,7 @@ class RemoteGitHubImplTest {
     }
 
 
-    @Before
+    @BeforeEach
     fun resetMockServer() {
         githubMockServer.reset()
     }

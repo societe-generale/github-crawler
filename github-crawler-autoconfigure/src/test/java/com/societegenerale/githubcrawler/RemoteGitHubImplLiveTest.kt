@@ -1,14 +1,15 @@
 package com.societegenerale.githubcrawler
 
 import com.societegenerale.githubcrawler.remote.RemoteGitHubImpl
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.Ignore
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.springframework.test.context.junit4.SpringRunner
 
-@RunWith(SpringRunner::class)
-@Ignore("useful class to debug easily in local")
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.test.context.junit.jupiter.SpringExtension
+
+@ExtendWith(SpringExtension::class)
+@Disabled("useful class to debug easily in local")
 class RemoteGitHubImplLiveTest {
 
     @Test

@@ -1,20 +1,19 @@
 package com.societegenerale.githubcrawler.parsers;
 
-import com.societegenerale.githubcrawler.IndicatorDefinition;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
-import org.springframework.util.ResourceUtils;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import static com.societegenerale.githubcrawler.parsers.FirstMatchingRegexpParser.FIND_FIRST_VALUE_WITH_REGEXP_CAPTURE_METHOD;
 import static com.societegenerale.githubcrawler.parsers.FirstMatchingRegexpParser.PATTERN;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FirstMatchingRegexpParserTest {
+import com.societegenerale.githubcrawler.IndicatorDefinition;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
+import org.springframework.util.ResourceUtils;
+
+class FirstMatchingRegexpParserTest {
 
     final String indicatorName = "someIndicatorName";
 
@@ -29,7 +28,7 @@ public class FirstMatchingRegexpParserTest {
 
 
     @Test
-    public void shouldFindValueBasedOnRegexp() {
+    void shouldFindValueBasedOnRegexp() {
 
         params.put(PATTERN, "(?s).*com\\.sgcib\\.fcc\\.osd\\.([a-z]*)\\.build\\.BuildHelpers.*");
 
@@ -40,11 +39,11 @@ public class FirstMatchingRegexpParserTest {
         Map<String, String> indicatorsFound = fileContentParser
                 .parseFileContentForIndicator(fileContent, StringUtils.EMPTY, firstMatchingRegexpToFind);
 
-        assertThat(indicatorsFound.get(indicatorName)).isEqualTo("cap");
+        assertThat(indicatorsFound).containsEntry(indicatorName,"cap");
     }
 
     @Test
-    public void shouldFindValueBasedOnRegexp_gradleVersion() throws Exception {
+    void shouldFindValueBasedOnRegexp_gradleVersion() throws Exception {
 
         params.put(PATTERN, "(?m)^distributionUrl=.*\\/([^\\/\\s]+$)$");
         firstMatchingRegexpToFind.setParams(params);
@@ -54,11 +53,11 @@ public class FirstMatchingRegexpParserTest {
         Map<String, String> indicatorsFound = fileContentParser
                 .parseFileContentForIndicator(fileContent, StringUtils.EMPTY, firstMatchingRegexpToFind);
 
-        assertThat(indicatorsFound.get(indicatorName)).isEqualTo("gradle-3.3-bin.zip");
+        assertThat(indicatorsFound).containsEntry(indicatorName,"gradle-3.3-bin.zip");
     }
 
     @Test
-    public void shouldFindValueBasedOnRegexp2() throws Exception {
+    void shouldFindValueBasedOnRegexp2() throws Exception {
 
         params.put(PATTERN, "(?s).*dockerNode\\(image:'(.+?(?=')).*");
         firstMatchingRegexpToFind.setParams(params);
@@ -68,28 +67,28 @@ public class FirstMatchingRegexpParserTest {
         Map<String, String> indicatorsFound = fileContentParser
                 .parseFileContentForIndicator(fileContent, StringUtils.EMPTY, firstMatchingRegexpToFind);
 
-        assertThat(indicatorsFound.get(indicatorName)).isEqualTo("myDtr.com/someOrg/someImageName:1.0");
+        assertThat(indicatorsFound).containsEntry(indicatorName,"myDtr.com/someOrg/someImageName:1.0");
     }
 
 
     @Test
-    public void canFindDockerImageInDockerFile() throws Exception {
+    void canFindDockerImageInDockerFile() throws Exception {
 
         Map<String, String> indicatorsFound = findDockerImageIndicatorIn("sample_Dockerfile");
 
-        assertThat(indicatorsFound.get(indicatorName)).isEqualTo("someImageName:20171206-162536-e136a81");
+        assertThat(indicatorsFound).containsEntry(indicatorName,"someImageName:20171206-162536-e136a81");
     }
 
     @Test
-    public void canFindDockerImageInMultilineDockerFile() throws Exception {
+    void canFindDockerImageInMultilineDockerFile() throws Exception {
 
         Map<String, String> indicatorsFound = findDockerImageIndicatorIn("sample_multilineDockerfile");
 
-        assertThat(indicatorsFound.get(indicatorName)).isEqualTo("someImageName:7.2");
+        assertThat(indicatorsFound).containsEntry(indicatorName,"someImageName:7.2");
     }
 
     @Test
-    public void canFindValueInDockerStackFile() throws Exception {
+    void canFindValueInDockerStackFile() throws Exception {
 
         String sampleDockerStackFile = FileUtils.readFileToString(ResourceUtils.getFile("classpath:sample_dockerStack"), "UTF-8");
 
@@ -99,11 +98,11 @@ public class FirstMatchingRegexpParserTest {
         Map<String, String> indicatorsFound = fileContentParser
                 .parseFileContentForIndicator(sampleDockerStackFile, StringUtils.EMPTY, firstMatchingRegexpToFind);
 
-        assertThat(indicatorsFound.get(indicatorName)).isEqualTo("http://someZipkinUrl.com");
+        assertThat(indicatorsFound).containsEntry(indicatorName,"http://someZipkinUrl.com");
     }
 
     @Test
-    public void shouldDefaultIfNotConfiguredProperly_noCapturingGroup() throws Exception {
+    void shouldDefaultIfNotConfiguredProperly_noCapturingGroup() throws Exception {
 
         String sampleDockerStackFile = FileUtils.readFileToString(ResourceUtils.getFile("classpath:sample_dockerStack"), "UTF-8");
 
@@ -113,7 +112,7 @@ public class FirstMatchingRegexpParserTest {
         Map<String, String> indicatorsFound = fileContentParser
                 .parseFileContentForIndicator(sampleDockerStackFile, StringUtils.EMPTY, firstMatchingRegexpToFind);
 
-        assertThat(indicatorsFound.get(indicatorName)).isEqualTo("issue in config, check logs");
+        assertThat(indicatorsFound).containsEntry(indicatorName,"issue in config, check logs");
     }
 
     private Map<String, String> findDockerImageIndicatorIn(String fileName) throws IOException {

@@ -4,7 +4,7 @@ import com.societegenerale.githubcrawler.IndicatorDefinition
 import com.societegenerale.githubcrawler.parsers.JsonPathParser.Companion.JSON_PATH
 import org.apache.commons.io.FileUtils
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.springframework.util.ResourceUtils
 
 

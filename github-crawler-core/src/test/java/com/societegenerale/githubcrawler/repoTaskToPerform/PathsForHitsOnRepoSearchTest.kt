@@ -1,19 +1,19 @@
 package com.societegenerale.githubcrawler.repoTaskToPerform
 
-import com.nhaarman.mockito_kotlin.mock
 import com.societegenerale.githubcrawler.model.Branch
 import com.societegenerale.githubcrawler.model.Repository
 import com.societegenerale.githubcrawler.model.SearchResult
 import com.societegenerale.githubcrawler.model.SearchResultItem
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
 import java.util.*
 
 class PathsForHitsOnRepoSearchTest {
 
-    private val mockRemoteGithub : RemoteGitHub= mock()
+    private val mockRemoteGithub = mock(RemoteGitHub::class.java)
 
     private val repoToSearch = Repository(name = "repo1",
             creationDate = Date(),
