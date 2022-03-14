@@ -33,7 +33,6 @@ import java.io.IOException
 import java.lang.reflect.Type
 import java.util.*
 import java.util.stream.Collectors.toSet
-import kotlin.collections.HashMap
 
 
 /**
@@ -212,7 +211,7 @@ private interface InternalGitLabClient {
     fun fetchGroupByName(@Param("groupName") groupName: String): List<GitLabGroup>
 
     //retrieving the max per page (100) so that we don't have to implement pagination
-    @RequestLine("GET /groups/{groupId}/projects?per_page=100")
+    @RequestLine("GET /groups/{groupId}/projects?per_page=100&archived=false")
     fun fetchRepositoriesForGroupId(@Param("groupId") groupId: Int): List<GitLabRepository>
 
     @RequestLine("GET /projects/{repoId}/repository/files/{filePath}/raw?ref={branchName}")
