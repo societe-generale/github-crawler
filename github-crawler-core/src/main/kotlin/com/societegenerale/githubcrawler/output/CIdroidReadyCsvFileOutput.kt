@@ -1,6 +1,5 @@
 package com.societegenerale.githubcrawler.output
 
-import com.societegenerale.githubcrawler.model.Branch
 import com.societegenerale.githubcrawler.model.Repository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -38,27 +37,5 @@ class CIdroidReadyCsvFileOutput(val indicatorsToOutput: List<String>) : CsvFileO
         return sb
     }
 
-    private fun getAllIndicatorsToOutput(indicatorsFromFiles: Map<Branch, Map<String, Any>>, miscTasksResults: Map<Branch, Map<String, Any>>): Map<Branch, Map<String, Any>> {
 
-        val result = LinkedHashMap<Branch, MutableMap<String, Any>>();
-
-        //TODO there's probably a better, more kotlin-esque way to merge the 2 maps..
-
-        for ((key, value) in miscTasksResults) {
-            result[key] = HashMap(value)
-
-            if (indicatorsFromFiles.keys.contains(key)) {
-                result[key]?.putAll(indicatorsFromFiles[key]!!)
-            }
-        }
-
-        for ((key, value) in indicatorsFromFiles) {
-
-            if (!result.containsKey(key)) {
-                result[key] = HashMap(value)
-            }
-        }
-
-        return result
-    }
 }
