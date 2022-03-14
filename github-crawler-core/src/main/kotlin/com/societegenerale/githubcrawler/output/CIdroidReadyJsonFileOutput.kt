@@ -48,11 +48,24 @@ class CIdroidReadyJsonFileOutput (val indicatorsToOutput: List<String>, val with
 
             val sb=StringBuilder()
 
-            for((branch,actualIndicators) in analyzedRepository.indicators ){
+            val allIndicators = getAllIndicatorsToOutput(analyzedRepository.indicators, analyzedRepository.miscTasksResults)
+
+            for((branch,actualIndicators) in allIndicators ){
                 sb.append("{")
                 sb.append("\"repoFullName\": \"").append(analyzedRepository.fullName).append("\",")
                 //we take the first indicator value, assuming it's a path to a file
-                sb.append("\"filePathOnRepo\": \"").append(actualIndicators.get(indicatorsToOutput[0])).append("\",")
+                val indicatorToOutput=actualIndicators.get(indicatorsToOutput[0])
+
+                val indicatorToOutputAsString : String
+                if (indicatorToOutput is Collection<*> && indicatorToOutput.isNotEmpty()) {
+                    indicatorToOutputAsString=indicatorToOutput.stream().findFirst().get().toString()
+                    sb.append("\"filePathOnRepo\": \"").append(indicatorToOutputAsString).append("\",")
+                }
+                else{
+                    sb.append("\"filePathOnRepo\": \"").append(indicatorToOutput).append("\",")
+                }
+
+
 
                 appendOtherIndicatorsIfAny(sb, actualIndicators)
 
