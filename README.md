@@ -56,6 +56,9 @@ Below configuration shows how outputs, indicators and actions are configured und
 github-crawler:
     
     githubConfig:    
+        # since v1.3.0, we need to mention the source control type. defaults to GitHub, but other options are possible
+        # as defined in https://github.com/societe-generale/github-crawler/blob/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/GithubConfig.kt
+        type: "GITHUB"
         # the base GitHub URL for your Github enterprise instance to crawl
         # or if it's github.com...
         # gitHub.url: https://api.github.com
@@ -187,9 +190,12 @@ From v1.2.0 onward, basic support for gitLab is available ! It all boils down to
 - run the application with proper Spring Boot profile, ie with ```-Dspring.profiles.active=gitLab``` on the command line
 - Since the crawler is still primarily for GitHub, the config properties haven't been adapted (yet ?) for Gitlab. So your config would look like : 
 
+note : if you're using v1.3.0+ , then we won't use profiles anymore, but use the `github-crawler.githubConfig.type` property and set it to `GITLAB` . 
+
 ```
     github-crawler:
       githubConfig:
+        type: "GITLAB"
         apiUrl: https://gitlab.com/api/v4/
 
         # your Gitlab personal access token
