@@ -1,6 +1,7 @@
 github-crawler:
 
   githubConfig:
+    type: "GITHUB"
     url: https://api.github.com
     oauthToken: "lihwlfhlihvliwh;wjg;"
     organizationName: MyOrg
