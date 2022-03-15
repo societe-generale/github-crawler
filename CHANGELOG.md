@@ -12,6 +12,15 @@
 
 ### Fixed
 
+##  [1.3.0] - 2022-03-15
+
+### Changed
+- PR #91 / 92 : upgraded to latest Spring Boot (2.6.4) and Kotlin (1.6.10)
+- PR #93 : now expecting that target source control is explicitly defined in config 
+- quick fix to output miscTaskresults in CIdroidReadyJsonFileOutput
+- will not fetch archived repositories for GitLab anymore 
+- PR #87 : building on JDK 11
+
 ##  [1.2.1] - 2020-09-03
 
 ### Added
