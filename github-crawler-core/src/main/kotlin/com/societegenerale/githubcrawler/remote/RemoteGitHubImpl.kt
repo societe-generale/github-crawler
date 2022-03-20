@@ -21,7 +21,7 @@ import feign.codec.ErrorDecoder
 import feign.gson.GsonEncoder
 import feign.httpclient.ApacheHttpClient
 import feign.slf4j.Slf4jLogger
-import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import org.apache.commons.io.IOUtils
@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters
 import org.springframework.cloud.openfeign.support.ResponseEntityDecoder
 import org.springframework.cloud.openfeign.support.SpringDecoder
-
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
@@ -81,7 +80,7 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
         try {
             extractRepositories(response)
         } catch (e: JsonProcessingException) {
-            throw NoReachableRepositories("not able to parse response : ${response.body()}", e)
+            throw NoReachableRepositories("not able to parse response : ${response.body}", e)
         }
 
     }
@@ -109,7 +108,7 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
             response = httpClient.newCall(request).execute()
 
             if (!response.isSuccessful) {
-                throw NoReachableRepositories("GET call to ${reposUrl} wasn't successful. Code : ${response.code()}, Message : ${response.message()}")
+                throw NoReachableRepositories("GET call to ${reposUrl} wasn't successful. Code : ${response.code}, Message : ${response.message}")
             }
         } catch (e: IOException) {
             throw NoReachableRepositories("Unable to perform the request", e)
@@ -175,7 +174,7 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
 
         try {
 
-            val body = response.body()
+            val body = response.body
 
             if (body != null) {
                 return objectMapper.readValue(body.string())
@@ -223,7 +222,7 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
      */
     override fun fetchCodeSearchResult(repositoryFullName: String, query: String): SearchResult {
 
-        val searchCodeUrl = HttpUrl.parse(gitHubUrl +buildQueryString(query,repositoryFullName))!!.newBuilder().build().toString()
+        val searchCodeUrl = (gitHubUrl +buildQueryString(query,repositoryFullName)).toHttpUrlOrNull()!!.newBuilder().build().toString()
 
         val requestBuilder = okhttp3.Request.Builder()
                 .url(searchCodeUrl)
@@ -235,7 +234,7 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
 
         val response = httpClient.newCall(request).execute()
 
-        val responseAsString=response.body()?.string()
+        val responseAsString=response.body?.string()
         log.info("response : "+responseAsString)
 
         return try {
@@ -273,7 +272,7 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
         val response = httpClient.newCall(request).execute()
 
 
-        return response.body()?.string() ?: ""
+        return response.body?.string() ?: ""
 
     }
 
@@ -398,7 +397,7 @@ internal class GitHubResponseDecoder : Decoder {
     fun decodeRepoConfig(response: okhttp3.Response): RepositoryConfig {
 
         val writer = StringWriter()
-        IOUtils.copy(response.body()?.byteStream(), writer, "UTF-8")
+        IOUtils.copy(response.body?.byteStream(), writer, "UTF-8")
         val responseAsString = writer.toString()
 
         return parseRepositoryConfigResponse(responseAsString, response)
@@ -444,7 +443,7 @@ internal class GitHubResponseDecoder : Decoder {
         try {
             return repoConfigMapper.readValue(responseAsString, RepositoryConfig::class.java)
         } catch (e: IOException) {
-            throw Repository.RepoConfigException(HttpStatus.BAD_REQUEST,"unable to parse config for repo - content : \"" + response.body() + "\"", e)
+            throw Repository.RepoConfigException(HttpStatus.BAD_REQUEST,"unable to parse config for repo - content : \"" + response.body+ "\"", e)
         }
     }
 

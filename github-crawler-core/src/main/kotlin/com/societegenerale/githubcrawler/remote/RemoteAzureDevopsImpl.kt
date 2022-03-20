@@ -145,12 +145,12 @@ internal class AzureDevopsResponseDecoder {
 
     fun decodeRepoConfig(response: okhttp3.Response): RepositoryConfig {
 
-        if(response.code()==HttpStatus.NOT_FOUND.value()){
+        if(response.code ==HttpStatus.NOT_FOUND.value()){
             return RepositoryConfig()
         }
 
         val writer = StringWriter()
-        IOUtils.copy(response.body()?.byteStream(), writer, "UTF-8")
+        IOUtils.copy(response.body?.byteStream(), writer, "UTF-8")
         val responseAsString = writer.toString()
 
         return parseRepositoryConfigResponse(responseAsString, response)
@@ -164,7 +164,7 @@ internal class AzureDevopsResponseDecoder {
         try {
             return repoConfigMapper.readValue(responseAsString, RepositoryConfig::class.java)
         } catch (e: IOException) {
-            throw Repository.RepoConfigException(HttpStatus.BAD_REQUEST,"unable to parse config for repo - content : \"" + response.body() + "\"", e)
+            throw Repository.RepoConfigException(HttpStatus.BAD_REQUEST,"unable to parse config for repo - content : \"" + response.body + "\"", e)
         }
     }
 

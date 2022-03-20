@@ -100,14 +100,14 @@
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>3.10.0</version>
+            <version>${okHttp.version}</version>
         </dependency>
 
 
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>logging-interceptor</artifactId>
-            <version>3.10.0</version>
+            <version>${okHttp.version}</version>
         </dependency>
 
 
