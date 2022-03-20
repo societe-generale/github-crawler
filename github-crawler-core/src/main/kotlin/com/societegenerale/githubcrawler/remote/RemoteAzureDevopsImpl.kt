@@ -13,7 +13,9 @@ import com.societegenerale.githubcrawler.model.commit.Commit
 import com.societegenerale.githubcrawler.model.commit.DetailedCommit
 import com.societegenerale.githubcrawler.model.team.Team
 import com.societegenerale.githubcrawler.model.team.TeamMember
+import okhttp3.Credentials
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.apache.commons.io.IOUtils
 import org.azd.utils.AzDClientApi
 import org.slf4j.LoggerFactory
@@ -43,21 +45,31 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(val organization: String, 
 
     private val azDevopsClient= AzDClientApi(azureOrg, azureProject, personalAccessToken)
 
-    private val httpClient = OkHttpClient()
+    private val basicAuthentCredentials: String = Credentials.basic("", personalAccessToken)
 
-    private val base64EncodedAccessToken=Base64.getEncoder().encodeToString(personalAccessToken.toByteArray())
+    private val requestTemplate=okhttp3.Request.Builder()
+                                    .header("Content-Type", "application/json")
+                                    .header("Authorization", basicAuthentCredentials)
+
+    private val httpClient : OkHttpClient
+
+    init {
+        val logging= HttpLoggingInterceptor()
+        //logging.level = (HttpLoggingInterceptor.Level.HEADERS)
+
+        httpClient= OkHttpClient.Builder().addInterceptor(logging).build()
+    }
 
     override fun fetchRepositories(organizationName: String): Set<Repository> {
 
         val repositories=azDevopsClient.gitApi.repositories.repositories
-
-
 
         return repositories.stream().map{ repo -> Repository(
                 url=repo.url,
                 name =repo.name,
                 fullName =repo.name,
                 defaultBranch = repo.defaultBranch,
+            //TODO make the dates nullable in Repository
                 creationDate = Date(),
                 lastUpdateDate = Date(),
         )}
@@ -71,18 +83,13 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(val organization: String, 
         val configUrl=AZURE_DEVOPS_URL+"${azureOrg}/${azureProject}/_apis/git/repositories/${repositoryFullName}/items?path=${REPO_LEVEL_CONFIG_FILE}&${
             AZURE_DEVOPS_API_VERSION}"
 
-        val request = okhttp3.Request.Builder()
-            .url(configUrl)
-            .header(BASIC_AUTHENTICATION, base64EncodedAccessToken)
-            .build()
+        val request = requestTemplate.url(configUrl).build()
 
         val response=httpClient.newCall(request).execute()
 
         val decoder = AzureDevopsResponseDecoder()
 
         return decoder.decodeRepoConfig(response)
-
-
     }
 
     override fun fetchRepoBranches(repositoryFullName: String): Set<Branch> {
@@ -137,6 +144,10 @@ internal class AzureDevopsResponseDecoder {
     }
 
     fun decodeRepoConfig(response: okhttp3.Response): RepositoryConfig {
+
+        if(response.code()==HttpStatus.NOT_FOUND.value()){
+            return RepositoryConfig()
+        }
 
         val writer = StringWriter()
         IOUtils.copy(response.body()?.byteStream(), writer, "UTF-8")
