@@ -21,7 +21,7 @@ import feign.codec.ErrorDecoder
 import feign.gson.GsonEncoder
 import feign.httpclient.ApacheHttpClient
 import feign.slf4j.Slf4jLogger
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import org.apache.commons.io.IOUtils
@@ -189,7 +189,7 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
 
     private fun getLinkToNextPageIfAny(response: Response): String? {
 
-        val linksFromHeader = response.header("link")
+        val linksFromHeader = response.header("link",null)
 
         if (linksFromHeader != null) {
 
@@ -222,7 +222,9 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
      */
     override fun fetchCodeSearchResult(repositoryFullName: String, query: String): SearchResult {
 
-        val searchCodeUrl = (gitHubUrl +buildQueryString(query,repositoryFullName)).toHttpUrlOrNull()!!.newBuilder().build().toString()
+        var searchUrlString=gitHubUrl +buildQueryString(query,repositoryFullName)
+
+        val searchCodeUrl = searchUrlString.toHttpUrl().newBuilder().build().toString()
 
         val requestBuilder = okhttp3.Request.Builder()
                 .url(searchCodeUrl)

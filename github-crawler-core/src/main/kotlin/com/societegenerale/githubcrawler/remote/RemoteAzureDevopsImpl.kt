@@ -15,7 +15,6 @@ import com.societegenerale.githubcrawler.model.team.Team
 import com.societegenerale.githubcrawler.model.team.TeamMember
 import okhttp3.Credentials
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import org.apache.commons.io.IOUtils
 import org.azd.utils.AzDClientApi
 import org.slf4j.LoggerFactory
@@ -54,10 +53,7 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(val organization: String, 
     private val httpClient : OkHttpClient
 
     init {
-        val logging= HttpLoggingInterceptor()
-        //logging.level = (HttpLoggingInterceptor.Level.HEADERS)
-
-        httpClient= OkHttpClient.Builder().addInterceptor(logging).build()
+         httpClient= OkHttpClient.Builder().build()
     }
 
     override fun fetchRepositories(organizationName: String): Set<Repository> {

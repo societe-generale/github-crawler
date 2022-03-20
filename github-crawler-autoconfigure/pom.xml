@@ -17,6 +17,15 @@
 
     <dependencies>
 
+        <!-- not clear why this is required... but somehow, an old version of okhttp comes from github-crawler-core, even  if it's not defined there
+        so we have to define the dependency again here, to make sure it's the expected version that is picked -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${okHttp.version}</version>
+        </dependency>
+
+
         <dependency>
             <groupId>com.societegenerale.github-crawler</groupId>
             <artifactId>github-crawler-core</artifactId>
