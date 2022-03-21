@@ -15,6 +15,7 @@ import com.societegenerale.githubcrawler.model.team.Team
 import com.societegenerale.githubcrawler.model.team.TeamMember
 import okhttp3.Credentials
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.apache.commons.io.IOUtils
 import org.azd.utils.AzDClientApi
 import org.slf4j.LoggerFactory
@@ -47,13 +48,16 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(val organization: String, 
     private val basicAuthentCredentials: String = Credentials.basic("", personalAccessToken)
 
     private val requestTemplate=okhttp3.Request.Builder()
-                                    .header("Content-Type", "application/json")
-                                    .header("Authorization", basicAuthentCredentials)
+        .header("Content-Type", "application/json")
+        .header("Authorization", basicAuthentCredentials)
 
     private val httpClient : OkHttpClient
 
     init {
-         httpClient= OkHttpClient.Builder().build()
+        val logging= HttpLoggingInterceptor()
+        //logging.level = (HttpLoggingInterceptor.Level.HEADERS)
+
+        httpClient= OkHttpClient.Builder().addInterceptor(logging).build()
     }
 
     override fun fetchRepositories(organizationName: String): Set<Repository> {
@@ -61,13 +65,13 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(val organization: String, 
         val repositories=azDevopsClient.gitApi.repositories.repositories
 
         return repositories.stream().map{ repo -> Repository(
-                url=repo.url,
-                name =repo.name,
-                fullName =repo.name,
-                defaultBranch = repo.defaultBranch,
+            url=repo.url,
+            name =repo.name,
+            fullName =repo.name,
+            defaultBranch = repo.defaultBranch,
             //TODO make the dates nullable in Repository
-                creationDate = Date(),
-                lastUpdateDate = Date(),
+            creationDate = Date(),
+            lastUpdateDate = Date(),
         )}
             .collect(toSet())
 
@@ -141,12 +145,12 @@ internal class AzureDevopsResponseDecoder {
 
     fun decodeRepoConfig(response: okhttp3.Response): RepositoryConfig {
 
-        if(response.code ==HttpStatus.NOT_FOUND.value()){
+        if(response.code()==HttpStatus.NOT_FOUND.value()){
             return RepositoryConfig()
         }
 
         val writer = StringWriter()
-        IOUtils.copy(response.body?.byteStream(), writer, "UTF-8")
+        IOUtils.copy(response.body()?.byteStream(), writer, "UTF-8")
         val responseAsString = writer.toString()
 
         return parseRepositoryConfigResponse(responseAsString, response)
@@ -160,7 +164,7 @@ internal class AzureDevopsResponseDecoder {
         try {
             return repoConfigMapper.readValue(responseAsString, RepositoryConfig::class.java)
         } catch (e: IOException) {
-            throw Repository.RepoConfigException(HttpStatus.BAD_REQUEST,"unable to parse config for repo - content : \"" + response.body + "\"", e)
+            throw Repository.RepoConfigException(HttpStatus.BAD_REQUEST,"unable to parse config for repo - content : \"" + response.body() + "\"", e)
         }
     }
 

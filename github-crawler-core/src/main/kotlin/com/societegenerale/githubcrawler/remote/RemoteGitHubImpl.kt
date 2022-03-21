@@ -21,7 +21,7 @@ import feign.codec.ErrorDecoder
 import feign.gson.GsonEncoder
 import feign.httpclient.ApacheHttpClient
 import feign.slf4j.Slf4jLogger
-import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import org.apache.commons.io.IOUtils
@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters
 import org.springframework.cloud.openfeign.support.ResponseEntityDecoder
 import org.springframework.cloud.openfeign.support.SpringDecoder
+
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
@@ -55,15 +56,15 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
     }
 
     private val internalGitHubClient: InternalGitHubClient = Feign.builder()
-            .client(ApacheHttpClient())
-            .encoder(GsonEncoder())
-            .decoder(GitHubResponseDecoder())
-            .errorDecoder(GiHubErrorDecoder())
-            .decode404()
-            .requestInterceptor(GitHubOauthTokenSetter(oauthToken))
-            .logger(Slf4jLogger(RemoteGitHubImpl::class.java))
-            .logLevel(Logger.Level.FULL)
-            .target<InternalGitHubClient>(InternalGitHubClient::class.java, gitHubUrl)
+        .client(ApacheHttpClient())
+        .encoder(GsonEncoder())
+        .decoder(GitHubResponseDecoder())
+        .errorDecoder(GiHubErrorDecoder())
+        .decode404()
+        .requestInterceptor(GitHubOauthTokenSetter(oauthToken))
+        .logger(Slf4jLogger(RemoteGitHubImpl::class.java))
+        .logLevel(Logger.Level.FULL)
+        .target<InternalGitHubClient>(InternalGitHubClient::class.java, gitHubUrl)
 
     private val httpClient = OkHttpClient()
 
@@ -80,7 +81,7 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
         try {
             extractRepositories(response)
         } catch (e: JsonProcessingException) {
-            throw NoReachableRepositories("not able to parse response : ${response.body}", e)
+            throw NoReachableRepositories("not able to parse response : ${response.body()}", e)
         }
 
     }
@@ -91,8 +92,8 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
         val reposUrl = "$gitHubUrl/" + userOrOrg() + "/$organizationName/repos"
 
         val requestBuilder = okhttp3.Request.Builder()
-                .url(reposUrl)
-                .header(ACCEPT, APPLICATION_GITHUB_MERCY_PREVIEW_JSON)
+            .url(reposUrl)
+            .header(ACCEPT, APPLICATION_GITHUB_MERCY_PREVIEW_JSON)
 
         addOAuthTokenIfRequired(requestBuilder)
 
@@ -108,7 +109,7 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
             response = httpClient.newCall(request).execute()
 
             if (!response.isSuccessful) {
-                throw NoReachableRepositories("GET call to ${reposUrl} wasn't successful. Code : ${response.code}, Message : ${response.message}")
+                throw NoReachableRepositories("GET call to ${reposUrl} wasn't successful. Code : ${response.code()}, Message : ${response.message()}")
             }
         } catch (e: IOException) {
             throw NoReachableRepositories("Unable to perform the request", e)
@@ -147,8 +148,8 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
 
 
             val nextPageRequestBuilder = okhttp3.Request.Builder()
-                    .url(nextPageLink)
-                    .header(ACCEPT, APPLICATION_GITHUB_MERCY_PREVIEW_JSON)
+                .url(nextPageLink)
+                .header(ACCEPT, APPLICATION_GITHUB_MERCY_PREVIEW_JSON)
 
             addOAuthTokenIfRequired(nextPageRequestBuilder)
 
@@ -174,7 +175,7 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
 
         try {
 
-            val body = response.body
+            val body = response.body()
 
             if (body != null) {
                 return objectMapper.readValue(body.string())
@@ -189,7 +190,7 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
 
     private fun getLinkToNextPageIfAny(response: Response): String? {
 
-        val linksFromHeader = response.header("link",null)
+        val linksFromHeader = response.header("link")
 
         if (linksFromHeader != null) {
 
@@ -222,13 +223,11 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
      */
     override fun fetchCodeSearchResult(repositoryFullName: String, query: String): SearchResult {
 
-        var searchUrlString=gitHubUrl +buildQueryString(query,repositoryFullName)
-
-        val searchCodeUrl = searchUrlString.toHttpUrl().newBuilder().build().toString()
+        val searchCodeUrl = HttpUrl.parse(gitHubUrl +buildQueryString(query,repositoryFullName))!!.newBuilder().build().toString()
 
         val requestBuilder = okhttp3.Request.Builder()
-                .url(searchCodeUrl)
-                .header(ACCEPT, APPLICATION_JSON)
+            .url(searchCodeUrl)
+            .header(ACCEPT, APPLICATION_JSON)
 
         addOAuthTokenIfRequired(requestBuilder)
 
@@ -236,7 +235,7 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
 
         val response = httpClient.newCall(request).execute()
 
-        val responseAsString=response.body?.string()
+        val responseAsString=response.body()?.string()
         log.info("response : "+responseAsString)
 
         return try {
@@ -264,8 +263,8 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
         }
 
         val requestBuilder = okhttp3.Request.Builder()
-                .url(fileOnRepository.downloadUrl)
-                .header(ACCEPT, APPLICATION_JSON)
+            .url(fileOnRepository.downloadUrl)
+            .header(ACCEPT, APPLICATION_JSON)
 
         addOAuthTokenIfRequired(requestBuilder)
 
@@ -274,19 +273,19 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
         val response = httpClient.newCall(request).execute()
 
 
-        return response.body?.string() ?: ""
+        return response.body()?.string() ?: ""
 
     }
 
     override fun fetchCommits(repositoryFullName: String, perPage: Int): Set<Commit> {
 
         return try {
-                internalGitHubClient.fetchCommits(repositoryFullName, perPage)
-            }
-            catch (e: GitHubResponseDecoder.GithubException) {
-                log.warn("not able to fetch commits for repo $repositoryFullName",e)
-                emptySet()
-            }
+            internalGitHubClient.fetchCommits(repositoryFullName, perPage)
+        }
+        catch (e: GitHubResponseDecoder.GithubException) {
+            log.warn("not able to fetch commits for repo $repositoryFullName",e)
+            emptySet()
+        }
 
     }
 
@@ -313,8 +312,8 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
         }
 
         val requestBuilder = okhttp3.Request.Builder()
-                .url(configFileOnRepository.downloadUrl)
-                .header(ACCEPT, APPLICATION_JSON)
+            .url(configFileOnRepository.downloadUrl)
+            .header(ACCEPT, APPLICATION_JSON)
 
         addOAuthTokenIfRequired(requestBuilder)
 
@@ -399,7 +398,7 @@ internal class GitHubResponseDecoder : Decoder {
     fun decodeRepoConfig(response: okhttp3.Response): RepositoryConfig {
 
         val writer = StringWriter()
-        IOUtils.copy(response.body?.byteStream(), writer, "UTF-8")
+        IOUtils.copy(response.body()?.byteStream(), writer, "UTF-8")
         val responseAsString = writer.toString()
 
         return parseRepositoryConfigResponse(responseAsString, response)
@@ -445,7 +444,7 @@ internal class GitHubResponseDecoder : Decoder {
         try {
             return repoConfigMapper.readValue(responseAsString, RepositoryConfig::class.java)
         } catch (e: IOException) {
-            throw Repository.RepoConfigException(HttpStatus.BAD_REQUEST,"unable to parse config for repo - content : \"" + response.body+ "\"", e)
+            throw Repository.RepoConfigException(HttpStatus.BAD_REQUEST,"unable to parse config for repo - content : \"" + response.body() + "\"", e)
         }
     }
 
