@@ -8,19 +8,17 @@ import com.societegenerale.githubcrawler.RepositoryEnricher
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput
 import com.societegenerale.githubcrawler.parsers.FileContentParser
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
-import com.societegenerale.githubcrawler.remote.RemoteGitHubImpl
-import com.societegenerale.githubcrawler.remote.RemoteGitLabImpl
 import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskBuilder
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
-import org.springframework.context.annotation.Profile
 import org.springframework.core.convert.ConversionService
 import org.springframework.core.env.Environment
 
 @Configuration
-@Import(GitHubCrawlerParserConfig::class,GitHubCrawlerOutputConfig::class,GitHubCrawlerMiscTasksConfig::class,GitHubConfiguration::class,GitLabConfiguration::class)
+@Import(GitHubCrawlerParserConfig::class,GitHubCrawlerOutputConfig::class,GitHubCrawlerMiscTasksConfig::class,
+    GitHubConfiguration::class,GitLabConfiguration::class,AzureDevopsConfiguration::class)
 @EnableConfigurationProperties(GitHubCrawlerProperties::class)
 open class GitHubCrawlerAutoConfiguration {
 
