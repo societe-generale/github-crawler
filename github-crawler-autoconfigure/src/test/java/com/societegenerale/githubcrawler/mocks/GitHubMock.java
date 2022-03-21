@@ -1,5 +1,16 @@
 package com.societegenerale.githubcrawler.mocks;
 
+import static com.societegenerale.githubcrawler.remote.RemoteGitHubImpl.CONFIG_VALIDATION_REQUEST_HEADER;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import net.codestory.http.Context;
 import net.codestory.http.WebServer;
 import net.codestory.http.constants.HttpStatus;
@@ -15,20 +26,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StreamUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.*;
-
-import static com.societegenerale.githubcrawler.remote.RemoteGitHubImpl.CONFIG_VALIDATION_REQUEST_HEADER;
-
 @Component
 public class GitHubMock implements RemoteServiceMock {
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(GitHubMock.class);
 
-    private String organisationResponse = "organisation.json";
+    private String organisationResponse = "github/organisation.json";
 
     public final static String REPO_EXCLUDED_CONFIG = "excluded: true";
 
@@ -158,10 +161,10 @@ public class GitHubMock implements RemoteServiceMock {
 
         if (aSubDirectory != null) {
 
-            fileOnRepoTemplate = FileUtils.readFileToString(ResourceUtils.getFile("classpath:template_FileOnRepo_withSubDir.json"), "UTF-8");
+            fileOnRepoTemplate = FileUtils.readFileToString(ResourceUtils.getFile("classpath:github/template_FileOnRepo_withSubDir.json"), "UTF-8");
             fileOnRepoTemplate = fileOnRepoTemplate.replaceFirst("\\$\\{SUB_DIRECTORY}", aSubDirectory);
         } else {
-            fileOnRepoTemplate = FileUtils.readFileToString(ResourceUtils.getFile("classpath:template_FileOnRepo.json"), "UTF-8");
+            fileOnRepoTemplate = FileUtils.readFileToString(ResourceUtils.getFile("classpath:github/template_FileOnRepo.json"), "UTF-8");
         }
 
         fileOnRepoTemplate = fileOnRepoTemplate.replaceFirst("\\$\\{REPO}", repo);
@@ -180,7 +183,7 @@ public class GitHubMock implements RemoteServiceMock {
 
         if (reposWithPomXml.contains(repo)) {
 
-            String pomXMlTemplate = FileUtils.readFileToString(ResourceUtils.getFile("classpath:pomXmlFileOnRepo.json"), "UTF-8");
+            String pomXMlTemplate = FileUtils.readFileToString(ResourceUtils.getFile("classpath:github/pomXmlFileOnRepo.json"), "UTF-8");
 
             return new Payload("application/json", pomXMlTemplate.replaceFirst("\\$\\{REPO}", repo));
         } else {
@@ -200,7 +203,7 @@ public class GitHubMock implements RemoteServiceMock {
         if (repoConfigPerRepo.containsKey(repo)) {
             log.info("\t returning something..");
 
-            String repoConfigTemplate = FileUtils.readFileToString(ResourceUtils.getFile("classpath:dummyFileOnRepo.json"), "UTF-8");
+            String repoConfigTemplate = FileUtils.readFileToString(ResourceUtils.getFile("classpath:github/dummyFileOnRepo.json"), "UTF-8");
 
             return new Payload("application/json", repoConfigTemplate.replaceFirst("\\$\\{REPO}", repo));
 
@@ -247,7 +250,7 @@ public class GitHubMock implements RemoteServiceMock {
 
         searchHitsCount++;
 
-        return new Payload("application/json", FileUtils.readFileToString(ResourceUtils.getFile("classpath:searchResult.json"), "UTF-8"));
+        return new Payload("application/json", FileUtils.readFileToString(ResourceUtils.getFile("classpath:github/searchResult.json"), "UTF-8"));
 
     }
 
@@ -316,7 +319,7 @@ public class GitHubMock implements RemoteServiceMock {
 
         log.debug("received a branches request for repo {}..", repoName);
 
-        InputStream is = getClass().getClassLoader().getResourceAsStream("branches.json");
+        InputStream is = getClass().getClassLoader().getResourceAsStream("github/branches.json");
         String jsonString = StreamUtils.copyToString(is, Charset.forName("UTF-8"));
 
         return new Payload("application/json", jsonString);
