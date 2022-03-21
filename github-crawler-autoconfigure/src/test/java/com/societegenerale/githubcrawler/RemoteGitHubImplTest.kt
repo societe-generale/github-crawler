@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.test.annotation.DirtiesContext
 
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeUnit.SECONDS
 
 @ExtendWith(SpringExtension::class)
 @ActiveProfiles(profiles = arrayOf("gitHubTest"))
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 class RemoteGitHubImplTest {
 
     companion object {

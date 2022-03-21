@@ -18,13 +18,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.ResourceUtils;
 
 
 @SpringBootTest(classes = {TestConfig.class, GitHubCrawlerAutoConfiguration.class})
 @ActiveProfiles(profiles = {"azureDevopsTest"})
-
+@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 class AzureDevopsCrawlerIT {
 
   Logger log = LoggerFactory.getLogger(this.getClass().toString());

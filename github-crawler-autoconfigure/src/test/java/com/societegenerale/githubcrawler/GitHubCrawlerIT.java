@@ -26,6 +26,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -33,6 +35,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {TestConfig.class, GitHubCrawlerAutoConfiguration.class})
 @ActiveProfiles(profiles = {"gitHubTest", "profilesAreAWayOfGrouping"})
+@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class GitHubCrawlerIT {
 
   private final int MAX_TIMEOUT_FOR_CRAWLER = 10;
