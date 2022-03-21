@@ -107,7 +107,30 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(val azureDevopsUrl: String
     }
 
     override fun fetchFileContent(repositoryFullName: String, branchName: String, fileToFetch: String): String {
-        TODO("Not yet implemented")
+        val fileContentUrl=azureDevopsUrl+"$azureOrg/$azureProject/_apis/git/repositories/$repositoryFullName/items?" +
+            "path=${fileToFetch}" +
+            "&versionDescriptor.versionType=branch" +
+            "&versionDescriptor.version=" +extractBranchNameFromRef(branchName) +
+            "&${AZURE_DEVOPS_API_VERSION}"
+
+        val request = requestTemplate.url(fileContentUrl).build()
+
+        val response=httpClient.newCall(request).execute()
+
+        if(response.isSuccessful){
+            return response.body()?.string() ?: ""
+        }
+        else{
+            throw NoFileFoundException("can't find $fileToFetch in repo $repositoryFullName, in branch $branchName")
+        }
+
+    }
+
+    /**
+     * the branchName we receive is actually the reference, like "refs/heads/main". We need only the part after the "/"
+     */
+    private fun extractBranchNameFromRef(refName: String): String {
+        return refName.substring(refName.lastIndexOf("/")+1)
     }
 
     override fun fetchCommits(repositoryFullName: String, perPage: Int): Set<Commit> {

@@ -14,7 +14,7 @@
         "visibility": "private",
         "lastUpdateTime": "2021-09-16T05:04:19.307Z"
       },
-      "defaultBranch": "refs/heads/master",
+      "defaultBranch": "refs/heads/main",
       "size": 79584,
       "remoteUrl": "https://my-platform@dev.azure.com/my-platform/my-platform-projects/_git/my-helm-chart",
       "sshUrl": "git@ssh.dev.azure.com:v3/my-platform/my-platform-projects/my-helm-chart",

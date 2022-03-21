@@ -17,7 +17,9 @@ class ConfigValidator(val properties : GitHubCrawlerProperties,
 
         val validationErrors = mutableListOf<String>()
 
-        if(properties.githubConfig.apiUrl.isBlank()){
+        // there's a default url for AzureDevops, no need to configure it
+        if(properties.githubConfig.type!= SourceControlType.AZURE_DEVOPS &&
+           properties.githubConfig.apiUrl.isBlank()){
             validationErrors.add("gitHub.apiUrl can't be empty")
         }
 

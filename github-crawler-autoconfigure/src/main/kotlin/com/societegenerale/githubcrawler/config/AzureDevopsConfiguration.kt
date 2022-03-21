@@ -18,7 +18,7 @@ open class AzureDevopsConfiguration {
 
         val targetUrl:String
 
-        if(gitHubCrawlerProperties.githubConfig.apiUrl == null){
+        if(gitHubCrawlerProperties.githubConfig.apiUrl.isEmpty()){
             targetUrl=  AZURE_DEVOPS_URL
         }
         else{

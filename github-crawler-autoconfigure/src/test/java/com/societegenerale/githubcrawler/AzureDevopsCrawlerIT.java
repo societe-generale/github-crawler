@@ -11,11 +11,13 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import com.societegenerale.githubcrawler.config.GitHubCrawlerAutoConfiguration;
 import com.societegenerale.githubcrawler.config.TestConfig;
 import java.io.IOException;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.util.ResourceUtils;
 
 
 @SpringBootTest(classes = {TestConfig.class, GitHubCrawlerAutoConfiguration.class})
@@ -35,7 +37,7 @@ class AzureDevopsCrawlerIT {
           .usingFilesUnderDirectory("src/test/resources/azureDevops"));
 
   @BeforeEach
-  void mockSetUp() {
+  void mockSetUp() throws IOException {
 
     wm.start();
     configureFor(AZUREDEVOPS_SERVER_PORT_FOR_TESTS);
@@ -51,12 +53,21 @@ class AzureDevopsCrawlerIT {
     stubFor(WireMock.get(urlEqualTo("/platform/platform-projects/_apis/git/repositories/vendor-portal-ui/items?path=.azureDevopsCrawler&"+API_VERSION))
         .willReturn(aResponse().withStatus(404)));
 
+    stubFor(WireMock.get(urlEqualTo("/platform/platform-projects/_apis/git/repositories/my-helm-chart/items?path=pom.xml&versionDescriptor.versionType=branch&versionDescriptor.version=main&"+API_VERSION))
+        .willReturn((aResponse()
+            .withBody(FileUtils.readFileToString(ResourceUtils.getFile("classpath:sample_pom.xml"), "UTF-8"))
+            .withStatus(200))));
+
+    stubFor(WireMock.get(urlEqualTo("/platform/platform-projects/_apis/git/repositories/vendor-portal-ui/items?path=pom.xml&versionDescriptor.versionType=branch&versionDescriptor.version=main&"+API_VERSION))
+        .willReturn(aResponse().withStatus(404)));
   }
 
 
   @Test
   void shouldCrawl() throws IOException {
     crawler.crawl();
+
+    //TODO have an in-memory output and assert content
   }
 
 
