@@ -14,6 +14,8 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -22,7 +24,10 @@ import org.springframework.util.ResourceUtils;
 
 @SpringBootTest(classes = {TestConfig.class, GitHubCrawlerAutoConfiguration.class})
 @ActiveProfiles(profiles = {"azureDevopsTest"})
+
 class AzureDevopsCrawlerIT {
+
+  Logger log = LoggerFactory.getLogger(this.getClass().toString());
 
   private final static String API_VERSION = "api-version=7.1-preview.1";
 
@@ -64,8 +69,16 @@ class AzureDevopsCrawlerIT {
 
 
   @Test
-  void shouldCrawl() throws IOException {
-    crawler.crawl();
+  void shouldCrawl(){
+
+    log.info("about to start crawling...");
+
+    try {
+      crawler.crawl();
+    } catch (IOException e) {
+      log.error("problem while crawling",e);
+
+    }
 
     //TODO have an in-memory output and assert content
   }
