@@ -1,6 +1,7 @@
 github-crawler:
 
   githubConfig:
+    type: "GITHUB"
     apiUrl: http://localhost:9900/api/v3
     organizationName: MyOrganization
 

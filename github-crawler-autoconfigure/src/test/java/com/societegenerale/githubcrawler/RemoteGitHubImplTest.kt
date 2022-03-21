@@ -15,7 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.util.concurrent.TimeUnit.SECONDS
 
 @ExtendWith(SpringExtension::class)
-@ActiveProfiles(profiles = arrayOf("test"))
+@ActiveProfiles(profiles = arrayOf("gitHubTest"))
 class RemoteGitHubImplTest {
 
     companion object {

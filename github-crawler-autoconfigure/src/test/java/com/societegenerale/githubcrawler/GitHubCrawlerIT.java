@@ -32,7 +32,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {TestConfig.class, GitHubCrawlerAutoConfiguration.class})
-@ActiveProfiles(profiles = {"test", "profilesAreAWayOfGrouping"})
+@ActiveProfiles(profiles = {"gitHubTest", "profilesAreAWayOfGrouping"})
 public class GitHubCrawlerIT {
 
   private final int MAX_TIMEOUT_FOR_CRAWLER = 10;
@@ -162,7 +162,7 @@ public class GitHubCrawlerIT {
         .until(() -> assertThat(processedRepositories).hasSize(nbRepositoriesInOrga));
 
     processedRepositories.stream().forEach(repo -> {
-      assertThat(repo.getGroups()).containsExactlyInAnyOrder("test", "profilesAreAWayOfGrouping");
+      assertThat(repo.getGroups()).containsExactlyInAnyOrder("gitHubTest", "profilesAreAWayOfGrouping");
     });
 
   }

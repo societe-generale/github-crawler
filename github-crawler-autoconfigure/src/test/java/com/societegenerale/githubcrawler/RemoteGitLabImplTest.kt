@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit.SECONDS
 
 
 @ExtendWith(SpringExtension::class)
-@ActiveProfiles(profiles = arrayOf("test"))
+@ActiveProfiles(profiles = arrayOf("gitLabTest"))
 class RemoteGitLabImplTest {
 
     companion object {
