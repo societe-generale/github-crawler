@@ -73,7 +73,12 @@ class AzureDevopsCrawlerIT {
 
     log.info("about to start crawling...");
 
-          crawler.crawl();
+    try {
+      crawler.crawl();
+    } catch (IOException e) {
+      log.error("problem while crawling",e);
+      throw e;
+    }
 
 
     //TODO have an in-memory output and assert content
