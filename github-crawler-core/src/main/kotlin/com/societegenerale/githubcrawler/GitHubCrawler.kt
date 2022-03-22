@@ -13,7 +13,6 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.stream.Collectors.toList
-import kotlin.collections.ArrayList
 
 class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
                     private val output: List<GitHubCrawlerOutput>,
@@ -112,6 +111,10 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
         log.info("${repositoriesFromOrga.size} repositories to crawl...")
 
         val repoStream = if (gitHubCrawlerProperties.crawlInParallel) repositoriesFromOrga.parallelStream() else repositoriesFromOrga.stream();
+
+
+        log.info("using remoteGitHub "+remoteGitHub+" when crawling...")
+        log.info("using repositoryEnricher "+repositoryEnricher+" when crawling...")
 
         repoStream.map { repo -> logRepoProcessing(repo) }
                 .map { repo -> repo.flagAsExcludedIfRequired(gitHubCrawlerProperties.repositoriesToExclude) }

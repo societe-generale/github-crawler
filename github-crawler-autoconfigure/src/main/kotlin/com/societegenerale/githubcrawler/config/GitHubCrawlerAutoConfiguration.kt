@@ -9,6 +9,7 @@ import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput
 import com.societegenerale.githubcrawler.parsers.FileContentParser
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
 import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskBuilder
+import org.slf4j.LoggerFactory
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -21,6 +22,8 @@ import org.springframework.core.env.Environment
     GitHubConfiguration::class,GitLabConfiguration::class,AzureDevopsConfiguration::class)
 @EnableConfigurationProperties(GitHubCrawlerProperties::class)
 open class GitHubCrawlerAutoConfiguration {
+
+    val log = LoggerFactory.getLogger(this.javaClass)
 
     @Bean
     open fun conversionService(): ConversionService {
@@ -39,7 +42,11 @@ open class GitHubCrawlerAutoConfiguration {
                      repoTasksBuilder: List<RepoTaskBuilder>
                      ): GitHubCrawler {
 
+        log.info("using remoteGitHub "+remoteGitHub+" when building the crawler...")
+
         val repositoryEnricher = RepositoryEnricher(remoteGitHub)
+
+        log.info("using repositoryEnricher "+repositoryEnricher+" when building the crawler...")
 
         return GitHubCrawler(remoteGitHub, output, repositoryEnricher,gitHubCrawlerProperties,environment,gitHubCrawlerProperties.githubConfig.organizationName,configValidator,fileContentParsers,repoTasksBuilder)
     }
