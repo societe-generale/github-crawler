@@ -75,6 +75,10 @@ class AzureDevopsCrawlerIT {
 
     log.info("about to start crawling...");
 
+    log.info("config used : "+crawler.getGitHubCrawlerProperties().getGithubConfig().getApiUrl());
+
+
+
     try {
       crawler.crawl();
     } catch (IOException e) {

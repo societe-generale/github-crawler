@@ -29,6 +29,8 @@ import java.util.stream.Collectors.toSet
 
 class RemoteAzureDevopsImpl @JvmOverloads constructor(val azureDevopsUrl: String = "https://dev.azure.com/", val organization: String, val personalAccessToken: String) : RemoteGitHub {
 
+    var log = LoggerFactory.getLogger(this.javaClass.toString())
+
     companion object {
 
         const val AZURE_DEVOPS_URL= "https://dev.azure.com/"
@@ -62,6 +64,8 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(val azureDevopsUrl: String
 
     override fun fetchRepositories(organizationName: String): Set<Repository> {
 
+        log.info("fetch repositories from "+this.toString());
+
         val repositoriesUrl=azureDevopsUrl+"${azureOrg}/${azureProject}/_apis/git/repositories?${AZURE_DEVOPS_API_VERSION}"
 
         val request = requestTemplate.url(repositoriesUrl).build()
@@ -88,6 +92,9 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(val azureDevopsUrl: String
 
         val configUrl=azureDevopsUrl+"${azureOrg}/${azureProject}/_apis/git/repositories/${repositoryFullName}/items?path=${REPO_LEVEL_CONFIG_FILE}&${
             AZURE_DEVOPS_API_VERSION}"
+
+        log.info("fetching code search result from $configUrl");
+
 
         val request = requestTemplate.url(configUrl).build()
 

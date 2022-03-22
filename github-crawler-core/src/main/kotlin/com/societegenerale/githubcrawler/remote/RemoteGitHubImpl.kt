@@ -45,8 +45,6 @@ import java.lang.reflect.Type
 @Suppress("TooManyFunctions") // most of methods are one liners, implementing the methods declared in interface
 class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val usersReposInsteadOfOrgasRepos: Boolean = false, val oauthToken: String) : RemoteGitHub {
 
-
-
     companion object {
         const val REPO_LEVEL_CONFIG_FILE = ".githubCrawler"
         const val APPLICATION_JSON = "application/json"
@@ -224,6 +222,8 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
     override fun fetchCodeSearchResult(repositoryFullName: String, query: String): SearchResult {
 
         val searchCodeUrl = HttpUrl.parse(gitHubUrl +buildQueryString(query,repositoryFullName))!!.newBuilder().build().toString()
+
+        log.info("fetching code search result from $searchCodeUrl");
 
         val requestBuilder = okhttp3.Request.Builder()
             .url(searchCodeUrl)
