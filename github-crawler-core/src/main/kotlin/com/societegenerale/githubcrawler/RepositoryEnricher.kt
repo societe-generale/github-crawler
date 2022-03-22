@@ -30,8 +30,6 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub,
 
     fun loadRepoSpecificConfigIfAny(repository: Repository): Repository {
 
-        log.info("loadRepoSpecificConfigIfAny from "+this)
-
         if (repository.excluded) {
             return repository
         }
@@ -61,8 +59,6 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub,
 
 
     fun fetchIndicatorsValues(repository: Repository,gitHubCrawlerPropertiesByFile: GitHubCrawlerProperties): Repository {
-
-        log.info("fetchIndicatorsValues from "+this)
 
         //TODO this check should be removed
         if (repository.excluded) {
@@ -127,8 +123,6 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub,
     }
 
     fun performMiscTasks(repo: Repository, miscRepositoryTasks: List<RepoTaskToPerform>): Repository {
-
-        log.info("performMiscTasks "+miscRepositoryTasks.size+" from "+this)
 
         val allActionsResults=miscRepositoryTasks.map { task -> task.perform(repo) } //executing all tasks -> getting a List<Map<Branch,Pair<String, Any>>>
 

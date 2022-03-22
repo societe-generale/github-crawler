@@ -77,10 +77,6 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
 
         val repoStream = if (gitHubCrawlerProperties.crawlInParallel) repositoriesFromOrga.parallelStream() else repositoriesFromOrga.stream();
 
-
-        log.info("using remoteGitHub "+remoteGitHub+" when crawling...")
-        log.info("using repositoryEnricher "+repositoryEnricher+" when crawling...")
-
         repoStream.map { repo -> logRepoProcessing(repo) }
                 .map { repo -> repo.flagAsExcludedIfRequired(gitHubCrawlerProperties.repositoriesToExclude) }
                 .filter { repo -> shouldKeepForFurtherProcessing(repo, gitHubCrawlerProperties) }
