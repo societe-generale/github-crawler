@@ -10,6 +10,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.societegenerale.githubcrawler.config.GitHubCrawlerAutoConfiguration;
 import com.societegenerale.githubcrawler.config.TestConfig;
+import com.societegenerale.githubcrawler.remote.RemoteGitHub;
 import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
@@ -34,6 +36,9 @@ class AzureDevopsCrawlerIT {
   private final static String API_VERSION = "api-version=7.1-preview.1";
 
   private final static int AZUREDEVOPS_SERVER_PORT_FOR_TESTS=9901;
+
+  @Autowired
+  ApplicationContext context;
 
   @Autowired
   private GitHubCrawler crawler;
@@ -72,6 +77,13 @@ class AzureDevopsCrawlerIT {
 
   @Test
   void shouldCrawl() throws IOException {
+
+    var crawlers=context.getBeanNamesForType(GitHubCrawler.class);
+    log.info("found "+crawlers.length+" crawlers in context..");
+
+    var remoteGitHubs=context.getBeanNamesForType(RemoteGitHub.class);
+    log.info("found "+remoteGitHubs.length+" remoteGitHubs in context..");
+
 
     log.info("about to start crawling...");
 
