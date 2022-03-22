@@ -79,10 +79,18 @@ class AzureDevopsCrawlerIT {
   void shouldCrawl() throws IOException {
 
     var crawlers=context.getBeanNamesForType(GitHubCrawler.class);
-    log.info("found "+crawlers.length+" crawlers in context..");
+    log.info("found "+crawlers.length+" crawlers in context : "+crawlers[0]);
+
+    var crawlerFromContext= context.getBean(GitHubCrawler.class);
+    log.info("crawlerId : "+crawlerFromContext);
+    log.info("properties : "+crawlerFromContext.getGitHubCrawlerProperties());
+
 
     var remoteGitHubs=context.getBeanNamesForType(RemoteGitHub.class);
-    log.info("found "+remoteGitHubs.length+" remoteGitHubs in context..");
+    log.info("found "+remoteGitHubs.length+" remoteGitHubs in context : "+remoteGitHubs[0]);
+    var remoteGitHubFromContext= context.getBean(RemoteGitHub.class);
+    log.info("remoteGitHubFromContextId : "+remoteGitHubFromContext);
+
 
 
     log.info("about to start crawling...");
