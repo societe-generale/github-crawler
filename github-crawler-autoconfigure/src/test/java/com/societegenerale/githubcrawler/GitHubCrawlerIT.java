@@ -78,11 +78,17 @@ public class GitHubCrawlerIT {
       hasGitHubMockServerStarted = true;
     }
 
-    output.reset();
     githubMockServer.reset();
+  }
+
+  @BeforeEach
+  void resetSharedData() {
+    output.reset();
+
     crawler.getGitHubCrawlerProperties().setRepositoriesToExclude(new ArrayList<>());
     crawler.getGitHubCrawlerProperties().setPublishExcludedRepositories(true);
     crawler.getGitHubCrawlerProperties().setCrawlAllBranches(false);
+    crawler.getTasksToPerform().clear();
   }
 
 
@@ -107,7 +113,7 @@ public class GitHubCrawlerIT {
 
     assertThat(githubMockServer.isHasCalledNextPage()).as("next page wasn't called").isTrue();
 
-    assertThat(githubMockServer.getRepoConfigHits().size()).isGreaterThanOrEqualTo(nbRepositoriesInOrga);
+    assertThat(githubMockServer.getRepoConfigHits()).hasSizeGreaterThanOrEqualTo(nbRepositoriesInOrga);
     assertThat(githubMockServer.getNbPages()).isEqualTo(2);
 
   }
@@ -116,7 +122,7 @@ public class GitHubCrawlerIT {
   void excludingRepositoriesOnServerConfigSideWithSingleRegexp() throws IOException {
 
     String excludedRepoName = "api-.*";
-    crawler.getGitHubCrawlerProperties().setRepositoriesToExclude(Arrays.asList(excludedRepoName));
+    crawler.getGitHubCrawlerProperties().setRepositoriesToExclude(List.of(excludedRepoName));
     crawler.crawl();
 
     assertOnlyThisRepoIsFlaggedAsExcluded("api-gateway");
@@ -178,8 +184,9 @@ public class GitHubCrawlerIT {
 
     crawler.crawl();
 
-    assertThat(githubMockServer.getPomXmlHits()).hasSize(nbRepositoriesInOrga - 1);
-    assertThat(githubMockServer.getPomXmlHits()).doesNotContain(excludedRepoName);
+    assertThat(githubMockServer.getPomXmlHits())
+        .hasSize(nbRepositoriesInOrga - 1)
+        .doesNotContain(excludedRepoName);
   }
 
   @Test
@@ -307,6 +314,10 @@ public class GitHubCrawlerIT {
 
   @Test
   void shouldPerformSearchOnAllRepos() throws IOException {
+
+    assertThat(output.getAnalyzedRepositories()).isEmpty();
+    assertThat(githubMockServer.getSearchHitsCount()).isEqualTo(0);
+
 
     crawler.crawl();
 

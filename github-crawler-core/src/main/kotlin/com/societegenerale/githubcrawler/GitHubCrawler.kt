@@ -29,11 +29,11 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
     companion object {
         const val NO_CRAWLER_RUN_ID_DEFINED: String = "NO_CRAWLER_RUN_ID_DEFINED"
         val availableFileContentParsers = HashMap<String, FileContentParser>()
-        val tasksToPerform = ArrayList<RepoTaskToPerform>()
     }
 
     val log = LoggerFactory.getLogger(this.javaClass)
 
+    val tasksToPerform = ArrayList<RepoTaskToPerform>()
 
     @Throws(IOException::class)
     fun crawl() {
@@ -44,9 +44,7 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
             throw IllegalStateException("There are some config validation errors - please double check the config. \n" + configValidationErrors.joinToString(separator = "\n", prefix = "\t - "))
         }
 
-        if (availableFileContentParsers.isEmpty() || tasksToPerform.isEmpty()) {
-            initParsersConfig()
-        }
+        initParsersConfig()
 
         var repositoriesFromOrga = remoteGitHub.fetchRepositories(organizationName)
 
