@@ -1,10 +1,7 @@
 package com.societegenerale.githubcrawler.config
 
 
-import com.societegenerale.githubcrawler.ConfigValidator
-import com.societegenerale.githubcrawler.GitHubCrawler
-import com.societegenerale.githubcrawler.GitHubCrawlerProperties
-import com.societegenerale.githubcrawler.RepositoryEnricher
+import com.societegenerale.githubcrawler.*
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput
 import com.societegenerale.githubcrawler.parsers.FileContentParser
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
@@ -39,16 +36,16 @@ open class GitHubCrawlerAutoConfiguration {
                      environment : Environment,
                      configValidator: ConfigValidator,
                      fileContentParsers: List<FileContentParser>,
-                     repoTasksBuilder: List<RepoTaskBuilder>
+                     repoTasksBuilders: List<RepoTaskBuilder>
                      ): GitHubCrawler {
 
-        log.info("using remoteGitHub "+remoteGitHub+" when building the crawler...")
+        var availableParsersAndTasks = AvailableParsersAndTasks(fileContentParsers,repoTasksBuilders)
 
-        val repositoryEnricher = RepositoryEnricher(remoteGitHub)
+        val repositoryEnricher = RepositoryEnricher(remoteGitHub,availableParsersAndTasks)
 
         log.info("using repositoryEnricher "+repositoryEnricher+" when building the crawler...")
 
-        return GitHubCrawler(remoteGitHub, output, repositoryEnricher,gitHubCrawlerProperties,environment,gitHubCrawlerProperties.githubConfig.organizationName,configValidator,fileContentParsers,repoTasksBuilder)
+        return GitHubCrawler(remoteGitHub, output, repositoryEnricher,gitHubCrawlerProperties,environment,gitHubCrawlerProperties.githubConfig.organizationName,configValidator,availableParsersAndTasks)
     }
 
     @Bean
