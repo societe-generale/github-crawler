@@ -24,12 +24,14 @@ class GitHubCrawlerTest {
 
     private val output = InMemoryGitHubCrawlerOutput()
     private val outputs: List<GitHubCrawlerOutput> = arrayListOf(output)
-    private val repositoryEnricher = RepositoryEnricher(mockRemoteGitHub)
+
 
     private val fileToParse="pom.xml"
     private val indicator=IndicatorDefinition("indicName","findFilePath")
 
-    private val fileContentParsers=listOf(SimpleFilePathParser())
+    private val availableParsersAndTasks = AvailableParsersAndTasks(listOf(SimpleFilePathParser()), emptyList())
+
+    private val repositoryEnricher = RepositoryEnricher(mockRemoteGitHub,availableParsersAndTasks)
 
     private val gitHubCrawlerProperties = GitHubCrawlerProperties(githubConfig= GithubConfig(), indicatorsToFetchByFile = mapOf(Pair(FileToParse(fileToParse, null), listOf(indicator))))
     private val mockEnvironment = mock(Environment::class.java)
@@ -41,7 +43,7 @@ class GitHubCrawlerTest {
     @BeforeEach
     fun setUp() {
 
-        gitHubCrawler = GitHubCrawler(mockRemoteGitHub, outputs, repositoryEnricher, gitHubCrawlerProperties, mockEnvironment, organizationName, mockConfigValidator,fileContentParsers)
+        gitHubCrawler = GitHubCrawler(mockRemoteGitHub, outputs, repositoryEnricher, gitHubCrawlerProperties, mockEnvironment, organizationName, mockConfigValidator,availableParsersAndTasks)
 
         `when`(mockRemoteGitHub.fetchRepositories(organizationName)).thenReturn(setOf(
                 Repository(url = "url1", fullName = "fullRepo1", name = "repo1", defaultBranch = "master", creationDate = Date(), lastUpdateDate = Date(), topics = listOf("topic1a", "topic1b")),

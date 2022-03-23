@@ -11,5 +11,5 @@ class GithubConfig(var type: SourceControlType = SourceControlType.GITHUB,
                    var crawlUsersRepoInsteadOfOrgasRepos: Boolean=false)
 
 enum class SourceControlType {
-  GITLAB, GITHUB
+  GITLAB, GITHUB,AZURE_DEVOPS
 }

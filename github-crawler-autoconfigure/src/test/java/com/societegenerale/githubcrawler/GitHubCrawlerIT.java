@@ -26,13 +26,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {TestConfig.class, GitHubCrawlerAutoConfiguration.class})
-@ActiveProfiles(profiles = {"test", "profilesAreAWayOfGrouping"})
+@ActiveProfiles(profiles = {"gitHubTest", "profilesAreAWayOfGrouping"})
+@DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 public class GitHubCrawlerIT {
 
   private final int MAX_TIMEOUT_FOR_CRAWLER = 10;
@@ -75,11 +78,17 @@ public class GitHubCrawlerIT {
       hasGitHubMockServerStarted = true;
     }
 
-    output.reset();
     githubMockServer.reset();
+  }
+
+  @BeforeEach
+  void resetSharedData() {
+    output.reset();
+
     crawler.getGitHubCrawlerProperties().setRepositoriesToExclude(new ArrayList<>());
     crawler.getGitHubCrawlerProperties().setPublishExcludedRepositories(true);
     crawler.getGitHubCrawlerProperties().setCrawlAllBranches(false);
+    crawler.getTasksToPerform().clear();
   }
 
 
@@ -104,7 +113,7 @@ public class GitHubCrawlerIT {
 
     assertThat(githubMockServer.isHasCalledNextPage()).as("next page wasn't called").isTrue();
 
-    assertThat(githubMockServer.getRepoConfigHits().size()).isGreaterThanOrEqualTo(nbRepositoriesInOrga);
+    assertThat(githubMockServer.getRepoConfigHits()).hasSizeGreaterThanOrEqualTo(nbRepositoriesInOrga);
     assertThat(githubMockServer.getNbPages()).isEqualTo(2);
 
   }
@@ -113,7 +122,7 @@ public class GitHubCrawlerIT {
   void excludingRepositoriesOnServerConfigSideWithSingleRegexp() throws IOException {
 
     String excludedRepoName = "api-.*";
-    crawler.getGitHubCrawlerProperties().setRepositoriesToExclude(Arrays.asList(excludedRepoName));
+    crawler.getGitHubCrawlerProperties().setRepositoriesToExclude(List.of(excludedRepoName));
     crawler.crawl();
 
     assertOnlyThisRepoIsFlaggedAsExcluded("api-gateway");
@@ -162,7 +171,7 @@ public class GitHubCrawlerIT {
         .until(() -> assertThat(processedRepositories).hasSize(nbRepositoriesInOrga));
 
     processedRepositories.stream().forEach(repo -> {
-      assertThat(repo.getGroups()).containsExactlyInAnyOrder("test", "profilesAreAWayOfGrouping");
+      assertThat(repo.getGroups()).containsExactlyInAnyOrder("gitHubTest", "profilesAreAWayOfGrouping");
     });
 
   }
@@ -175,8 +184,9 @@ public class GitHubCrawlerIT {
 
     crawler.crawl();
 
-    assertThat(githubMockServer.getPomXmlHits()).hasSize(nbRepositoriesInOrga - 1);
-    assertThat(githubMockServer.getPomXmlHits()).doesNotContain(excludedRepoName);
+    assertThat(githubMockServer.getPomXmlHits())
+        .hasSize(nbRepositoriesInOrga - 1)
+        .doesNotContain(excludedRepoName);
   }
 
   @Test
@@ -304,6 +314,10 @@ public class GitHubCrawlerIT {
 
   @Test
   void shouldPerformSearchOnAllRepos() throws IOException {
+
+    assertThat(output.getAnalyzedRepositories()).isEmpty();
+    assertThat(githubMockServer.getSearchHitsCount()).isEqualTo(0);
+
 
     crawler.crawl();
 

@@ -1,0 +1,21 @@
+github-crawler:
+
+  githubConfig:
+    type: "AZURE_DEVOPS"
+    apiUrl: http://localhost:9901/
+    organizationName: "platform#platform-projects"
+
+  publishExcludedRepositories: false
+
+  crawlAllBranches: false
+
+  indicatorsToFetchByFile:
+    "[pom.xml]":
+        - name: spring_boot_starter_parent_version
+          type: findDependencyVersionInXml
+          params:
+            artifactId: spring-boot-starter-parent
+
+
+
+

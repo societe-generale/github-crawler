@@ -9,7 +9,8 @@ import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskToPerform
 import org.slf4j.LoggerFactory
 
 
-class RepositoryEnricher(val remoteGitHub: RemoteGitHub){
+class RepositoryEnricher(val remoteGitHub: RemoteGitHub,
+                         val availableParsersAndTasks : AvailableParsersAndTasks = AvailableParsersAndTasks(emptyList(), emptyList())){
 
     val log = LoggerFactory.getLogger(this.javaClass)
 
@@ -116,7 +117,7 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub){
     private fun parseIndicatorsFromFileContent(fileContent: String, pathToFileToGetIndicatorsFrom:String, indicatorsToFetch: List<IndicatorDefinition>): Map<String, String> {
 
         return indicatorsToFetch.asSequence()
-                .map { GitHubCrawler.availableFileContentParsers.get(it.type)!!.parseFileContentForIndicator(fileContent, pathToFileToGetIndicatorsFrom, it) }
+                .map { availableParsersAndTasks.getParserByName(it.type).parseFileContentForIndicator(fileContent, pathToFileToGetIndicatorsFrom, it) }
                 .reduce { acc, item -> acc + item }
 
     }

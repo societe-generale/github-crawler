@@ -51,15 +51,15 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
     }
 
     private val internalGitLabClient: InternalGitLabClient = Feign.builder()
-            .client(ApacheHttpClient())
-            .encoder(GsonEncoder())
-            .decoder(GitLabResponseDecoder())
-            .errorDecoder(GiLabErrorDecoder())
-            .decode404()
-            .requestInterceptor(GitLabPrivateTokenSetter(privateToken))
-            .logger(Slf4jLogger(RemoteGitLabImpl::class.java))
-            .logLevel(Logger.Level.FULL)
-            .target<InternalGitLabClient>(InternalGitLabClient::class.java, gitLabUrl)
+        .client(ApacheHttpClient())
+        .encoder(GsonEncoder())
+        .decoder(GitLabResponseDecoder())
+        .errorDecoder(GiLabErrorDecoder())
+        .decode404()
+        .requestInterceptor(GitLabPrivateTokenSetter(privateToken))
+        .logger(Slf4jLogger(RemoteGitLabImpl::class.java))
+        .logLevel(Logger.Level.FULL)
+        .target<InternalGitLabClient>(InternalGitLabClient::class.java, gitLabUrl)
 
     private val httpClient = OkHttpClient()
 
@@ -98,9 +98,9 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
         val repoSearchUrl = gitLabUrl +"/projects/"+repoNameToIdMapping.get(repositoryFullName)+"/search?scope=blobs&"+searchString
 
         val request = okhttp3.Request.Builder()
-                .url(repoSearchUrl)
-                .header(PRIVATE_TOKEN_HEADER_KEY, privateToken)
-                .build()
+            .url(repoSearchUrl)
+            .header(PRIVATE_TOKEN_HEADER_KEY, privateToken)
+            .build()
 
         val httpResponse=httpClient.newCall(request).execute()
 
@@ -161,23 +161,23 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
      */
     override fun fetchFileContent(repositoryFullName: String, branchName: String, fileToFetch: String): String {
 
-            val fetchFileUrl = gitLabUrl +"/projects/"+repoNameToIdMapping.get(repositoryFullName)+"/repository/files/"+fileToFetch+"/raw?ref="+branchName
+        val fetchFileUrl = gitLabUrl +"/projects/"+repoNameToIdMapping.get(repositoryFullName)+"/repository/files/"+fileToFetch+"/raw?ref="+branchName
 
-            val request = okhttp3.Request.Builder()
-                    .url(fetchFileUrl)
-                    .header(PRIVATE_TOKEN_HEADER_KEY, privateToken)
-                    .build()
+        val request = okhttp3.Request.Builder()
+            .url(fetchFileUrl)
+            .header(PRIVATE_TOKEN_HEADER_KEY, privateToken)
+            .build()
 
-            val response = httpClient.newCall(request).execute()
+        val response = httpClient.newCall(request).execute()
 
-            if(response.code()==HttpStatus.NOT_FOUND.value()){
-                throw NoFileFoundException("can't find $fileToFetch in repo $repositoryFullName, in branch $branchName")
-            }
-            else if (!response.isSuccessful) {
-                throw NoReachableRepositories("GET call to ${fetchFileUrl} wasn't successful. Code : ${response.code()}, Message : ${response.message()}")
-            }
+        if(response.code()==HttpStatus.NOT_FOUND.value()){
+            throw NoFileFoundException("can't find $fileToFetch in repo $repositoryFullName, in branch $branchName")
+        }
+        else if (!response.isSuccessful) {
+            throw NoReachableRepositories("GET call to ${fetchFileUrl} wasn't successful. Code : ${response.code()}, Message : ${response.message()}")
+        }
 
-            return response.body()!!.string()
+        return response.body()!!.string()
     }
 
     @Throws(NoReachableRepositories::class)
@@ -247,12 +247,12 @@ data class GitLabRepository (val id : Int,val web_url : String, val path : Strin
     fun toRepository(): Repository {
 
         return  Repository(url = web_url,
-                           fullName = path_with_namespace,
-                           name = path,
-                           defaultBranch = default_branch,
-                           creationDate = created_at,
-                           lastUpdateDate = last_activity_at,
-                           topics = tag_list)
+            fullName = path_with_namespace,
+            name = path,
+            defaultBranch = default_branch,
+            creationDate = created_at,
+            lastUpdateDate = last_activity_at,
+            topics = tag_list)
 
     }
 }

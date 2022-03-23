@@ -1,15 +1,14 @@
 package com.societegenerale.githubcrawler.mocks;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import net.codestory.http.WebServer;
 import net.codestory.http.payload.Payload;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class GitLabMock implements RemoteServiceMock {
@@ -57,7 +56,7 @@ public class GitLabMock implements RemoteServiceMock {
 
         log.info("performing a search for repoId {} with query string {}",repoId,searchedString);
 
-        String searchResult = FileUtils.readFileToString(ResourceUtils.getFile("classpath:gitLabRepoSearchResults.json"), "UTF-8");
+        String searchResult = FileUtils.readFileToString(ResourceUtils.getFile("classpath:gitlab/gitLabRepoSearchResults.json"), "UTF-8");
 
         return new Payload("application/json", searchResult);
 
@@ -79,7 +78,7 @@ public class GitLabMock implements RemoteServiceMock {
 
         log.info("fetching groups for name {}",byGroupName);
 
-        String groupListWIthOneElem = FileUtils.readFileToString(ResourceUtils.getFile("classpath:gitLabGroups.json"), "UTF-8");
+        String groupListWIthOneElem = FileUtils.readFileToString(ResourceUtils.getFile("classpath:gitlab/gitLabGroups.json"), "UTF-8");
 
         return new Payload("application/json", groupListWIthOneElem);
 
@@ -89,7 +88,7 @@ public class GitLabMock implements RemoteServiceMock {
 
         log.info("get repositories for group {}",groupId);
 
-        String repositoriesForGroup = FileUtils.readFileToString(ResourceUtils.getFile("classpath:gitLabRepositories.json"), "UTF-8");
+        String repositoriesForGroup = FileUtils.readFileToString(ResourceUtils.getFile("classpath:gitlab/gitLabRepositories.json"), "UTF-8");
 
         return new Payload("application/json", repositoriesForGroup);
     }

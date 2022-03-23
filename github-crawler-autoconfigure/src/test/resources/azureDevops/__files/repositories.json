@@ -1,0 +1,47 @@
+{
+  "value": [
+    {
+      "id": "b2222b21-8680-4f78-8255-0167a40bf5a8",
+      "name": "my-helm-chart",
+      "url": "https://dev.azure.com/my-platform/111111c0-ff82-4e2c-8b71-fbca48f259eb/_apis/git/repositories/b2222b21-8680-4f78-8255-0167a40bf5a8",
+      "project": {
+        "id": "111111c0-ff82-4e2c-8b71-fbca48f259eb",
+        "name": "my-platform-projects",
+        "description": "My Projects",
+        "url": "https://dev.azure.com/my-platform/_apis/projects/111111c0-ff82-4e2c-8b71-fbca48f259eb",
+        "state": "wellFormed",
+        "revision": 34,
+        "visibility": "private",
+        "lastUpdateTime": "2021-09-16T05:04:19.307Z"
+      },
+      "defaultBranch": "refs/heads/main",
+      "size": 79584,
+      "remoteUrl": "https://my-platform@dev.azure.com/my-platform/my-platform-projects/_git/my-helm-chart",
+      "sshUrl": "git@ssh.dev.azure.com:v3/my-platform/my-platform-projects/my-helm-chart",
+      "webUrl": "https://dev.azure.com/my-platform/my-platform-projects/_git/my-helm-chart",
+      "isDisabled": false
+    },
+    {
+      "id": "b3333e7f-9e5b-47cb-a6b3-01788b6bde25",
+      "name": "vendor-portal-ui",
+      "url": "https://dev.azure.com/my-platform/111111c0-ff82-4e2c-8b71-fbca48f259eb/_apis/git/repositories/b3333e7f-9e5b-47cb-a6b3-01788b6bde25",
+      "project": {
+        "id": "111111c0-ff82-4e2c-8b71-fbca48f259eb",
+        "name": "my-platform-projects",
+        "description": "Projects developed by us",
+        "url": "https://dev.azure.com/my-platform/_apis/projects/111111c0-ff82-4e2c-8b71-fbca48f259eb",
+        "state": "wellFormed",
+        "revision": 34,
+        "visibility": "private",
+        "lastUpdateTime": "2021-09-16T05:04:19.307Z"
+      },
+      "defaultBranch": "refs/heads/main",
+      "size": 766571,
+      "remoteUrl": "https://my-platform@dev.azure.com/my-platform/my-platform-projects/_git/vendor-portal-ui",
+      "sshUrl": "git@ssh.dev.azure.com:v3/my-platform/my-platform-projects/vendor-portal-ui",
+      "webUrl": "https://dev.azure.com/my-platform/my-platform-projects/_git/vendor-portal-ui",
+      "isDisabled": false
+    }
+
+  ]
+}

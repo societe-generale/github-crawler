@@ -1,28 +1,26 @@
 package com.societegenerale.githubcrawler.config
 
 
-import com.societegenerale.githubcrawler.ConfigValidator
-import com.societegenerale.githubcrawler.GitHubCrawler
-import com.societegenerale.githubcrawler.GitHubCrawlerProperties
-import com.societegenerale.githubcrawler.RepositoryEnricher
+import com.societegenerale.githubcrawler.*
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput
 import com.societegenerale.githubcrawler.parsers.FileContentParser
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
-import com.societegenerale.githubcrawler.remote.RemoteGitHubImpl
-import com.societegenerale.githubcrawler.remote.RemoteGitLabImpl
 import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskBuilder
+import org.slf4j.LoggerFactory
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
-import org.springframework.context.annotation.Profile
 import org.springframework.core.convert.ConversionService
 import org.springframework.core.env.Environment
 
 @Configuration
-@Import(GitHubCrawlerParserConfig::class,GitHubCrawlerOutputConfig::class,GitHubCrawlerMiscTasksConfig::class,GitHubConfiguration::class,GitLabConfiguration::class)
+@Import(GitHubCrawlerParserConfig::class,GitHubCrawlerOutputConfig::class,GitHubCrawlerMiscTasksConfig::class,
+    GitHubConfiguration::class,GitLabConfiguration::class,AzureDevopsConfiguration::class)
 @EnableConfigurationProperties(GitHubCrawlerProperties::class)
 open class GitHubCrawlerAutoConfiguration {
+
+    val log = LoggerFactory.getLogger(this.javaClass)
 
     @Bean
     open fun conversionService(): ConversionService {
@@ -38,12 +36,16 @@ open class GitHubCrawlerAutoConfiguration {
                      environment : Environment,
                      configValidator: ConfigValidator,
                      fileContentParsers: List<FileContentParser>,
-                     repoTasksBuilder: List<RepoTaskBuilder>
+                     repoTasksBuilders: List<RepoTaskBuilder>
                      ): GitHubCrawler {
 
-        val repositoryEnricher = RepositoryEnricher(remoteGitHub)
+        var availableParsersAndTasks = AvailableParsersAndTasks(fileContentParsers,repoTasksBuilders)
 
-        return GitHubCrawler(remoteGitHub, output, repositoryEnricher,gitHubCrawlerProperties,environment,gitHubCrawlerProperties.githubConfig.organizationName,configValidator,fileContentParsers,repoTasksBuilder)
+        val repositoryEnricher = RepositoryEnricher(remoteGitHub,availableParsersAndTasks)
+
+        log.info("using repositoryEnricher "+repositoryEnricher+" when building the crawler...")
+
+        return GitHubCrawler(remoteGitHub, output, repositoryEnricher,gitHubCrawlerProperties,environment,gitHubCrawlerProperties.githubConfig.organizationName,configValidator,availableParsersAndTasks)
     }
 
     @Bean

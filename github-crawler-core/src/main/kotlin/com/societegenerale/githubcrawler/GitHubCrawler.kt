@@ -2,18 +2,14 @@ package com.societegenerale.githubcrawler
 
 import com.societegenerale.githubcrawler.model.Repository
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput
-import com.societegenerale.githubcrawler.parsers.FileContentParser
 import com.societegenerale.githubcrawler.remote.RemoteGitHub
-import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskBuilder
 import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskToPerform
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.env.Environment
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.stream.Collectors.toList
-import kotlin.collections.ArrayList
 
 class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
                     private val output: List<GitHubCrawlerOutput>,
@@ -22,19 +18,15 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
                     private val environment: Environment,
                     private val organizationName: String,
                     private val configValidator: ConfigValidator,
-                    @Autowired
-                    private val fileContentParsers: List<FileContentParser> = emptyList(),
-                    @Autowired
-                    private val taskBuilders: List<RepoTaskBuilder> = emptyList()) {
+                    private val availableParsersAndTasks : AvailableParsersAndTasks) {
 
     companion object {
         const val NO_CRAWLER_RUN_ID_DEFINED: String = "NO_CRAWLER_RUN_ID_DEFINED"
-        val availableFileContentParsers = HashMap<String, FileContentParser>()
-        val tasksToPerform = ArrayList<RepoTaskToPerform>()
     }
 
     val log = LoggerFactory.getLogger(this.javaClass)
 
+    val tasksToPerform = ArrayList<RepoTaskToPerform>()
 
     @Throws(IOException::class)
     fun crawl() {
@@ -45,8 +37,12 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
             throw IllegalStateException("There are some config validation errors - please double check the config. \n" + configValidationErrors.joinToString(separator = "\n", prefix = "\t - "))
         }
 
-        if (availableFileContentParsers.isEmpty() || tasksToPerform.isEmpty()) {
-            initParsersConfig()
+        gitHubCrawlerProperties.miscRepositoryTasks.forEach{
+
+            val matchingTaskBuilder=availableParsersAndTasks.getRepoTasksBuilderByType(it.type)
+
+            tasksToPerform.add(matchingTaskBuilder.buildTask(it.name, it.params))
+
         }
 
         var repositoriesFromOrga = remoteGitHub.fetchRepositories(organizationName)
@@ -67,38 +63,6 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
         return gitHubCrawlerProperties
     }
 
-    private fun initParsersConfig() {
-
-        //TODO validate we don't have 2 parsers with same nameInConfig
-
-        //TODO check that all methods in gitHubCrawlerProperties are known, ie mappable to a Parser.
-        // Otherwise, we'll get an NPE later during processing
-
-        fileContentParsers.forEach {
-            log.info("adding ${it.getNameInConfig()} in the map of available file parsers..")
-            availableFileContentParsers.put(it.getNameInConfig(), it)
-        }
-        log.info("--> ${availableFileContentParsers.size} available parser(s)..")
-
-        log.info("${gitHubCrawlerProperties.miscRepositoryTasks.size} task(s) to create...")
-        val availableTaskBuilderTypes=taskBuilders.map { task -> task.type }.joinToString(separator = ", ")
-        log.info("${taskBuilders.size} taskBuilder(s) available : $availableTaskBuilderTypes")
-
-        gitHubCrawlerProperties.miscRepositoryTasks.forEach{
-
-            val matchingTaskBuilder=taskBuilders.find { taskBuilder -> taskBuilder.type.equals(it.type) }
-
-            if(matchingTaskBuilder==null){
-                log.warn("task with type ${it.type} couldn't be found in list of available task builders")
-            }
-            else {
-                tasksToPerform.add(matchingTaskBuilder.buildTask(it.name, it.params))
-            }
-        }
-
-        log.info("--> ${tasksToPerform.size} task(s) to perform have been built..")
-
-    }
 
     @Throws(IOException::class)
     private fun fetchAndParseRepoContent(repositoriesFromOrga: Set<Repository>) {
