@@ -12,9 +12,11 @@
 
 ### Fixed
 
-##  [1.3.0] - 2022-03-15
+##  [2.0.0] - 2022-03-23
 
 ### Changed
+- PR #96 / 97 : renaming some config keys
+- PR #94 : Added first Azure Devops capabilities
 - PR #91 / 92 : upgraded to latest Spring Boot (2.6.4) and Kotlin (1.6.10)
 - PR #93 : now expecting that target source control is explicitly defined in config 
 - quick fix to output miscTaskresults in CIdroidReadyJsonFileOutput

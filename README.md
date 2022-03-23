@@ -53,17 +53,17 @@ Several output types are available in [this package](./github-crawler-core/src/m
 Below configuration shows how outputs, indicators and actions are configured under the ```github-crawler``` prefix.
 
 ```yaml
-github-crawler:
+crawler:
     
-    githubConfig:    
-        # since v1.3.0, we need to mention the source control type. defaults to GitHub, but other options are possible
+    source-control:    
+        # since v2.0.0, we need to mention the source control type. defaults to GitHub, but other options are possible
         # as defined in https://github.com/societe-generale/github-crawler/blob/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/GithubConfig.kt
         type: "GITHUB"
         # the base GitHub URL for your Github enterprise instance to crawl
         # or if it's github.com...
         # gitHub.url: https://api.github.com
-        apiUrl: https://my.githubEnterprise/api/v3
-        oauthToken: "YOUR_TOKEN"
+        url: https://my.githubEnterprise/api/v3
+        apiToken: "YOUR_TOKEN"
         # the name of the GitHub organization to crawl. To fetch the repositories, the crawler will hit 
         # https://${gitHub.url}/api/v3/orgs/${organizationName}/repos
         organizationName: MyOrganization
@@ -193,13 +193,13 @@ From v1.2.0 onward, basic support for gitLab is available ! It all boils down to
 note : if you're using v1.3.0+ , then we won't use profiles anymore, but use the `github-crawler.githubConfig.type` property and set it to `GITLAB` . 
 
 ```
-    github-crawler:
-      githubConfig:
+    crawler:
+      source-control:
         type: "GITLAB"
-        apiUrl: https://gitlab.com/api/v4/
+        url: https://gitlab.com/api/v4/
 
         # your Gitlab personal access token
-        oauthToken: "5yL4_Y9hyC_YX9urZN_G"
+        apiToken: "5yL4_Y9hyC_YX9urZN_G"
 
         # your Gitlab "group"
         organizationName: myJavaProjects
