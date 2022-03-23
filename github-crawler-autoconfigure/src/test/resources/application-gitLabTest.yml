@@ -1,8 +1,8 @@
 github-crawler:
 
-  githubConfig:
+  source-control:
     type: "GITLAB"
-    apiUrl: http://localhost:9900/api/v3
+    url: http://localhost:9900/api/v3
     organizationName: MyOrganization
 
   publishExcludedRepositories: false

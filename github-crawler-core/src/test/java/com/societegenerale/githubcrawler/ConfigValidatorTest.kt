@@ -15,16 +15,16 @@ class ConfigValidatorTest {
     @Test
     fun shouldNotHaveEmptyGitHubUrl() {
 
-        val configValidator = ConfigValidator(GitHubCrawlerProperties(GithubConfig(apiUrl = "",organizationName="notEmpty")),mockRemoteGitHub)
+        val configValidator = ConfigValidator(GitHubCrawlerProperties(SourceControlConfig(url = "",organizationName="notEmpty")),mockRemoteGitHub)
 
-        assertThat(configValidator.getValidationErrors()).containsOnly("gitHub.apiUrl can't be empty");
+        assertThat(configValidator.getValidationErrors()).containsOnly("source-control.url can't be empty");
 
     }
 
     @Test
     fun shouldNotHaveEmptyOrganization() {
 
-        val configValidator = ConfigValidator(GitHubCrawlerProperties(GithubConfig(apiUrl = "notEmpty",organizationName="")),mockRemoteGitHub)
+        val configValidator = ConfigValidator(GitHubCrawlerProperties(SourceControlConfig(url = "notEmpty",organizationName="")),mockRemoteGitHub)
 
         assertThat(configValidator.getValidationErrors()).containsOnly("organization can't be empty");
 
@@ -33,7 +33,7 @@ class ConfigValidatorTest {
     @Test
     fun shouldLogProperMessageIfNotAbleToHitAPI() {
 
-        val configValidator = ConfigValidator(GitHubCrawlerProperties(GithubConfig(apiUrl = "someIncorrectURL",organizationName="someOrg")),mockRemoteGitHub)
+        val configValidator = ConfigValidator(GitHubCrawlerProperties(SourceControlConfig(url = "someIncorrectURL",organizationName="someOrg")),mockRemoteGitHub)
 
         `when`(mockRemoteGitHub.validateRemoteConfig("someOrg")).thenThrow(NoReachableRepositories("problem !",mock(Exception::class.java)))
 

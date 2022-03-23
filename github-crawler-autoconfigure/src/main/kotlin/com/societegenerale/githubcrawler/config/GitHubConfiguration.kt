@@ -9,13 +9,15 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@ConditionalOnProperty(prefix = "github-crawler.githubConfig", name = ["type"], havingValue = "GITHUB")
+@ConditionalOnProperty(prefix = "github-crawler.source-control", name = ["type"], havingValue = "GITHUB")
 open class GitHubConfiguration {
 
     @Bean
     open fun remoteGitHub(gitHubCrawlerProperties: GitHubCrawlerProperties): RemoteGitHub {
 
-        return RemoteGitHubImpl(gitHubCrawlerProperties.githubConfig.apiUrl,gitHubCrawlerProperties.githubConfig.crawlUsersRepoInsteadOfOrgasRepos,gitHubCrawlerProperties.githubConfig.oauthToken)
+        return RemoteGitHubImpl(gitHubCrawlerProperties.sourceControl.url,
+                                gitHubCrawlerProperties.sourceControl.crawlUsersRepoInsteadOfOrgasRepos,
+                                gitHubCrawlerProperties.sourceControl.apiToken)
     }
 
 }

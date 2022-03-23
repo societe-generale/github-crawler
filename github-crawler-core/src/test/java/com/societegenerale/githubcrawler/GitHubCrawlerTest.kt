@@ -33,7 +33,7 @@ class GitHubCrawlerTest {
 
     private val repositoryEnricher = RepositoryEnricher(mockRemoteGitHub,availableParsersAndTasks)
 
-    private val gitHubCrawlerProperties = GitHubCrawlerProperties(githubConfig= GithubConfig(), indicatorsToFetchByFile = mapOf(Pair(FileToParse(fileToParse, null), listOf(indicator))))
+    private val gitHubCrawlerProperties = GitHubCrawlerProperties(sourceControl= SourceControlConfig(), indicatorsToFetchByFile = mapOf(Pair(FileToParse(fileToParse, null), listOf(indicator))))
     private val mockEnvironment = mock(Environment::class.java)
     private val organizationName = "myOrg"
     private val mockConfigValidator = mock(ConfigValidator::class.java)

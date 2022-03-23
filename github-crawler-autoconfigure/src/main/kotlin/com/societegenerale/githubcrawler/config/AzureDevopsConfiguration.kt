@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@ConditionalOnProperty(prefix = "github-crawler.githubConfig", name = ["type"], havingValue = "AZURE_DEVOPS")
+@ConditionalOnProperty(prefix = "github-crawler.source-control", name = ["type"], havingValue = "AZURE_DEVOPS")
 open class AzureDevopsConfiguration {
 
     val log = LoggerFactory.getLogger(this.javaClass)
@@ -21,18 +21,18 @@ open class AzureDevopsConfiguration {
 
         val targetUrl:String
 
-        if(gitHubCrawlerProperties.githubConfig.apiUrl.isEmpty()){
+        if(gitHubCrawlerProperties.sourceControl.url.isEmpty()){
             targetUrl=  AZURE_DEVOPS_URL
         }
         else{
-            targetUrl=gitHubCrawlerProperties.githubConfig.apiUrl
+            targetUrl=gitHubCrawlerProperties.sourceControl.url
         }
 
         log.info("URL for AzureDevops : $targetUrl")
 
         return RemoteAzureDevopsImpl(targetUrl,
-                                     gitHubCrawlerProperties.githubConfig.organizationName,
-                                     gitHubCrawlerProperties.githubConfig.oauthToken)
+                                     gitHubCrawlerProperties.sourceControl.organizationName,
+                                     gitHubCrawlerProperties.sourceControl.apiToken)
     }
 
 }
