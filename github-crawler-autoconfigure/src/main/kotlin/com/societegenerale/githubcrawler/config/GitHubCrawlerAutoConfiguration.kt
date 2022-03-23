@@ -45,7 +45,7 @@ open class GitHubCrawlerAutoConfiguration {
 
         log.info("using repositoryEnricher "+repositoryEnricher+" when building the crawler...")
 
-        return GitHubCrawler(remoteGitHub, output, repositoryEnricher,gitHubCrawlerProperties,environment,gitHubCrawlerProperties.githubConfig.organizationName,configValidator,availableParsersAndTasks)
+        return GitHubCrawler(remoteGitHub, output, repositoryEnricher,gitHubCrawlerProperties,environment,gitHubCrawlerProperties.sourceControl.organizationName,configValidator,availableParsersAndTasks)
     }
 
     @Bean

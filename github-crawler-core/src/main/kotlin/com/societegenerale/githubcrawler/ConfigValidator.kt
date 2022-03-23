@@ -18,12 +18,12 @@ class ConfigValidator(val properties : GitHubCrawlerProperties,
         val validationErrors = mutableListOf<String>()
 
         // there's a default url for AzureDevops, no need to configure it
-        if(properties.githubConfig.type!= SourceControlType.AZURE_DEVOPS &&
-           properties.githubConfig.apiUrl.isBlank()){
-            validationErrors.add("gitHub.apiUrl can't be empty")
+        if(properties.sourceControl.type!= SourceControlType.AZURE_DEVOPS &&
+           properties.sourceControl.url.isBlank()){
+            validationErrors.add("source-control.url can't be empty")
         }
 
-        if(properties.githubConfig.organizationName.isBlank()){
+        if(properties.sourceControl.organizationName.isBlank()){
             validationErrors.add("organization can't be empty")
         }
 
@@ -31,14 +31,14 @@ class ConfigValidator(val properties : GitHubCrawlerProperties,
             return ImmutableList.copyOf(validationErrors);
         }
 
-        val organizationName=properties.githubConfig.organizationName;
+        val organizationName=properties.sourceControl.organizationName;
 
         try{
             remoteGitHub.validateRemoteConfig(organizationName)
         }
         catch(e : NoReachableRepositories){
             //TODO make this GitLab ready..
-            val errorMessage = "Not able to fetch repositories from the organization ${organizationName} on URL ${properties.githubConfig.apiUrl}. This could be due to several things :\n"+
+            val errorMessage = "Not able to fetch repositories from the organization ${organizationName} on URL ${properties.sourceControl.url}. This could be due to several things :\n"+
                     "\t\t - URL should be the API URL. For github.com it's https://api.github.com, for Github Enterprise, it's usually https://myGHEserver/api/v3 (no trailing slash) \n"+
                     "\t\t - the organization doesn't exist\n"+
                     "\t\t - remote server is not reachable (are you using a proxy ?)\n\n"+

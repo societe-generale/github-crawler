@@ -95,7 +95,7 @@ class AzureDevopsCrawlerIT {
 
     log.info("about to start crawling...");
 
-    log.info("URL config used : "+crawler.getGitHubCrawlerProperties().getGithubConfig().getApiUrl());
+    log.info("URL config used : "+crawler.getGitHubCrawlerProperties().getSourceControl().getUrl());
 
     log.info("nb misc tasks : "+crawler.getGitHubCrawlerProperties().getMiscRepositoryTasks().size());
 

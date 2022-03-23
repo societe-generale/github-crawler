@@ -1,8 +1,8 @@
 github-crawler:
 
-  githubConfig:
+  source-control:
     type: "AZURE_DEVOPS"
-    apiUrl: http://localhost:9901/
+    url: http://localhost:9901/
     organizationName: "platform#platform-projects"
 
   publishExcludedRepositories: false

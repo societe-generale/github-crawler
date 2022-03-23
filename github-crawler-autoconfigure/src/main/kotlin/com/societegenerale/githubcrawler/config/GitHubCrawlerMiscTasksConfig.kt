@@ -45,7 +45,7 @@ open class GitHubCrawlerMiscTasksConfig {
     @Bean
     open fun repoOwnershipComputer(remoteGitHub: RemoteGitHub, gitHubCrawlerProperties: GitHubCrawlerProperties): RepoOwnershipComputerBuilder {
 
-        val organizationName=gitHubCrawlerProperties.githubConfig.organizationName
+        val organizationName=gitHubCrawlerProperties.sourceControl.organizationName
 
         return RepoOwnershipComputerBuilder(remoteGitHub, MembershipParser(remoteGitHub, organizationName), organizationName,150);
     }
