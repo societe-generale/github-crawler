@@ -4,12 +4,11 @@ import com.societegenerale.githubcrawler.GitHubCrawlerProperties;
 import com.societegenerale.githubcrawler.mocks.GitHubMock;
 import com.societegenerale.githubcrawler.model.Repository;
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
 @EnableConfigurationProperties(GitHubCrawlerProperties.class)
@@ -22,7 +21,7 @@ public class TestConfig {
     }
 
     @Bean
-    public InMemoryGitHubCrawlerOutput output() {
+    public GitHubCrawlerOutput output() {
 
         InMemoryGitHubCrawlerOutput output = new InMemoryGitHubCrawlerOutput();
 
