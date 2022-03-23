@@ -3,7 +3,7 @@ package com.societegenerale.githubcrawler
 import org.springframework.boot.context.properties.ConfigurationProperties
 
 
-@ConfigurationProperties("github-crawler.source-control")
+@ConfigurationProperties("crawler.source-control")
 class SourceControlConfig(var type: SourceControlType = SourceControlType.GITHUB,
                           var url: String="",
                           var apiToken: String="",

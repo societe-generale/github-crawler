@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@ConditionalOnProperty(prefix = "github-crawler.source-control", name = ["type"], havingValue = "GITLAB")
+@ConditionalOnProperty(prefix = "crawler.source-control", name = ["type"], havingValue = "GITLAB")
 open class GitLabConfiguration {
 
     @Bean

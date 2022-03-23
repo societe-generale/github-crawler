@@ -1,4 +1,4 @@
-github-crawler:
+crawler:
 
   source-control:
     type: "AZURE_DEVOPS"
