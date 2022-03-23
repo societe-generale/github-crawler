@@ -32,7 +32,7 @@ open class AzureDevopsConfiguration {
 
         return RemoteAzureDevopsImpl(targetUrl,
                                      gitHubCrawlerProperties.sourceControl.organizationName,
-                                     gitHubCrawlerProperties.sourceControl.oauthToken)
+                                     gitHubCrawlerProperties.sourceControl.apiToken)
     }
 
 }

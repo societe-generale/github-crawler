@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty
 @ConfigurationProperties("github-crawler")
 @EnableConfigurationProperties
 class GitHubCrawlerProperties(@NestedConfigurationProperty
-                              val sourceControl : GithubConfig=GithubConfig(),
+                              val sourceControl : SourceControlConfig=SourceControlConfig(),
                               val indicatorsToFetchByFile: Map<com.societegenerale.githubcrawler.FileToParse, List<IndicatorDefinition>> = HashMap(),
                               var repositoriesToExclude: List<String> = ArrayList(),
                               var publishExcludedRepositories: Boolean = false,

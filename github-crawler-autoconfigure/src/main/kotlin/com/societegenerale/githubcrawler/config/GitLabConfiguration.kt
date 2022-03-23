@@ -15,7 +15,7 @@ open class GitLabConfiguration {
     @Bean
     open fun remoteGitLab(gitHubCrawlerProperties: GitHubCrawlerProperties): RemoteGitHub {
 
-        return RemoteGitLabImpl(gitHubCrawlerProperties.sourceControl.url,gitHubCrawlerProperties.sourceControl.oauthToken)
+        return RemoteGitLabImpl(gitHubCrawlerProperties.sourceControl.url,gitHubCrawlerProperties.sourceControl.apiToken)
     }
 
 }

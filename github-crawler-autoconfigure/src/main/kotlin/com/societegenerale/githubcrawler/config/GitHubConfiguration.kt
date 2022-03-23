@@ -17,7 +17,7 @@ open class GitHubConfiguration {
 
         return RemoteGitHubImpl(gitHubCrawlerProperties.sourceControl.url,
                                 gitHubCrawlerProperties.sourceControl.crawlUsersRepoInsteadOfOrgasRepos,
-                                gitHubCrawlerProperties.sourceControl.oauthToken)
+                                gitHubCrawlerProperties.sourceControl.apiToken)
     }
 
 }
