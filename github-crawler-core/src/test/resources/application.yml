@@ -1,9 +1,9 @@
-github-crawler:
+crawler:
 
   githubConfig:
     type: "GITHUB"
     url: https://api.github.com
-    oauthToken: "lihwlfhlihvliwh;wjg;"
+    apiToken: "lihwlfhlihvliwh;wjg;"
     organizationName: MyOrg
     crawlUsersRepoInsteadOfOrgasRepos: false
 

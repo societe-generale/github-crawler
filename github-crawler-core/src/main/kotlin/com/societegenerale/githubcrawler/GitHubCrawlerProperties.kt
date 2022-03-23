@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 
 
-@ConfigurationProperties("github-crawler")
+@ConfigurationProperties("crawler")
 @EnableConfigurationProperties
 class GitHubCrawlerProperties(@NestedConfigurationProperty
                               val sourceControl : SourceControlConfig=SourceControlConfig(),

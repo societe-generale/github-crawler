@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@ConditionalOnProperty(prefix = "github-crawler.source-control", name = ["type"], havingValue = "AZURE_DEVOPS")
+@ConditionalOnProperty(prefix = "crawler.source-control", name = ["type"], havingValue = "AZURE_DEVOPS")
 open class AzureDevopsConfiguration {
 
     val log = LoggerFactory.getLogger(this.javaClass)
