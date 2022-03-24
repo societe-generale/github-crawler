@@ -43,7 +43,7 @@ import java.lang.reflect.Type
  * Implementation is mainly based on Feign's Builder for standard calls, and OkHttpClient for the others
  */
 @Suppress("TooManyFunctions") // most of methods are one liners, implementing the methods declared in interface
-class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val usersReposInsteadOfOrgasRepos: Boolean = false, val oauthToken: String) : RemoteGitHub {
+class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val usersReposInsteadOfOrgasRepos: Boolean = false, val apiKey: String) : RemoteSourceControl {
 
     companion object {
         const val REPO_LEVEL_CONFIG_FILE = ".githubCrawler"
@@ -59,7 +59,7 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
         .decoder(GitHubResponseDecoder())
         .errorDecoder(GiHubErrorDecoder())
         .decode404()
-        .requestInterceptor(GitHubOauthTokenSetter(oauthToken))
+        .requestInterceptor(GitHubOauthTokenSetter(apiKey))
         .logger(Slf4jLogger(RemoteGitHubImpl::class.java))
         .logLevel(Logger.Level.FULL)
         .target<InternalGitHubClient>(InternalGitHubClient::class.java, gitHubUrl)
@@ -118,8 +118,8 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
 
     private fun addOAuthTokenIfRequired(requestBuilder: okhttp3.Request.Builder): Unit {
 
-        if (oauthToken.isNotBlank()) {
-            requestBuilder.addHeader("Authorization", "token " + oauthToken)
+        if (apiKey.isNotBlank()) {
+            requestBuilder.addHeader("Authorization", "token " + apiKey)
         }
 
     }

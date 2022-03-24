@@ -2,7 +2,7 @@ package com.societegenerale.githubcrawler
 
 import com.societegenerale.githubcrawler.model.Repository
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput
-import com.societegenerale.githubcrawler.remote.RemoteGitHub
+import com.societegenerale.githubcrawler.remote.RemoteSourceControl
 import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskToPerform
 import org.slf4j.LoggerFactory
 import org.springframework.core.env.Environment
@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.stream.Collectors.toList
 
-class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
+class GitHubCrawler(private val remoteSourceControl: RemoteSourceControl,
                     private val output: List<GitHubCrawlerOutput>,
                     private val repositoryEnricher: RepositoryEnricher,
                     private val gitHubCrawlerProperties: GitHubCrawlerProperties,
@@ -45,7 +45,7 @@ class GitHubCrawler(private val remoteGitHub: RemoteGitHub,
 
         }
 
-        var repositoriesFromOrga = remoteGitHub.fetchRepositories(organizationName)
+        var repositoriesFromOrga = remoteSourceControl.fetchRepositories(organizationName)
 
         fetchAndParseRepoContent(repositoriesFromOrga)
 

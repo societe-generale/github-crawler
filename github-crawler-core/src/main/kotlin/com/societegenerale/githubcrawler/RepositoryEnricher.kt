@@ -4,12 +4,12 @@ package com.societegenerale.githubcrawler
 import com.societegenerale.githubcrawler.model.Branch
 import com.societegenerale.githubcrawler.model.Repository
 import com.societegenerale.githubcrawler.remote.NoFileFoundException
-import com.societegenerale.githubcrawler.remote.RemoteGitHub
+import com.societegenerale.githubcrawler.remote.RemoteSourceControl
 import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskToPerform
 import org.slf4j.LoggerFactory
 
 
-class RepositoryEnricher(val remoteGitHub: RemoteGitHub,
+class RepositoryEnricher(val remoteSourceControl: RemoteSourceControl,
                          val availableParsersAndTasks : AvailableParsersAndTasks = AvailableParsersAndTasks(emptyList(), emptyList())){
 
     val log = LoggerFactory.getLogger(this.javaClass)
@@ -18,7 +18,7 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub,
 
         if (crawlAllBranches) {
 
-            val branchesFound = remoteGitHub.fetchRepoBranches(repository.fullName);
+            val branchesFound = remoteSourceControl.fetchRepoBranches(repository.fullName);
 
             val repoWithBranches = repository.copy(branchesToParse = branchesFound)
 
@@ -39,7 +39,7 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub,
         try {
             log.debug("loading repo config for $repository.fullName")
 
-            repositoryConfig = remoteGitHub.fetchRepoConfig(repository.fullName,repository.defaultBranch)
+            repositoryConfig = remoteSourceControl.fetchRepoConfig(repository.fullName,repository.defaultBranch)
 
             log.debug("..repo config found ${repositoryConfig.toString()}")
         } catch (e: NoFileFoundException) {
@@ -110,7 +110,7 @@ class RepositoryEnricher(val remoteGitHub: RemoteGitHub,
 
 
     private fun fetchFileWithIndicatorsToFind(repoFullName : String, branch: Branch, fileToFetchAndProcess: String): String {
-            return remoteGitHub.fetchFileContent(repoFullName, branch.name, fileToFetchAndProcess)
+            return remoteSourceControl.fetchFileContent(repoFullName, branch.name, fileToFetchAndProcess)
     }
 
 

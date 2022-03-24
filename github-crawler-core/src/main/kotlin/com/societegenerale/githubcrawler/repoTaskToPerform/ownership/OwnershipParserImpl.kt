@@ -1,14 +1,14 @@
 package com.societegenerale.githubcrawler.repoTaskToPerform.ownership
 
 import com.societegenerale.githubcrawler.model.team.Membership
-import com.societegenerale.githubcrawler.remote.RemoteGitHub
+import com.societegenerale.githubcrawler.remote.RemoteSourceControl
 import org.slf4j.LoggerFactory
 
 /**
  * Example of implementation for repository ownership computation.
  * Just instantiate a class implementing OwnershipParser interface in your Spring Boot config. If none is found, a dummy one will be instantiated by default.
  */
-class OwnershipParserImpl(private val githubClient: RemoteGitHub, private val membershipParser: MembershipParser, private val organizationName: String) : OwnershipParser {
+class OwnershipParserImpl(private val githubClient: RemoteSourceControl, private val membershipParser: MembershipParser, private val organizationName: String) : OwnershipParser {
 
     companion object {
         private val log = LoggerFactory.getLogger(OwnershipParserImpl::class.java)

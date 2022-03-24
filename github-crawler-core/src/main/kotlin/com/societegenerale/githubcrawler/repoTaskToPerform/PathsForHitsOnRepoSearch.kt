@@ -2,7 +2,7 @@ package com.societegenerale.githubcrawler.repoTaskToPerform
 
 import com.societegenerale.githubcrawler.model.Branch
 import com.societegenerale.githubcrawler.model.Repository
-import com.societegenerale.githubcrawler.remote.RemoteGitHub
+import com.societegenerale.githubcrawler.remote.RemoteSourceControl
 
 
 /**
@@ -12,11 +12,11 @@ import com.societegenerale.githubcrawler.remote.RemoteGitHub
  */
 class PathsForHitsOnRepoSearch( private val taskName: String,
                                 private val searchQuery: String,
-                                private val remoteGitHub: RemoteGitHub) : RepoTaskToPerform {
+                                private val remoteSourceControl: RemoteSourceControl) : RepoTaskToPerform {
 
     override fun perform(repository: Repository): Map<Branch, Pair<String, Any>> {
 
-        val searchResult= remoteGitHub.fetchCodeSearchResult(repository.fullName, searchQuery)
+        val searchResult= remoteSourceControl.fetchCodeSearchResult(repository.fullName, searchQuery)
 
         val paths=if(searchResult.totalCount>0){
                 searchResult.items.map { i -> i.path }
@@ -32,14 +32,14 @@ class PathsForHitsOnRepoSearch( private val taskName: String,
 
 }
 
-class PathsForHitsOnRepoSearchBuilder(private val remoteGitHub: RemoteGitHub) : RepoTaskBuilder  {
+class PathsForHitsOnRepoSearchBuilder(private val remoteSourceControl: RemoteSourceControl) : RepoTaskBuilder  {
 
     override val type="pathsForHitsOnRepoSearch"
 
 
     override fun buildTask(name: String, params : Map<String,String>) : RepoTaskToPerform{
 
-        return PathsForHitsOnRepoSearch(name, params["queryString"]!!,remoteGitHub)
+        return PathsForHitsOnRepoSearch(name, params["queryString"]!!,remoteSourceControl)
 
     }
 

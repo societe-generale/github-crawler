@@ -3,13 +3,13 @@ package com.societegenerale.githubcrawler
 
 import com.google.common.collect.ImmutableList
 import com.societegenerale.githubcrawler.remote.NoReachableRepositories
-import com.societegenerale.githubcrawler.remote.RemoteGitHub
+import com.societegenerale.githubcrawler.remote.RemoteSourceControl
 import org.slf4j.LoggerFactory
 
 
 class ConfigValidator(val properties : GitHubCrawlerProperties,
 
-                      private val remoteGitHub: RemoteGitHub) {
+                      private val remoteSourceControl: RemoteSourceControl) {
 
     val log = LoggerFactory.getLogger(this.javaClass)
 
@@ -34,7 +34,7 @@ class ConfigValidator(val properties : GitHubCrawlerProperties,
         val organizationName=properties.sourceControl.organizationName;
 
         try{
-            remoteGitHub.validateRemoteConfig(organizationName)
+            remoteSourceControl.validateRemoteConfig(organizationName)
         }
         catch(e : NoReachableRepositories){
             //TODO make this GitLab ready..

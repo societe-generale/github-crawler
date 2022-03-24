@@ -1,7 +1,7 @@
 package com.societegenerale.githubcrawler
 
 import com.societegenerale.githubcrawler.remote.NoReachableRepositories
-import com.societegenerale.githubcrawler.remote.RemoteGitHub
+import com.societegenerale.githubcrawler.remote.RemoteSourceControl
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
@@ -10,12 +10,12 @@ import org.mockito.Mockito.mock
 
 class ConfigValidatorTest {
 
-    val mockRemoteGitHub = mock(RemoteGitHub::class.java)
+    val mockRemoteSourceControl = mock(RemoteSourceControl::class.java)
 
     @Test
     fun shouldNotHaveEmptyGitHubUrl() {
 
-        val configValidator = ConfigValidator(GitHubCrawlerProperties(SourceControlConfig(url = "",organizationName="notEmpty")),mockRemoteGitHub)
+        val configValidator = ConfigValidator(GitHubCrawlerProperties(SourceControlConfig(url = "",organizationName="notEmpty")),mockRemoteSourceControl)
 
         assertThat(configValidator.getValidationErrors()).containsOnly("source-control.url can't be empty");
 
@@ -24,7 +24,7 @@ class ConfigValidatorTest {
     @Test
     fun shouldNotHaveEmptyOrganization() {
 
-        val configValidator = ConfigValidator(GitHubCrawlerProperties(SourceControlConfig(url = "notEmpty",organizationName="")),mockRemoteGitHub)
+        val configValidator = ConfigValidator(GitHubCrawlerProperties(SourceControlConfig(url = "notEmpty",organizationName="")),mockRemoteSourceControl)
 
         assertThat(configValidator.getValidationErrors()).containsOnly("organization can't be empty");
 
@@ -33,9 +33,9 @@ class ConfigValidatorTest {
     @Test
     fun shouldLogProperMessageIfNotAbleToHitAPI() {
 
-        val configValidator = ConfigValidator(GitHubCrawlerProperties(SourceControlConfig(url = "someIncorrectURL",organizationName="someOrg")),mockRemoteGitHub)
+        val configValidator = ConfigValidator(GitHubCrawlerProperties(SourceControlConfig(url = "someIncorrectURL",organizationName="someOrg")),mockRemoteSourceControl)
 
-        `when`(mockRemoteGitHub.validateRemoteConfig("someOrg")).thenThrow(NoReachableRepositories("problem !",mock(Exception::class.java)))
+        `when`(mockRemoteSourceControl.validateRemoteConfig("someOrg")).thenThrow(NoReachableRepositories("problem !",mock(Exception::class.java)))
 
         val validationErrors=configValidator.getValidationErrors()
 

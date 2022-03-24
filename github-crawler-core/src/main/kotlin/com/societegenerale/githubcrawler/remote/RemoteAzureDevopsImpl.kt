@@ -27,7 +27,7 @@ import java.util.*
 import java.util.stream.Collectors.toSet
 
 
-class RemoteAzureDevopsImpl @JvmOverloads constructor(val azureDevopsUrl: String = "https://dev.azure.com/", val organization: String, val personalAccessToken: String) : RemoteGitHub {
+class RemoteAzureDevopsImpl @JvmOverloads constructor(val azureDevopsUrl: String = "https://dev.azure.com/", val organization: String, val personalAccessToken: String) : RemoteSourceControl {
 
     var log = LoggerFactory.getLogger(this.javaClass.toString())
 
