@@ -190,7 +190,7 @@ From v1.2.0 onward, basic support for gitLab is available ! It all boils down to
 - run the application with proper Spring Boot profile, ie with ```-Dspring.profiles.active=gitLab``` on the command line
 - Since the crawler is still primarily for GitHub, the config properties haven't been adapted (yet ?) for Gitlab. So your config would look like : 
 
-note : if you're using v1.3.0+ , then we won't use profiles anymore, but use the `github-crawler.githubConfig.type` property and set it to `GITLAB` . 
+note : if you're using v2.0.0+ , then we won't use profiles anymore, but use the `crawler.source-control.type` property and set it to `GITLAB` . 
 
 ```
     crawler:
