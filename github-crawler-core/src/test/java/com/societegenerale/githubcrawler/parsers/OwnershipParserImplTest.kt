@@ -8,7 +8,7 @@ import com.societegenerale.githubcrawler.model.commit.DetailedCommit
 import com.societegenerale.githubcrawler.model.team.Membership
 import com.societegenerale.githubcrawler.model.team.Team
 import com.societegenerale.githubcrawler.model.team.TeamMember
-import com.societegenerale.githubcrawler.remote.RemoteGitHub
+import com.societegenerale.githubcrawler.remote.RemoteSourceControl
 import com.societegenerale.githubcrawler.repoTaskToPerform.ownership.MembershipParser
 import com.societegenerale.githubcrawler.repoTaskToPerform.ownership.OwnershipParserImpl
 import org.assertj.core.api.Assertions.assertThat
@@ -17,7 +17,7 @@ import org.mockito.Mockito.*
 
 class OwnershipParserImplTest {
 
-    private val githubClient: RemoteGitHub = mock(RemoteGitHub::class.java)
+    private val githubClient: RemoteSourceControl = mock(RemoteSourceControl::class.java)
     private val membershipParser: MembershipParser = mock(MembershipParser::class.java)
     private val organizationName = "FCC_OSD"
     private val repositoryFullName = "declarative-process"

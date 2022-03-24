@@ -4,7 +4,7 @@ package com.societegenerale.githubcrawler.config
 import com.societegenerale.githubcrawler.GitHubCrawlerProperties
 import com.societegenerale.githubcrawler.remote.RemoteAzureDevopsImpl
 import com.societegenerale.githubcrawler.remote.RemoteAzureDevopsImpl.Companion.AZURE_DEVOPS_URL
-import com.societegenerale.githubcrawler.remote.RemoteGitHub
+import com.societegenerale.githubcrawler.remote.RemoteSourceControl
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
@@ -17,7 +17,7 @@ open class AzureDevopsConfiguration {
     val log = LoggerFactory.getLogger(this.javaClass)
 
     @Bean
-    open fun remoteAzureDevops(gitHubCrawlerProperties: GitHubCrawlerProperties): RemoteGitHub {
+    open fun remoteAzureDevops(gitHubCrawlerProperties: GitHubCrawlerProperties): RemoteSourceControl {
 
         val targetUrl:String
 

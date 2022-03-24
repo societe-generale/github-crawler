@@ -2,7 +2,7 @@ package com.societegenerale.githubcrawler
 
 import com.societegenerale.githubcrawler.model.Branch
 import com.societegenerale.githubcrawler.model.Repository
-import com.societegenerale.githubcrawler.remote.RemoteGitHub
+import com.societegenerale.githubcrawler.remote.RemoteSourceControl
 import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskToPerform
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -12,9 +12,9 @@ import java.util.*
 
 class RepositoryEnricherTest {
 
-    private val mockRemoteGitHub: RemoteGitHub = Mockito.mock(RemoteGitHub::class.java)
+    private val mockRemoteSourceControl: RemoteSourceControl = Mockito.mock(RemoteSourceControl::class.java)
 
-    private val repositoryEnricher = RepositoryEnricher(mockRemoteGitHub)
+    private val repositoryEnricher = RepositoryEnricher(mockRemoteSourceControl)
 
     private val masterBranch=Branch("master")
     private val branch1=Branch("branch1")

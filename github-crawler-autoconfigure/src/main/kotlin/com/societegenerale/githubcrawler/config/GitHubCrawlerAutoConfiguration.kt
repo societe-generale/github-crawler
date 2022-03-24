@@ -4,7 +4,7 @@ package com.societegenerale.githubcrawler.config
 import com.societegenerale.githubcrawler.*
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput
 import com.societegenerale.githubcrawler.parsers.FileContentParser
-import com.societegenerale.githubcrawler.remote.RemoteGitHub
+import com.societegenerale.githubcrawler.remote.RemoteSourceControl
 import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskBuilder
 import org.slf4j.LoggerFactory
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -30,7 +30,7 @@ open class GitHubCrawlerAutoConfiguration {
     }
 
     @Bean
-    open fun crawler(remoteGitHub: RemoteGitHub,
+    open fun crawler(remoteSourceControl: RemoteSourceControl,
                      output: List<GitHubCrawlerOutput>,
                      gitHubCrawlerProperties: GitHubCrawlerProperties,
                      environment : Environment,
@@ -41,18 +41,18 @@ open class GitHubCrawlerAutoConfiguration {
 
         var availableParsersAndTasks = AvailableParsersAndTasks(fileContentParsers,repoTasksBuilders)
 
-        val repositoryEnricher = RepositoryEnricher(remoteGitHub,availableParsersAndTasks)
+        val repositoryEnricher = RepositoryEnricher(remoteSourceControl,availableParsersAndTasks)
 
         log.info("using repositoryEnricher "+repositoryEnricher+" when building the crawler...")
 
-        return GitHubCrawler(remoteGitHub, output, repositoryEnricher,gitHubCrawlerProperties,environment,gitHubCrawlerProperties.sourceControl.organizationName,configValidator,availableParsersAndTasks)
+        return GitHubCrawler(remoteSourceControl, output, repositoryEnricher,gitHubCrawlerProperties,environment,gitHubCrawlerProperties.sourceControl.organizationName,configValidator,availableParsersAndTasks)
     }
 
     @Bean
     open fun configValidator(gitHubCrawlerProperties: GitHubCrawlerProperties,
-                             remoteGitHub: RemoteGitHub): ConfigValidator {
+                             remoteSourceControl: RemoteSourceControl): ConfigValidator {
 
-        return ConfigValidator(gitHubCrawlerProperties,remoteGitHub)
+        return ConfigValidator(gitHubCrawlerProperties,remoteSourceControl)
     }
 
 }

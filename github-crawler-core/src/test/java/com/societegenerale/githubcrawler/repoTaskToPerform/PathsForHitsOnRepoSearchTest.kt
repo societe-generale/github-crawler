@@ -4,7 +4,7 @@ import com.societegenerale.githubcrawler.model.Branch
 import com.societegenerale.githubcrawler.model.Repository
 import com.societegenerale.githubcrawler.model.SearchResult
 import com.societegenerale.githubcrawler.model.SearchResultItem
-import com.societegenerale.githubcrawler.remote.RemoteGitHub
+import com.societegenerale.githubcrawler.remote.RemoteSourceControl
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
@@ -13,7 +13,7 @@ import java.util.*
 
 class PathsForHitsOnRepoSearchTest {
 
-    private val mockRemoteGithub = mock(RemoteGitHub::class.java)
+    private val mockRemoteGithub = mock(RemoteSourceControl::class.java)
 
     private val repoToSearch = Repository(name = "repo1",
             creationDate = Date(),

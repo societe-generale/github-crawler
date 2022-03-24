@@ -3,7 +3,7 @@ package com.societegenerale.githubcrawler.repoTaskToPerform.ownership
 import com.societegenerale.githubcrawler.model.Branch
 import com.societegenerale.githubcrawler.model.Repository
 import com.societegenerale.githubcrawler.model.team.Membership
-import com.societegenerale.githubcrawler.remote.RemoteGitHub
+import com.societegenerale.githubcrawler.remote.RemoteSourceControl
 import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskBuilder
 import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskToPerform
 import org.slf4j.LoggerFactory
@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory
  *
  * The value will be returned under an indicator named "owningTeam". If it hasn't been able to find an owning team, it will return "Undefined"
  */
-class RepoOwnershipComputer(private val githubClient: RemoteGitHub,
+class RepoOwnershipComputer(private val githubClient: RemoteSourceControl,
                             private val membershipParser: MembershipParser,
                             private val organizationName: String,
                             private val lastCommitNumber: Int) : RepoTaskToPerform{
@@ -70,7 +70,7 @@ class RepoOwnershipComputer(private val githubClient: RemoteGitHub,
 
 }
 
-class RepoOwnershipComputerBuilder(private val githubClient: RemoteGitHub,
+class RepoOwnershipComputerBuilder(private val githubClient: RemoteSourceControl,
                                    private val membershipParser: MembershipParser,
                                    private val organizationName: String,
                                    private val lastCommitNumber: Int) : RepoTaskBuilder  {

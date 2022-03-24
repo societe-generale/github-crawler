@@ -2,7 +2,7 @@ package com.societegenerale.githubcrawler.config
 
 
 import com.societegenerale.githubcrawler.GitHubCrawlerProperties
-import com.societegenerale.githubcrawler.remote.RemoteGitHub
+import com.societegenerale.githubcrawler.remote.RemoteSourceControl
 import com.societegenerale.githubcrawler.repoTaskToPerform.CountHitsOnRepoSearchBuilder
 import com.societegenerale.githubcrawler.repoTaskToPerform.NbBranchesOnRepoBuilder
 import com.societegenerale.githubcrawler.repoTaskToPerform.NbOpenPRsOnRepoBuilder
@@ -19,35 +19,35 @@ import org.springframework.context.annotation.Configuration
 open class GitHubCrawlerMiscTasksConfig {
 
     @Bean
-    open fun countHitsOnRepoSearchBuilder(remoteGitHub: RemoteGitHub): CountHitsOnRepoSearchBuilder{
+    open fun countHitsOnRepoSearchBuilder(remoteSourceControl: RemoteSourceControl): CountHitsOnRepoSearchBuilder{
 
-        return CountHitsOnRepoSearchBuilder(remoteGitHub)
+        return CountHitsOnRepoSearchBuilder(remoteSourceControl)
     }
 
     @Bean
-    open fun pathsForHitsOnRepoSearchBuilder(remoteGitHub: RemoteGitHub): PathsForHitsOnRepoSearchBuilder {
+    open fun pathsForHitsOnRepoSearchBuilder(remoteSourceControl: RemoteSourceControl): PathsForHitsOnRepoSearchBuilder {
 
-        return PathsForHitsOnRepoSearchBuilder(remoteGitHub)
+        return PathsForHitsOnRepoSearchBuilder(remoteSourceControl)
     }
 
     @Bean
-    open fun nbOpenPRsOnRepoBuilder(remoteGitHub: RemoteGitHub): NbOpenPRsOnRepoBuilder {
+    open fun nbOpenPRsOnRepoBuilder(remoteSourceControl: RemoteSourceControl): NbOpenPRsOnRepoBuilder {
 
-        return NbOpenPRsOnRepoBuilder(remoteGitHub)
+        return NbOpenPRsOnRepoBuilder(remoteSourceControl)
     }
 
     @Bean
-    open fun nbBranchesOnRepoBuilder(remoteGitHub: RemoteGitHub): NbBranchesOnRepoBuilder {
+    open fun nbBranchesOnRepoBuilder(remoteSourceControl: RemoteSourceControl): NbBranchesOnRepoBuilder {
 
-        return NbBranchesOnRepoBuilder(remoteGitHub)
+        return NbBranchesOnRepoBuilder(remoteSourceControl)
     }
 
     @Bean
-    open fun repoOwnershipComputer(remoteGitHub: RemoteGitHub, gitHubCrawlerProperties: GitHubCrawlerProperties): RepoOwnershipComputerBuilder {
+    open fun repoOwnershipComputer(remoteSourceControl: RemoteSourceControl, gitHubCrawlerProperties: GitHubCrawlerProperties): RepoOwnershipComputerBuilder {
 
         val organizationName=gitHubCrawlerProperties.sourceControl.organizationName
 
-        return RepoOwnershipComputerBuilder(remoteGitHub, MembershipParser(remoteGitHub, organizationName), organizationName,150);
+        return RepoOwnershipComputerBuilder(remoteSourceControl, MembershipParser(remoteSourceControl, organizationName), organizationName,150);
     }
 
 }

@@ -1,11 +1,11 @@
 package com.societegenerale.githubcrawler.repoTaskToPerform.ownership
 
 import com.societegenerale.githubcrawler.model.team.Membership
-import com.societegenerale.githubcrawler.remote.RemoteGitHub
+import com.societegenerale.githubcrawler.remote.RemoteSourceControl
 import org.slf4j.LoggerFactory
 import java.util.function.Consumer
 
-class MembershipParser(private val githubClient: RemoteGitHub, private val organizationName: String) {
+class MembershipParser(private val githubClient: RemoteSourceControl, private val organizationName: String) {
 
     companion object {
         private val log = LoggerFactory.getLogger(MembershipParser::class.java)

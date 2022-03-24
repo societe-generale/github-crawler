@@ -5,7 +5,7 @@ import com.jayway.awaitility.Awaitility.await
 import com.societegenerale.githubcrawler.model.Repository
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput
 import com.societegenerale.githubcrawler.parsers.SimpleFilePathParser
-import com.societegenerale.githubcrawler.remote.RemoteGitHub
+import com.societegenerale.githubcrawler.remote.RemoteSourceControl
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -20,7 +20,7 @@ import java.util.*
 
 class GitHubCrawlerTest {
 
-    private val mockRemoteGitHub: RemoteGitHub = mock(RemoteGitHub::class.java)
+    private val mockRemoteSourceControl: RemoteSourceControl = mock(RemoteSourceControl::class.java)
 
     private val output = InMemoryGitHubCrawlerOutput()
     private val outputs: List<GitHubCrawlerOutput> = arrayListOf(output)
@@ -31,7 +31,7 @@ class GitHubCrawlerTest {
 
     private val availableParsersAndTasks = AvailableParsersAndTasks(listOf(SimpleFilePathParser()), emptyList())
 
-    private val repositoryEnricher = RepositoryEnricher(mockRemoteGitHub,availableParsersAndTasks)
+    private val repositoryEnricher = RepositoryEnricher(mockRemoteSourceControl,availableParsersAndTasks)
 
     private val gitHubCrawlerProperties = GitHubCrawlerProperties(sourceControl= SourceControlConfig(), indicatorsToFetchByFile = mapOf(Pair(FileToParse(fileToParse, null), listOf(indicator))))
     private val mockEnvironment = mock(Environment::class.java)
@@ -43,16 +43,16 @@ class GitHubCrawlerTest {
     @BeforeEach
     fun setUp() {
 
-        gitHubCrawler = GitHubCrawler(mockRemoteGitHub, outputs, repositoryEnricher, gitHubCrawlerProperties, mockEnvironment, organizationName, mockConfigValidator,availableParsersAndTasks)
+        gitHubCrawler = GitHubCrawler(mockRemoteSourceControl, outputs, repositoryEnricher, gitHubCrawlerProperties, mockEnvironment, organizationName, mockConfigValidator,availableParsersAndTasks)
 
-        `when`(mockRemoteGitHub.fetchRepositories(organizationName)).thenReturn(setOf(
+        `when`(mockRemoteSourceControl.fetchRepositories(organizationName)).thenReturn(setOf(
                 Repository(url = "url1", fullName = "fullRepo1", name = "repo1", defaultBranch = "master", creationDate = Date(), lastUpdateDate = Date(), topics = listOf("topic1a", "topic1b")),
                 Repository(url = "url2", fullName = "fullRepo2", name = "repo2", defaultBranch = "master", creationDate = Date(), lastUpdateDate = Date(), groups = listOf("group2a", "group2b"))
         ))
 
-        `when`(mockRemoteGitHub.fetchRepoConfig(anyString(), anyString())).thenReturn(RepositoryConfig())
+        `when`(mockRemoteSourceControl.fetchRepoConfig(anyString(), anyString())).thenReturn(RepositoryConfig())
 
-        `when`(mockRemoteGitHub.fetchFileContent(any(String::class.java), any(String::class.java),eq(fileToParse))).thenReturn("")
+        `when`(mockRemoteSourceControl.fetchFileContent(any(String::class.java), any(String::class.java),eq(fileToParse))).thenReturn("")
 
 
         `when`(mockConfigValidator.getValidationErrors()).thenReturn(ImmutableList.of())
@@ -73,7 +73,7 @@ class GitHubCrawlerTest {
     @Test
     fun excludedRepositoriesOnRepoConfigSideAreNotOutputByDefault() {
 
-        `when`(mockRemoteGitHub.fetchRepoConfig("fullRepo1", "master")).thenReturn(RepositoryConfig(excluded = true))
+        `when`(mockRemoteSourceControl.fetchRepoConfig("fullRepo1", "master")).thenReturn(RepositoryConfig(excluded = true))
 
         val processedRepositories = crawlAndWaitUntilWeHaveRecordsInOutput(1)
 
@@ -84,7 +84,7 @@ class GitHubCrawlerTest {
     @Test
     fun excludedRepositoriesOnRepoConfigSideShouldBeOutputIfConfigured() {
 
-        `when`(mockRemoteGitHub.fetchRepoConfig("fullRepo1", "master")).thenReturn(RepositoryConfig(excluded = true))
+        `when`(mockRemoteSourceControl.fetchRepoConfig("fullRepo1", "master")).thenReturn(RepositoryConfig(excluded = true))
 
         gitHubCrawlerProperties.publishExcludedRepositories = true
 
@@ -122,9 +122,9 @@ class GitHubCrawlerTest {
 
         val processedRepositories = crawlAndWaitUntilWeHaveRecordsInOutput(1)
 
-        verify(mockRemoteGitHub, times(1)).fetchFileContent("fullRepo2", "master", "pom.xml")
+        verify(mockRemoteSourceControl, times(1)).fetchFileContent("fullRepo2", "master", "pom.xml")
         //TODO we shouldn't check for pom.xml but for anyString()
-        verify(mockRemoteGitHub, never()).fetchFileContent("fullRepo1", "master", "pom.xml")
+        verify(mockRemoteSourceControl, never()).fetchFileContent("fullRepo1", "master", "pom.xml")
 
         assertThat(processedRepositories.keys).containsExactly("repo2")
     }

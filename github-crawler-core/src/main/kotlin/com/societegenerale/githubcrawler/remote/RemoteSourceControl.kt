@@ -10,7 +10,7 @@ import com.societegenerale.githubcrawler.model.commit.DetailedCommit
 import com.societegenerale.githubcrawler.model.team.Team
 import com.societegenerale.githubcrawler.model.team.TeamMember
 
-interface RemoteGitHub {
+interface RemoteSourceControl {
 
     fun fetchRepoConfig(repositoryFullName: String, defaultBranch: String): RepositoryConfig
 
