@@ -183,14 +183,9 @@ GithubCrawler crawls through repository and attaches tags information with all t
 
 ## Gitlab support
 
-From v1.2.0 onward, basic support for gitLab is available ! It all boils down to implementing a GitLab specific version of ```RemoteGitHub``` interface. Primary support is still for Github though, so not all the naming and config is aligned for GitLab (at least for now).
+Basic support for gitLab is available ! It all boils down to implementing a GitLab specific version of ```RemoteSourceControl``` interface.
 
-### Running the crawler for Gitlab
-
-- run the application with proper Spring Boot profile, ie with ```-Dspring.profiles.active=gitLab``` on the command line
-- Since the crawler is still primarily for GitHub, the config properties haven't been adapted (yet ?) for Gitlab. So your config would look like : 
-
-note : if you're using v2.0.0+ , then we won't use profiles anymore, but use the `crawler.source-control.type` property and set it to `GITLAB` . 
+Your config would look like : 
 
 ```
     crawler:
@@ -205,13 +200,30 @@ note : if you're using v2.0.0+ , then we won't use profiles anymore, but use the
         organizationName: myJavaProjects
 ```
 
-Not all methods defined in [RemoteGitHub](https://github.com/societe-generale/github-crawler/blob/b86c7483e4f361211750f454d70ccdec135ad655/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/remote/RemoteGitHub.kt) interface may have been implemented for Gitlab : ```NotImplementedError``` would be thrown in that case. If you need them, you can implement them in ```RemoteGitLabImpl``` (and contribute them back through a pull request ?).
+Not all methods defined in [RemoteSourceControl](https://github.com/societe-generale/github-crawler/blob/b86c7483e4f361211750f454d70ccdec135ad655/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/remote/RemoteGitHub.kt) interface may have been implemented for Gitlab : ```NotImplementedError``` would be thrown in that case. If you need them, you can implement them in ```RemoteGitLabImpl``` (and contribute them back through a pull request ?).
 
 Similarly, we may have added methods in the interface for some of our Gitlab specific use-cases : in that case, these methods may not have been implemented in the [Github version of the interface](https://github.com/societe-generale/github-crawler/blob/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/remote/RemoteGitHubImpl.kt) 
 
 ### overriding config at repository level for Gitlab
 
 the same rules apply that for GitHub, but in a file named `.gitlabCrawler`
+
+
+## Azure Devops support
+
+Just like for GitLab, there's basic support for Azure Devops !
+
+```
+    crawler:
+      source-control:
+        type: "AZURE_DEVOPS"
+        apiToken: "abcedfr6rwqwzslqhvfmdpuo5amfyv25a"
+        # no need to define the URL, since it can only be a hosted service 
+
+        # in Azure devops, repositories are in a project, within an organization. We mention both of them, separated by a '#' :
+        # the crawler will pick the repositories from this project
+        organization-name: "myOrg#myProject"
+```
 
  
 ## File content parsers
