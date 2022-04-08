@@ -16,6 +16,11 @@ crawler:
           params:
             artifactId: spring-boot-starter-parent
 
+  misc-repository-tasks:
+    - name: "pipelineTemplateLocation"
+      type: "pathsForHitsOnRepoSearch"
+      params:
+        queryString: "pipelinetemplates"
 
 
 

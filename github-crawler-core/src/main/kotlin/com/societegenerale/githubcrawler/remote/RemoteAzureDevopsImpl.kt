@@ -117,7 +117,7 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(val azureDevopsUrl: String
 
         val fileSearchUrl=azureDevopsSearchUrl+"$azureOrg/_apis/search/codesearchresults?${AZURE_DEVOPS_API_VERSION}"
 
-        val codeSearchRequestDetails = CodeSearchRequestDetails(query,CodeSearchFilter(listOf(repositoryFullName),listOf(repositoryFullName)))
+        val codeSearchRequestDetails = CodeSearchRequestDetails(query,CodeSearchFilter(listOf(repositoryFullName),listOf(azureProject)))
 
         val requestPayloadAsString=objectMapper.writeValueAsString(codeSearchRequestDetails).replaceFirst("{","{\"\$top\": 1,")
 
@@ -135,7 +135,7 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(val azureDevopsUrl: String
     }
 
     override fun fetchFileContent(repositoryFullName: String, branchName: String, fileToFetch: String): String {
-        val fileContentUrl=azureDevopsUrl+"$azureOrg/_apis/git/repositories/$repositoryFullName/items?" +
+        val fileContentUrl=azureDevopsUrl+"$azureOrg/$azureProject/_apis/git/repositories/$repositoryFullName/items?" +
             "path=${fileToFetch}" +
             "&versionDescriptor.versionType=branch" +
             "&versionDescriptor.version=" +extractBranchNameFromRef(branchName) +
@@ -193,8 +193,21 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(val azureDevopsUrl: String
 internal data class CodeSearchResult(val count : Int, val results : List<CodeSearchResultItem>) {
 
     fun toStandardSearchResult(): SearchResult {
-        return SearchResult(count,results.map { SearchResultItem(it.path) }.toList())
+
+        return SearchResult(count,results.map { SearchResultItem(toStandardPath(it.path)) }.toList())
     }
+
+    private fun toStandardPath(path: String): String {
+
+        if (path.startsWith("/")) {
+            return path.substring(1)
+        } else {
+            return path
+        }
+
+    }
+
+
 }
 
 internal class CodeSearchResultItem(val path : String)
