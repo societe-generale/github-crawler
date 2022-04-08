@@ -15,6 +15,7 @@
 ##  [2.0.1] - 2022-04-08
 
 ### Changed
+- Spring 2.6.6 upgrade
 - PR #101 : adding code search capability for Azure Devops (for pathsForHitsOnRepoSearch misc task)
 
 ##  [2.0.0] - 2022-04-01
