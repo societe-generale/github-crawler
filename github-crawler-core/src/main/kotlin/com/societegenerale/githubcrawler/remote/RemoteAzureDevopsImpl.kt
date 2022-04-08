@@ -6,17 +6,16 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.societegenerale.githubcrawler.RepositoryConfig
-import com.societegenerale.githubcrawler.model.Branch
-import com.societegenerale.githubcrawler.model.PullRequest
-import com.societegenerale.githubcrawler.model.Repository
-import com.societegenerale.githubcrawler.model.SearchResult
+import com.societegenerale.githubcrawler.model.*
 import com.societegenerale.githubcrawler.model.azuredevops.Repositories
 import com.societegenerale.githubcrawler.model.commit.Commit
 import com.societegenerale.githubcrawler.model.commit.DetailedCommit
 import com.societegenerale.githubcrawler.model.team.Team
 import com.societegenerale.githubcrawler.model.team.TeamMember
 import okhttp3.Credentials
+import okhttp3.MediaType
 import okhttp3.OkHttpClient
+import okhttp3.RequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
@@ -27,13 +26,18 @@ import java.util.*
 import java.util.stream.Collectors.toSet
 
 
-class RemoteAzureDevopsImpl @JvmOverloads constructor(val azureDevopsUrl: String = "https://dev.azure.com/", val organization: String, val personalAccessToken: String) : RemoteSourceControl {
+class RemoteAzureDevopsImpl @JvmOverloads constructor(val azureDevopsUrl: String = AZURE_DEVOPS_URL,
+                                                      val azureDevopsSearchUrl: String = AZURE_DEVOPS_SEARCH_URL,
+                                                      val organization: String,
+                                                      val personalAccessToken: String) : RemoteSourceControl {
 
     var log = LoggerFactory.getLogger(this.javaClass.toString())
 
     companion object {
 
         const val AZURE_DEVOPS_URL= "https://dev.azure.com/"
+
+        const val AZURE_DEVOPS_SEARCH_URL= "https://almsearch.dev.azure.com/"
 
         const val AZURE_DEVOPS_API_VERSION= "api-version=7.1-preview.1"
 
@@ -93,7 +97,7 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(val azureDevopsUrl: String
         val configUrl=azureDevopsUrl+"${azureOrg}/${azureProject}/_apis/git/repositories/${repositoryFullName}/items?path=${REPO_LEVEL_CONFIG_FILE}&${
             AZURE_DEVOPS_API_VERSION}"
 
-        log.info("fetching code search result from $configUrl");
+        log.info("fetching optional repo config from $configUrl");
 
 
         val request = requestTemplate.url(configUrl).build()
@@ -110,11 +114,28 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(val azureDevopsUrl: String
     }
 
     override fun fetchCodeSearchResult(repositoryFullName: String, query: String): SearchResult {
-        TODO("Not yet implemented")
+
+        val fileSearchUrl=azureDevopsSearchUrl+"$azureOrg/_apis/search/codesearchresults?${AZURE_DEVOPS_API_VERSION}"
+
+        val codeSearchRequestDetails = CodeSearchRequestDetails(query,CodeSearchFilter(listOf(repositoryFullName),listOf(repositoryFullName)))
+
+        val requestPayloadAsString=objectMapper.writeValueAsString(codeSearchRequestDetails).replaceFirst("{","{\"\$top\": 1,")
+
+        val codeSearchBody = RequestBody.create(
+            MediaType.parse("application/json"), requestPayloadAsString)
+
+        val request =requestTemplate.url(fileSearchUrl).post(codeSearchBody).build()
+
+        val responseBody=httpClient.newCall(request).execute().body()
+
+        val repoSearchResult = objectMapper.readValue(responseBody?.string(), CodeSearchResult::class.java)
+
+        return repoSearchResult.toStandardSearchResult()
+
     }
 
     override fun fetchFileContent(repositoryFullName: String, branchName: String, fileToFetch: String): String {
-        val fileContentUrl=azureDevopsUrl+"$azureOrg/$azureProject/_apis/git/repositories/$repositoryFullName/items?" +
+        val fileContentUrl=azureDevopsUrl+"$azureOrg/_apis/git/repositories/$repositoryFullName/items?" +
             "path=${fileToFetch}" +
             "&versionDescriptor.versionType=branch" +
             "&versionDescriptor.version=" +extractBranchNameFromRef(branchName) +
@@ -168,6 +189,16 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(val azureDevopsUrl: String
 
 
 }
+
+internal data class CodeSearchResult(val count : Int, val results : List<CodeSearchResultItem>) {
+
+    fun toStandardSearchResult(): SearchResult {
+        return SearchResult(count,results.map { SearchResultItem(it.path) }.toList())
+    }
+}
+
+internal class CodeSearchResultItem(val path : String)
+
 
 internal class AzureDevopsResponseDecoder {
     val log = LoggerFactory.getLogger(this.javaClass)
