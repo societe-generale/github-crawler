@@ -40,8 +40,7 @@ class ConfigValidatorTest {
 
         assertThat(validationErrors).hasSize(1);
 
+        assertThat(validationErrors[0]).startsWith("Not able to fetch repositories from the organization someOrg on URL someIncorrectURL");
+
     }
-
-
-
 }
