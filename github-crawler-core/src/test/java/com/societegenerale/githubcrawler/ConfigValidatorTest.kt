@@ -3,18 +3,13 @@ package com.societegenerale.githubcrawler
 import com.societegenerale.githubcrawler.remote.NoReachableRepositories
 import com.societegenerale.githubcrawler.remote.RemoteSourceControl
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
-import org.slf4j.LoggerFactory
-
 
 class ConfigValidatorTest {
 
-    val log = LoggerFactory.getLogger(this.javaClass)
-
-    val mockRemoteSourceControl = mock(RemoteSourceControl::class.java)
+    private val mockRemoteSourceControl = mock(RemoteSourceControl::class.java)
 
     @Test
     fun shouldNotHaveEmptyGitHubUrl() {
