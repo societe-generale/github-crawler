@@ -7,10 +7,9 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 
-
 class ConfigValidatorTest {
 
-    val mockRemoteSourceControl = mock(RemoteSourceControl::class.java)
+    private val mockRemoteSourceControl = mock(RemoteSourceControl::class.java)
 
     @Test
     fun shouldNotHaveEmptyGitHubUrl() {
@@ -35,16 +34,13 @@ class ConfigValidatorTest {
 
         val configValidator = ConfigValidator(GitHubCrawlerProperties(SourceControlConfig(url = "someIncorrectURL",organizationName="someOrg")),mockRemoteSourceControl)
 
-        `when`(mockRemoteSourceControl.validateRemoteConfig("someOrg")).thenThrow(NoReachableRepositories("problem !",mock(Exception::class.java)))
+        `when`(mockRemoteSourceControl.validateRemoteConfig("someOrg")).thenThrow(NoReachableRepositories("problem !", Exception()))
 
-        val validationErrors=configValidator.getValidationErrors()
+        val validationErrors = configValidator.getValidationErrors()
 
         assertThat(validationErrors).hasSize(1);
 
         assertThat(validationErrors[0]).startsWith("Not able to fetch repositories from the organization someOrg on URL someIncorrectURL");
 
     }
-
-
-
 }
