@@ -11,7 +11,14 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.societegenerale.githubcrawler.config.GitHubCrawlerAutoConfiguration;
 import com.societegenerale.githubcrawler.config.TestConfig;
+import com.societegenerale.githubcrawler.model.Branch;
+import com.societegenerale.githubcrawler.model.Repository;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,6 +65,11 @@ class AzureDevopsCrawlerIT {
             .withBodyFile("repositories.json")
             .withStatus(200)));
 
+    stubFor(WireMock.post(urlEqualTo("/platform/_apis/search/codesearchresults?"+API_VERSION))
+        .willReturn(aResponse()
+            .withBodyFile("codeSearchResponse.json")
+            .withStatus(200)));
+
     stubFor(WireMock.get(urlEqualTo("/platform/platform-projects/_apis/git/repositories/my-helm-chart/items?path=.azureDevopsCrawler&"+API_VERSION))
         .willReturn(aResponse().withStatus(404)));
 
@@ -80,6 +92,17 @@ class AzureDevopsCrawlerIT {
       crawler.crawl();
 
       assertThat(output.getAnalyzedRepositories()).hasSize(2);
+
+      Repository vendorPortalUiRepo=output.getAnalyzedRepositories().get("vendor-portal-ui");
+      Set<Entry<Branch, Map<String, Object>>> miscTaskResults=vendorPortalUiRepo.getMiscTasksResults().entrySet();
+      assertThat(miscTaskResults).hasSize(1);
+
+      Entry<Branch, Map<String, Object>> firstTaskResult=miscTaskResults.stream().findFirst().get();
+      Branch branchWhereResultWasFound=firstTaskResult.getKey();
+      assertThat(branchWhereResultWasFound.getName()).isEqualTo("refs/heads/main");
+
+      List<String> valueForIndicator=(ArrayList)firstTaskResult.getValue().get("pipelineTemplateLocation");
+      assertThat(valueForIndicator.get(0)).isEqualTo("azure-pipelines.yml");
   }
 
 

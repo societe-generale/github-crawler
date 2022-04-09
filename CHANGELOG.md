@@ -12,7 +12,12 @@
 
 ### Fixed
 
-##  [2.0.0] - 2022-03-23
+##  [2.0.1] - 2022-04-09
+
+### Changed
+- PR #101 : adding code search capability for Azure Devops (for pathsForHitsOnRepoSearch misc task)
+
+##  [2.0.0] - 2022-04-01
 
 ### Changed
 - PR #96 / 97 : renaming some config keys

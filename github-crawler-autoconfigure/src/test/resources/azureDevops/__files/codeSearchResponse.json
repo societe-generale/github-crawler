@@ -1,0 +1,51 @@
+{
+  "count": 1,
+  "results": [
+    {
+      "fileName": "azure-pipelines.yml",
+      "path": "/azure-pipelines.yml",
+      "matches": {
+        "content": [
+          {
+            "charOffset": 233,
+            "length": 16,
+            "line": 0,
+            "column": 0,
+            "codeSnippet": null,
+            "type": "content"
+          }
+        ],
+        "fileName": []
+      },
+      "collection": {
+        "name": "DefaultCollection"
+      },
+      "project": {
+        "name": "platform-projects",
+        "id": "123456-ff82-4e2c-8b71-fbca48f259eb"
+      },
+      "repository": {
+        "name": "my-helm-chart",
+        "id": "2345676-e8f7-47ff-bc15-06f7fef9b9ed",
+        "type": "git"
+      },
+      "versions": [
+        {
+          "branchName": "main",
+          "changeId": "3d2935564b77fef57fa31241ad3f06f9dee4de37"
+        }
+      ],
+      "contentId": "40c4015c82950d285fe2e398d2daffd081736fe0"
+    }
+  ],
+  "infoCode": 0,
+  "facets": {
+    "Branch": [
+      {
+        "name": "main",
+        "id": "main",
+        "resultCount": 0
+      }
+    ]
+  }
+}
