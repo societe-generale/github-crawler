@@ -119,6 +119,7 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(val azureDevopsUrl: String
 
         val codeSearchRequestDetails = CodeSearchRequestDetails(query,CodeSearchFilter(listOf(repositoryFullName),listOf(azureProject)))
 
+        //TODO hack-ish way to build the payload : use custom serializer instead
         val requestPayloadAsString=objectMapper.writeValueAsString(codeSearchRequestDetails).replaceFirst("{","{\"\$top\": 1,")
 
         val codeSearchBody = RequestBody.create(
