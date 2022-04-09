@@ -39,22 +39,11 @@ class ConfigValidatorTest {
 
         val configValidator = ConfigValidator(GitHubCrawlerProperties(SourceControlConfig(url = "someIncorrectURL",organizationName="someOrg")),mockRemoteSourceControl)
 
-        `when`(mockRemoteSourceControl.validateRemoteConfig("someOrg")).thenThrow(NoReachableRepositories("problem !"))
+        `when`(mockRemoteSourceControl.validateRemoteConfig("someOrg")).thenThrow(NoReachableRepositories("problem !", Exception()))
 
-        try {
-            val validationErrors = configValidator.getValidationErrors()
+        val validationErrors = configValidator.getValidationErrors()
 
-            assertThat(validationErrors).hasSize(1);
-
-            assertThat(validationErrors[0]).startsWith("Not able to fetch repositories from the organization someOrg on URL someIncorrectURL");
-
-        }
-        catch(e : Exception){
-            log.info("problem during test",e)
-            fail("test failed")
-        }
-
-
+        assertThat(validationErrors).hasSize(1);
 
     }
 
