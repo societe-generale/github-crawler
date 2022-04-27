@@ -17,14 +17,6 @@
 
     <dependencies>
 
-        <!-- [CVE-2022-22965] can be removed once spring-beans comes transitively in a version >=5.3.18 -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <version>5.3.18</version>
-        </dependency>
-
-
         <!--
             Theoretically, we don't need to declare gson lib, as it's provided by spring-cloud-starter-openfeign .
             The gson version is overridden in spring boot starter (to 2.8.5 as of Spring Boot 2.0.4)
