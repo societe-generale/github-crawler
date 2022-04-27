@@ -46,6 +46,7 @@ import java.lang.reflect.Type
 class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val usersReposInsteadOfOrgasRepos: Boolean = false, val apiKey: String) : RemoteSourceControl {
 
     companion object {
+        const val GITHUB_URL= "https://api.github.com"
         const val REPO_LEVEL_CONFIG_FILE = ".githubCrawler"
         const val APPLICATION_JSON = "application/json"
         const val ACCEPT = "accept"
@@ -223,7 +224,7 @@ class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val user
 
         val searchCodeUrl = HttpUrl.parse(gitHubUrl +buildQueryString(query,repositoryFullName))!!.newBuilder().build().toString()
 
-        log.info("fetching code search result from $searchCodeUrl");
+        log.info("fetching code search result from $searchCodeUrl")
 
         val requestBuilder = okhttp3.Request.Builder()
             .url(searchCodeUrl)
@@ -381,7 +382,7 @@ internal class GiHubErrorDecoder : ErrorDecoder {
             throw GitHubResponseDecoder.GithubException("problem while fetching content... conflict state as per HTTP 409 code")
         }
 
-        return errorStatus(methodKey, response);
+        return errorStatus(methodKey, response)
     }
 }
 
@@ -395,7 +396,7 @@ internal class GitHubResponseDecoder : Decoder {
         repoConfigMapper.registerModule(KotlinModule.Builder().build())
     }
 
-    fun decodeRepoConfig(response: okhttp3.Response): RepositoryConfig {
+    fun decodeRepoConfig(response: Response): RepositoryConfig {
 
         val writer = StringWriter()
         IOUtils.copy(response.body()?.byteStream(), writer, "UTF-8")
@@ -436,7 +437,7 @@ internal class GitHubResponseDecoder : Decoder {
         }
     }
 
-    private fun parseRepositoryConfigResponse(responseAsString: String, response: okhttp3.Response): RepositoryConfig {
+    private fun parseRepositoryConfigResponse(responseAsString: String, response: Response): RepositoryConfig {
         if (responseAsString.isEmpty()) {
             return RepositoryConfig()
         }

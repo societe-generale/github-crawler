@@ -41,7 +41,7 @@ Following a simple configuration, it will use Github API starting from a given o
 
 You can easily exclude repositories from the analysis, configure the files and patterns you're interested in. If you have several types of repositories (front-end, back-end, config repositories for instance), you can have separate configuration files so that the information retrieved is relevant to each scope of analysis.
 
-Several output types are available in [this package](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/output/) :
+Several output types are available in [this package](./tree/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/output) :
 - console is the default and will be used if no output is configured
 - a simple "raw" file output
 - HTTP output, which enables you to POST the results to an endpoint like ElasticSearch, for easy analysis in Kibana
@@ -61,7 +61,7 @@ crawler:
         type: "GITHUB"
         # the base GitHub URL for your Github enterprise instance to crawl
         # or if it's github.com...
-        # gitHub.url: https://api.github.com
+        # url: https://api.github.com
         url: https://my.githubEnterprise/api/v3
         apiToken: "YOUR_TOKEN"
         # the name of the GitHub organization to crawl. To fetch the repositories, the crawler will hit 
