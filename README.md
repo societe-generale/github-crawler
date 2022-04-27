@@ -59,12 +59,11 @@ crawler:
         # since v2.0.0, we need to mention the source control type. defaults to GitHub, but other options are possible
         # as defined in https://github.com/societe-generale/github-crawler/blob/master/github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/GithubConfig.kt
         type: "GITHUB"
-        # the base GitHub URL for your Github enterprise instance to crawl
-        # or if it's github.com...
-        # url: https://api.github.com
+        # the base GitHub URL for your Github enterprise or on prem GitLab instance to crawl. 
+        # defaults to public URL for GitHub and Azure Devops if not provided in config. 
         url: https://my.githubEnterprise/api/v3
         apiToken: "YOUR_TOKEN"
-        # the name of the GitHub organization to crawl. To fetch the repositories, the crawler will hit 
+        # the name of the GitHub organization (or equivalent for other systems) to crawl. To fetch the repositories, the crawler will hit 
         # https://${gitHub.url}/api/v3/orgs/${organizationName}/repos
         organizationName: MyOrganization
         # default is false - API URL is slightly different depending on whether you're crawling an organization (most common case) or a user's repositories
