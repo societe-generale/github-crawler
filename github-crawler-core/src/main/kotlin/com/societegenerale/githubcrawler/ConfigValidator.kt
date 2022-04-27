@@ -17,8 +17,9 @@ class ConfigValidator(val properties : GitHubCrawlerProperties,
 
         val validationErrors = mutableListOf<String>()
 
-        // there's a default url for AzureDevops, no need to configure it
-        if(properties.sourceControl.type!= SourceControlType.AZURE_DEVOPS &&
+        // there's a default url for AzureDevops and GitHub, no need to configure it
+        if(properties.sourceControl.type != SourceControlType.AZURE_DEVOPS &&
+            properties.sourceControl.type != SourceControlType.GITHUB &&
            properties.sourceControl.url.isBlank()){
             validationErrors.add("source-control.url can't be empty")
         }
@@ -28,10 +29,10 @@ class ConfigValidator(val properties : GitHubCrawlerProperties,
         }
 
         if(validationErrors.isNotEmpty()){
-            return ImmutableList.copyOf(validationErrors);
+            return ImmutableList.copyOf(validationErrors)
         }
 
-        val organizationName=properties.sourceControl.organizationName;
+        val organizationName=properties.sourceControl.organizationName
 
         try{
             remoteSourceControl.validateRemoteConfig(organizationName)
@@ -50,7 +51,7 @@ class ConfigValidator(val properties : GitHubCrawlerProperties,
             return ImmutableList.of(errorMessage)
         }
 
-        return ImmutableList.of();
+        return ImmutableList.of()
 
     }
 
