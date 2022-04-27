@@ -12,11 +12,20 @@ class ConfigValidatorTest {
     private val mockRemoteSourceControl = mock(RemoteSourceControl::class.java)
 
     @Test
-    fun shouldNotHaveEmptyGitHubUrl() {
+    fun shouldNotHaveEmptyGitLabUrl() {
 
-        val configValidator = ConfigValidator(GitHubCrawlerProperties(SourceControlConfig(url = "",organizationName="notEmpty")),mockRemoteSourceControl)
+        val configValidator = ConfigValidator(GitHubCrawlerProperties(SourceControlConfig(type=SourceControlType.GITLAB, url = "",organizationName="notEmpty")),mockRemoteSourceControl)
 
         assertThat(configValidator.getValidationErrors()).containsOnly("source-control.url can't be empty");
+
+    }
+
+    @Test
+    fun gitHubUrlCanBeEmpty() {
+
+        val configValidator = ConfigValidator(GitHubCrawlerProperties(SourceControlConfig(type=SourceControlType.GITHUB, url = "",organizationName="notEmpty")),mockRemoteSourceControl)
+
+        assertThat(configValidator.getValidationErrors()).isEmpty();
 
     }
 
