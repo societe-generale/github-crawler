@@ -45,7 +45,7 @@ class GitHubCrawler(private val remoteSourceControl: RemoteSourceControl,
 
         }
 
-        var repositoriesFromOrga = remoteSourceControl.fetchRepositories(organizationName)
+        val repositoriesFromOrga = remoteSourceControl.fetchRepositories(organizationName)
 
         fetchAndParseRepoContent(repositoriesFromOrga)
 
@@ -75,10 +75,10 @@ class GitHubCrawler(private val remoteSourceControl: RemoteSourceControl,
 
         log.info("${repositoriesFromOrga.size} repositories to crawl...")
 
-        val repoStream = if (gitHubCrawlerProperties.crawlInParallel) repositoriesFromOrga.parallelStream() else repositoriesFromOrga.stream();
+        val repoStream = if (gitHubCrawlerProperties.crawlInParallel) repositoriesFromOrga.parallelStream() else repositoriesFromOrga.stream()
 
         repoStream.map { repo -> logRepoProcessing(repo) }
-                .map { repo -> repo.flagAsExcludedIfRequired(gitHubCrawlerProperties.repositoriesToExclude) }
+                .map { repo -> repo.flagAsExcludedIfRequired(gitHubCrawlerProperties) }
                 .filter { repo -> shouldKeepForFurtherProcessing(repo, gitHubCrawlerProperties) }
                 .map { repo -> repositoryEnricher.loadRepoSpecificConfigIfAny(repo) }
                 .map { repo -> repo.flagAsExcludedIfConfiguredAtRepoLevel() }
@@ -97,7 +97,7 @@ class GitHubCrawler(private val remoteSourceControl: RemoteSourceControl,
 
     private fun logRepoProcessing(repo: Repository): Repository {
         log.info("processing repo ${repo.name}")
-        return repo;
+        return repo
     }
 
 

@@ -2,6 +2,7 @@ package com.societegenerale.githubcrawler.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.societegenerale.githubcrawler.GitHubCrawlerProperties
 import com.societegenerale.githubcrawler.RepositoryConfig
 import feign.FeignException
 import org.slf4j.LoggerFactory
@@ -46,28 +47,44 @@ data class Repository(val url: String,
 
     val log = LoggerFactory.getLogger(this.javaClass)
 
-    fun flagAsExcludedIfRequired(repositoriesToExclude: List<String>): Repository {
+    fun flagAsExcludedIfRequired(config : GitHubCrawlerProperties): Repository {
 
-        val matchedOnAnExclusionPattern = repositoriesToExclude.map { s -> Pattern.compile(s) }
-                //below map returns true if it matches, false otherwise
-                .map { p -> logIfMatches(p) }
-                //we return the first item matching predicate "it", ie being true. Else, return false
-                .firstOrNull { it } ?: false
+      val repositoriesToExclude = config.repositoriesToExclude
+      val repositoriesToInclude = config.repositoriesToInclude
 
+      if(repositoriesToExclude.isNotEmpty()) {
+        val matchedOnAnExclusionPattern = repoNameMatchesAnyPatternsFrom(repositoriesToExclude)
 
         if (matchedOnAnExclusionPattern) {
-            log.info("\texcluding repo ${name} because of server config ")
+          log.info("\texcluding repo ${name} because of server config ")
 
-            return this.copy(excluded = true, reason = "excluded from server config side")
+          return this.copy(excluded = true, reason = "excluded from server config side")
+        }
+      }
+      else if(repositoriesToInclude.isNotEmpty()){
+        val matchedOnAnInclusionPattern = repoNameMatchesAnyPatternsFrom(repositoriesToInclude)
+
+        if (!matchedOnAnInclusionPattern) {
+          log.info("\texcluding repo ${name} because of server config - not matching the inclusion pattern")
+
+          return this.copy(excluded = true, reason = "excluded from server config side")
         }
 
-        return this
+      }
+
+      return this
     }
 
-    private fun logIfMatches(p: Pattern): Boolean {
+  private fun repoNameMatchesAnyPatternsFrom(repositoriesToInclude: List<String>) = repositoriesToInclude.map { s -> Pattern.compile(s) }
+      //below map returns true if it matches, false otherwise
+      .map { p -> logIfMatches(p) }
+      //we return the first item matching predicate "it", ie being true. Else, return false
+      .firstOrNull { it } ?: false
+
+  private fun logIfMatches(p: Pattern): Boolean {
 
         if (p.matcher(name).find()) {
-            log.debug("repo {} matched on exclusion pattern {}", name, p.pattern())
+            log.debug("repo {} matched on exclusion/inclusion pattern {}", name, p.pattern())
             return true
         }
 
