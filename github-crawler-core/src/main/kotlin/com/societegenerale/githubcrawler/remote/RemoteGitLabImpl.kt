@@ -42,7 +42,7 @@ import java.util.stream.Collectors.toSet
  *
  */
 @Suppress("TooManyFunctions") // most of methods are one liners, implementing the methods declared in interface
-class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val privateToken: String) : RemoteSourceControl {
+class RemoteGitLabImpl constructor(val gitLabUrl: String, val privateToken: String) : RemoteSourceControl {
 
     companion object {
         const val REPO_LEVEL_CONFIG_FILE = ".gitlabCrawler"
@@ -93,9 +93,9 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun fetchCodeSearchResult(repositoryFullName: String, searchString: String): SearchResult {
+    override fun fetchCodeSearchResult(repositoryFullName: String, query: String): SearchResult {
 
-        val repoSearchUrl = gitLabUrl +"/projects/"+repoNameToIdMapping.get(repositoryFullName)+"/search?scope=blobs&"+searchString
+        val repoSearchUrl = gitLabUrl +"/projects/"+repoNameToIdMapping.get(repositoryFullName)+"/search?scope=blobs&"+query
 
         val request = okhttp3.Request.Builder()
             .url(repoSearchUrl)
@@ -128,16 +128,19 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun fetchRepositories(groupName: String): Set<Repository> {
+    /**
+     * organizationName is more "groupName" in GitLab context
+     */
+    override fun fetchRepositories(organizationName: String): Set<Repository> {
 
-        val gitLabGroups = internalGitLabClient.fetchGroupByName(groupName)
+        val gitLabGroups = internalGitLabClient.fetchGroupByName(organizationName)
 
         if(gitLabGroups.isEmpty() ){
-            throw GitLabResponseDecoder.GitLabException("no GitLab group found for groupName $groupName, so can't find any repositories to crawl")
+            throw GitLabResponseDecoder.GitLabException("no GitLab group found for groupName $organizationName, so can't find any repositories to crawl")
         }
 
         if(gitLabGroups.size > 1 ){
-            log.warn("more than one GitLab group found for groupName $groupName : $gitLabGroups. Using the first one to perform the crawling. Refine your search criteria if that's not what you expect")
+            log.warn("more than one GitLab group found for groupName $organizationName : $gitLabGroups. Using the first one to perform the crawling. Refine your search criteria if that's not what you expect")
         }
 
         val gitLabGroup= gitLabGroups[0]
@@ -235,9 +238,9 @@ internal data class GitLabSearchResultItem(val basename : String, val startline 
 
 internal class GiLabErrorDecoder : ErrorDecoder {
 
-    override fun decode(methodKey: String?, response: feign.Response?): java.lang.Exception {
+    override fun decode(methodKey: String?, response: Response?): java.lang.Exception {
 
-        return errorStatus(methodKey, response);
+        return errorStatus(methodKey, response)
     }
 }
 
@@ -271,7 +274,7 @@ internal class GitLabResponseDecoder : Decoder {
     }
 
     @Throws(IOException::class)
-    override fun decode(response: feign.Response, type: Type): Any {
+    override fun decode(response: Response, type: Type): Any {
 
         if (response.status() == HttpStatus.NOT_FOUND.value()) {
 
