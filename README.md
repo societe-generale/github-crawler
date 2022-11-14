@@ -75,6 +75,12 @@ crawler:
       - "^financing-platform-.*-run$"
       # exclude the ones that DON'T start with "financing-platform-" 
       - "^(?!financing-platform-.*$).*"
+
+    # repositoriesToExclude and  repositoriesToInclude ARE EXCLUSIVE. you will get an error at startup if both are configured
+    repositoriesToInclude:
+      # include the ones that start with "financing-platform-" and end with "-service" (and exclude the ones that don't match)
+      - "^financing-platform-.*-service$"
+
     
     # do you want the excluded repositories to be written in output ? (default is false)
     # even if they won't have any indicators attached, it can be useful to output excluded repositories, 

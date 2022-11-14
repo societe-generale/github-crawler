@@ -12,6 +12,11 @@
 
 ### Fixed
 
+##  [2.0.2] - 2022-11-14
+
+### Added
+- now possible to configure `repositoriesToInclude`
+
 ##  [2.0.1] - 2022-04-09
 
 ### Changed
