@@ -3,6 +3,7 @@ package com.societegenerale.githubcrawler.repoTaskToPerform.ownership
 import com.societegenerale.githubcrawler.model.team.Membership
 import com.societegenerale.githubcrawler.remote.RemoteSourceControl
 import org.slf4j.LoggerFactory
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Example of implementation for repository ownership computation.
@@ -18,20 +19,18 @@ class OwnershipParserImpl(private val githubClient: RemoteSourceControl, private
 
     private var memberIdToTeamName: Membership = Membership()
 
-    private var isParserInitiated: Boolean = false
+    private var isParserInitiated = AtomicBoolean(false)
 
 
     override fun computeOwnershipFor(repositoryFullName: String, lastCommitNumber: Int): String {
 
         //TODO see if we can make this an init block - currently, problem for tests, because it requires a remote server to be available
-        // to fetch teams...  and the OwnershipParserImpl is instanciated (as part of the whole config) BEFORE the fake remote webserver is available
-        synchronized(isParserInitiated) {
-            if (!isParserInitiated) {
-                memberIdToTeamName = membershipParser.computeMembership()
-                isParserInitiated = true
-            }
-        }
+        // to fetch teams...  and the OwnershipParserImpl is instantiated (as part of the whole config) BEFORE the fake remote webserver is available
 
+        if (!isParserInitiated.get()) {
+            memberIdToTeamName = membershipParser.computeMembership()
+            isParserInitiated.set(true)
+        }
 
         if (memberIdToTeamName.isEmpty()) {
             log.info("Membership is empty, unable to compute repository owner...")
@@ -45,7 +44,7 @@ class OwnershipParserImpl(private val githubClient: RemoteSourceControl, private
                 .filter { it.author != null }
                 .flatMap { (_, author, stats) -> memberIdToTeamName.getTeams(author!!.login).map { team -> Pair(team, stats.total) } }
                 .groupBy { it.first }
-                .mapValues { it.value.sumBy { stat -> stat.second } }
+                .mapValues { it.value.sumOf { stat -> stat.second } }
                 .entries
                 .sortedByDescending { it.value }
                 .firstOrNull()?.key ?: UNDEFINED

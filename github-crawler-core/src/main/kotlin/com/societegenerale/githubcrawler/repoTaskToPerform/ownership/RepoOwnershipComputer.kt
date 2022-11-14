@@ -7,6 +7,7 @@ import com.societegenerale.githubcrawler.remote.RemoteSourceControl
 import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskBuilder
 import com.societegenerale.githubcrawler.repoTaskToPerform.RepoTaskToPerform
 import org.slf4j.LoggerFactory
+import java.util.concurrent.atomic.AtomicBoolean
 
 
 /**
@@ -30,19 +31,19 @@ class RepoOwnershipComputer(private val githubClient: RemoteSourceControl,
 
     private var memberIdToTeamName: Membership = Membership()
 
-    private var isParserInitiated: Boolean = false
+    private var isParserInitiated = AtomicBoolean(false)
 
 
     override fun perform(repository: Repository): Map<Branch, Pair<String, Any>> {
 
         //TODO see if we can make this an init block - currently, problem for tests, because it requires a remote server to be available
-        // to fetch teams...  and the OwnershipParserImpl is instanciated (as part of the whole config) BEFORE the fake remote webserver is available
-        synchronized(isParserInitiated) {
-            if (!isParserInitiated) {
-                memberIdToTeamName = membershipParser.computeMembership()
-                isParserInitiated = true
-            }
+        // to fetch teams...  and the OwnershipParserImpl is instantiated (as part of the whole config) BEFORE the fake remote webserver is available
+
+        if (!isParserInitiated.get()) {
+            memberIdToTeamName = membershipParser.computeMembership()
+            isParserInitiated.set(true)
         }
+
 
         if (memberIdToTeamName.isEmpty()) {
             log.info("Membership is empty, unable to compute repository owner...")
@@ -57,7 +58,7 @@ class RepoOwnershipComputer(private val githubClient: RemoteSourceControl,
                 .filter { it.author != null }
                 .flatMap { (_, author, stats) -> memberIdToTeamName.getTeams(author!!.login).map { team -> Pair(team, stats.total) } }
                 .groupBy { it.first }
-                .mapValues { it.value.sumBy { stat -> stat.second } }
+                .mapValues { it.value.sumOf { stat -> stat.second } }
                 .entries
                 .sortedByDescending { it.value }
                 .firstOrNull()?.key ?: UNDEFINED

@@ -42,7 +42,7 @@ import java.util.stream.Collectors.toSet
  *
  */
 @Suppress("TooManyFunctions") // most of methods are one liners, implementing the methods declared in interface
-class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val privateToken: String) : RemoteSourceControl {
+class RemoteGitLabImpl constructor(val gitLabUrl: String, val privateToken: String) : RemoteSourceControl {
 
     companion object {
         const val REPO_LEVEL_CONFIG_FILE = ".gitlabCrawler"
@@ -93,9 +93,9 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun fetchCodeSearchResult(repositoryFullName: String, searchString: String): SearchResult {
+    override fun fetchCodeSearchResult(repositoryFullName: String, query: String): SearchResult {
 
-        val repoSearchUrl = gitLabUrl +"/projects/"+repoNameToIdMapping.get(repositoryFullName)+"/search?scope=blobs&"+searchString
+        val repoSearchUrl = gitLabUrl +"/projects/"+repoNameToIdMapping.get(repositoryFullName)+"/search?scope=blobs&"+query
 
         val request = okhttp3.Request.Builder()
             .url(repoSearchUrl)
@@ -104,7 +104,7 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
 
         val httpResponse=httpClient.newCall(request).execute()
 
-        val gitlabSearchResult : List<GitLabSearchResultItem> = objectMapper.readValue(httpResponse.body()!!.string())
+        val gitlabSearchResult : List<GitLabSearchResultItem> = objectMapper.readValue(httpResponse.body!!.string())
 
         return SearchResult(gitlabSearchResult.size,gitlabSearchResult.map{ it -> it.toSearchResultItem()})
 
@@ -128,29 +128,35 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun fetchRepositories(groupName: String): Set<Repository> {
+    /**
+     * organizationName is more "groupName" in GitLab context
+     */
+    override fun fetchRepositories(organizationName: String): Set<Repository> {
 
-        val gitLabGroups = internalGitLabClient.fetchGroupByName(groupName)
+        val gitLabGroups = internalGitLabClient.fetchGroupByName(organizationName)
 
         if(gitLabGroups.isEmpty() ){
-            throw GitLabResponseDecoder.GitLabException("no GitLab group found for groupName $groupName, so can't find any repositories to crawl")
+            throw GitLabResponseDecoder.GitLabException("no GitLab group found for groupName $organizationName, so can't find any repositories to crawl")
         }
 
         if(gitLabGroups.size > 1 ){
-            log.warn("more than one GitLab group found for groupName $groupName : $gitLabGroups. Using the first one to perform the crawling. Refine your search criteria if that's not what you expect")
+            log.warn("more than one GitLab group found for groupName $organizationName : $gitLabGroups. Using the first one to perform the crawling. Refine your search criteria if that's not what you expect")
         }
 
         val gitLabGroup= gitLabGroups[0]
 
         val gitlabRepositories = internalGitLabClient.fetchRepositoriesForGroupId(gitLabGroup.id)
 
-        return gitlabRepositories.stream().map { gitLabRepo -> recordMapping(gitLabRepo) }.map { gitLabRepo -> gitLabRepo!!.toRepository() }.collect(toSet())
+        return gitlabRepositories.stream()
+            .map { gitLabRepo -> recordMapping(gitLabRepo) }
+            .map { gitLabRepo -> gitLabRepo.toRepository() }
+            .collect(toSet())
 
     }
 
-    private fun recordMapping(gitLabRepo: GitLabRepository?): GitLabRepository? {
+    private fun recordMapping(gitLabRepo: GitLabRepository): GitLabRepository {
 
-        repoNameToIdMapping.put(gitLabRepo!!.path_with_namespace,gitLabRepo?.id)
+        repoNameToIdMapping.put(gitLabRepo.path_with_namespace,gitLabRepo.id)
 
         return gitLabRepo
     }
@@ -170,14 +176,14 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
 
         val response = httpClient.newCall(request).execute()
 
-        if(response.code()==HttpStatus.NOT_FOUND.value()){
+        if(response.code==HttpStatus.NOT_FOUND.value()){
             throw NoFileFoundException("can't find $fileToFetch in repo $repositoryFullName, in branch $branchName")
         }
         else if (!response.isSuccessful) {
-            throw NoReachableRepositories("GET call to ${fetchFileUrl} wasn't successful. Code : ${response.code()}, Message : ${response.message()}")
+            throw NoReachableRepositories("GET call to ${fetchFileUrl} wasn't successful. Code : ${response.code}, Message : ${response.message}")
         }
 
-        return response.body()!!.string()
+        return response.body!!.string()
     }
 
     @Throws(NoReachableRepositories::class)
@@ -232,9 +238,9 @@ internal data class GitLabSearchResultItem(val basename : String, val startline 
 
 internal class GiLabErrorDecoder : ErrorDecoder {
 
-    override fun decode(methodKey: String?, response: feign.Response?): java.lang.Exception {
+    override fun decode(methodKey: String?, response: Response?): java.lang.Exception {
 
-        return errorStatus(methodKey, response);
+        return errorStatus(methodKey, response)
     }
 }
 
@@ -268,7 +274,7 @@ internal class GitLabResponseDecoder : Decoder {
     }
 
     @Throws(IOException::class)
-    override fun decode(response: feign.Response, type: Type): Any {
+    override fun decode(response: Response, type: Type): Any {
 
         if (response.status() == HttpStatus.NOT_FOUND.value()) {
 
