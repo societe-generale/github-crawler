@@ -12,6 +12,13 @@
 
 ### Fixed
 
+##  [2.1.0] - 2022-11-14
+
+### Changed
+- upgraded to Spring Boot 2.7.5 and Kotlin 1.7.21
+  BREAKING CHANGE : since Spring Boot has been upgraded some dependencies versions have been updated (like okhttp for instance) 
+
+
 ##  [2.0.2] - 2022-11-14
 
 ### Added
