@@ -13,7 +13,11 @@ import com.societegenerale.githubcrawler.model.commit.Commit
 import com.societegenerale.githubcrawler.model.commit.DetailedCommit
 import com.societegenerale.githubcrawler.model.team.Team
 import com.societegenerale.githubcrawler.model.team.TeamMember
-import okhttp3.*
+import okhttp3.Credentials
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
@@ -26,8 +30,8 @@ import java.util.stream.Collectors.toSet
 
 class RemoteAzureDevopsImpl @JvmOverloads constructor(val azureDevopsUrl: String = AZURE_DEVOPS_URL,
                                                       val azureDevopsSearchUrl: String = AZURE_DEVOPS_SEARCH_URL,
-                                                      val organization: String,
-                                                      val personalAccessToken: String) : RemoteSourceControl {
+                                                      organization: String,
+                                                      personalAccessToken: String) : RemoteSourceControl {
 
     var log = LoggerFactory.getLogger(this.javaClass.toString())
 
@@ -66,13 +70,13 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(val azureDevopsUrl: String
 
     override fun fetchRepositories(organizationName: String): Set<Repository> {
 
-        log.info("fetch repositories from "+this.toString());
+        log.info("fetch repositories from "+this.toString())
 
         val repositoriesUrl=azureDevopsUrl+"${azureOrg}/${azureProject}/_apis/git/repositories?${AZURE_DEVOPS_API_VERSION}"
 
         val request = requestTemplate.url(repositoriesUrl).build()
 
-        val responseBody=httpClient.newCall(request).execute().body()
+        val responseBody=httpClient.newCall(request).execute().body
 
         val repositories = readRepositories(responseBody)
 
@@ -111,7 +115,7 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(val azureDevopsUrl: String
         val configUrl=azureDevopsUrl+"${azureOrg}/${azureProject}/_apis/git/repositories/${repositoryFullName}/items?path=${REPO_LEVEL_CONFIG_FILE}&${
             AZURE_DEVOPS_API_VERSION}"
 
-        log.info("fetching optional repo config from $configUrl");
+        log.info("fetching optional repo config from $configUrl")
 
 
         val request = requestTemplate.url(configUrl).build()
@@ -136,12 +140,11 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(val azureDevopsUrl: String
         //TODO hack-ish way to build the payload : use custom serializer instead
         val requestPayloadAsString=objectMapper.writeValueAsString(codeSearchRequestDetails).replaceFirst("{","{\"\$top\": 1,")
 
-        val codeSearchBody = RequestBody.create(
-            MediaType.parse("application/json"), requestPayloadAsString)
+        val codeSearchBody = requestPayloadAsString.toRequestBody("application/json".toMediaTypeOrNull())
 
         val request =requestTemplate.url(fileSearchUrl).post(codeSearchBody).build()
 
-        val responseBody=httpClient.newCall(request).execute().body()
+        val responseBody= httpClient.newCall(request).execute().body
 
         val repoSearchResult = objectMapper.readValue(responseBody?.string(), CodeSearchResult::class.java)
 
@@ -161,7 +164,7 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(val azureDevopsUrl: String
         val response=httpClient.newCall(request).execute()
 
         if(response.isSuccessful){
-            return response.body()?.string() ?: ""
+            return response.body?.string() ?: ""
         }
         else{
             throw NoFileFoundException("can't find $fileToFetch in repo $repositoryFullName, in branch $branchName")
@@ -240,12 +243,12 @@ internal class AzureDevopsResponseDecoder {
 
     fun decodeRepoConfig(response: okhttp3.Response): RepositoryConfig {
 
-        if(response.code()==HttpStatus.NOT_FOUND.value()){
+        if(response.code==HttpStatus.NOT_FOUND.value()){
             return RepositoryConfig()
         }
 
         val writer = StringWriter()
-        IOUtils.copy(response.body()?.byteStream(), writer, "UTF-8")
+        IOUtils.copy(response.body?.byteStream(), writer, "UTF-8")
         val responseAsString = writer.toString()
 
         return parseRepositoryConfigResponse(responseAsString, response)
@@ -259,7 +262,7 @@ internal class AzureDevopsResponseDecoder {
         try {
             return repoConfigMapper.readValue(responseAsString, RepositoryConfig::class.java)
         } catch (e: IOException) {
-            throw Repository.RepoConfigException(HttpStatus.BAD_REQUEST,"unable to parse config for repo - content : \"" + response.body() + "\"", e)
+            throw Repository.RepoConfigException(HttpStatus.BAD_REQUEST,"unable to parse config for repo - content : \"" + response.body + "\"", e)
         }
     }
 

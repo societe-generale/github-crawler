@@ -9,7 +9,7 @@ class GitHubCrawlerPropertiesTest {
   fun cant_have_both_inclusion_and_exclusion_patterns_configured() {
 
     assertThatThrownBy {
-      var invalidProperties = GitHubCrawlerProperties(
+       GitHubCrawlerProperties(
           repositoriesToInclude = listOf("pattern1"),
           repositoriesToExclude = listOf("pattern2")
       )

@@ -104,7 +104,7 @@ class RemoteGitLabImpl constructor(val gitLabUrl: String, val privateToken: Stri
 
         val httpResponse=httpClient.newCall(request).execute()
 
-        val gitlabSearchResult : List<GitLabSearchResultItem> = objectMapper.readValue(httpResponse.body()!!.string())
+        val gitlabSearchResult : List<GitLabSearchResultItem> = objectMapper.readValue(httpResponse.body!!.string())
 
         return SearchResult(gitlabSearchResult.size,gitlabSearchResult.map{ it -> it.toSearchResultItem()})
 
@@ -176,14 +176,14 @@ class RemoteGitLabImpl constructor(val gitLabUrl: String, val privateToken: Stri
 
         val response = httpClient.newCall(request).execute()
 
-        if(response.code()==HttpStatus.NOT_FOUND.value()){
+        if(response.code==HttpStatus.NOT_FOUND.value()){
             throw NoFileFoundException("can't find $fileToFetch in repo $repositoryFullName, in branch $branchName")
         }
         else if (!response.isSuccessful) {
-            throw NoReachableRepositories("GET call to ${fetchFileUrl} wasn't successful. Code : ${response.code()}, Message : ${response.message()}")
+            throw NoReachableRepositories("GET call to ${fetchFileUrl} wasn't successful. Code : ${response.code}, Message : ${response.message}")
         }
 
-        return response.body()!!.string()
+        return response.body!!.string()
     }
 
     @Throws(NoReachableRepositories::class)

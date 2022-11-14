@@ -23,15 +23,13 @@ interface GitHubCrawlerOutput {
      * Some implementations may need a finalize method after all elements have been written in output
      */
     @Throws(IOException::class)
-    @JvmDefault
     fun finalizeOutput(){
 
     }
 
-    @JvmDefault
     fun getAllIndicatorsToOutput(indicatorsFromFiles: Map<Branch, Map<String, Any>>, miscTasksResults: Map<Branch, Map<String, Any>>): Map<Branch, Map<String, Any>> {
 
-        val result = LinkedHashMap<Branch, MutableMap<String, Any>>();
+        val result = LinkedHashMap<Branch, MutableMap<String, Any>>()
 
         //TODO there's probably a better, more kotlin-esque way to merge the 2 maps..
 
