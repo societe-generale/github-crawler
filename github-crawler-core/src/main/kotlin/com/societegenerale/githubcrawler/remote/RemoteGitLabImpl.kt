@@ -144,13 +144,16 @@ class RemoteGitLabImpl @JvmOverloads constructor(val gitLabUrl: String, val priv
 
         val gitlabRepositories = internalGitLabClient.fetchRepositoriesForGroupId(gitLabGroup.id)
 
-        return gitlabRepositories.stream().map { gitLabRepo -> recordMapping(gitLabRepo) }.map { gitLabRepo -> gitLabRepo!!.toRepository() }.collect(toSet())
+        return gitlabRepositories.stream()
+            .map { gitLabRepo -> recordMapping(gitLabRepo) }
+            .map { gitLabRepo -> gitLabRepo.toRepository() }
+            .collect(toSet())
 
     }
 
-    private fun recordMapping(gitLabRepo: GitLabRepository?): GitLabRepository? {
+    private fun recordMapping(gitLabRepo: GitLabRepository): GitLabRepository {
 
-        repoNameToIdMapping.put(gitLabRepo!!.path_with_namespace,gitLabRepo?.id)
+        repoNameToIdMapping.put(gitLabRepo.path_with_namespace,gitLabRepo.id)
 
         return gitLabRepo
     }
