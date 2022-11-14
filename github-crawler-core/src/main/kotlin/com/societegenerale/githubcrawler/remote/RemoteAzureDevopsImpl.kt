@@ -1,5 +1,6 @@
 package com.societegenerale.githubcrawler.remote
 
+import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
@@ -12,10 +13,7 @@ import com.societegenerale.githubcrawler.model.commit.Commit
 import com.societegenerale.githubcrawler.model.commit.DetailedCommit
 import com.societegenerale.githubcrawler.model.team.Team
 import com.societegenerale.githubcrawler.model.team.TeamMember
-import okhttp3.Credentials
-import okhttp3.MediaType
-import okhttp3.OkHttpClient
-import okhttp3.RequestBody
+import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
@@ -76,7 +74,7 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(val azureDevopsUrl: String
 
         val responseBody=httpClient.newCall(request).execute().body()
 
-        val repositories = objectMapper.readValue(responseBody?.string(), Repositories::class.java)
+        val repositories = readRepositories(responseBody)
 
         return repositories.value.stream().map{ repo -> Repository(
             url=repo.url,
@@ -89,6 +87,22 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(val azureDevopsUrl: String
         )}
             .collect(toSet())
 
+    }
+
+    private fun readRepositories(responseBody: ResponseBody?): Repositories {
+
+        var bodyAsString : String? = ""
+
+        try{
+
+            bodyAsString = responseBody?.string()
+
+            return objectMapper.readValue(bodyAsString, Repositories::class.java)
+        }
+        catch( e : JsonParseException){
+
+            throw IllegalArgumentException("unable to read the repositories to crawl from the response we got $bodyAsString",e)
+        }
     }
 
 
