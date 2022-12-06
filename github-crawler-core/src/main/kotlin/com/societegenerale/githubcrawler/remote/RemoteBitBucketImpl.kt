@@ -242,6 +242,7 @@ class RemoteBitBucketImpl @JvmOverloads constructor(val BitBucketUrl: String, va
     }
 
     private fun buildQueryString(queryString: String, repositoryFullName: String): String {
+        // Todo can be replaced with organizationName
         return "/plugins/servlet/search?q=project:${projectName} repo:${repositoryFullName} $queryString"
     }
 
