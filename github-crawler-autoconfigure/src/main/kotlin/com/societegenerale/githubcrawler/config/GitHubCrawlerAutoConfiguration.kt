@@ -16,7 +16,7 @@ import org.springframework.core.env.Environment
 
 @Configuration
 @Import(GitHubCrawlerParserConfig::class,GitHubCrawlerOutputConfig::class,GitHubCrawlerMiscTasksConfig::class,
-    GitHubConfiguration::class,GitLabConfiguration::class,AzureDevopsConfiguration::class)
+    GitHubConfiguration::class,GitLabConfiguration::class,AzureDevopsConfiguration::class, BitBucketConfiguration::class)
 @EnableConfigurationProperties(GitHubCrawlerProperties::class)
 open class GitHubCrawlerAutoConfiguration {
 
