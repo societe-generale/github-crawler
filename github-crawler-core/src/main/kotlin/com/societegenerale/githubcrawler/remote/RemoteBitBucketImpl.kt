@@ -41,15 +41,13 @@ import java.lang.reflect.Type
  * Implementation is mainly based on Feign's Builder for standard calls, and OkHttpClient for the others
  */
 @Suppress("TooManyFunctions") // most of methods are one liners, implementing the methods declared in interface
-class RemoteBitBucketImpl @JvmOverloads constructor(val BitBucketUrl: String, val usersReposInsteadOfOrgasRepos: Boolean = false, val apiKey: String) : RemoteSourceControl {
+class RemoteBitBucketImpl @JvmOverloads constructor(val BitBucketUrl: String, val projectName: String = "", val apiKey: String) : RemoteSourceControl {
 
     companion object {
-        const val BitBucket_URL= "https://api.BitBucket.com"
         const val REPO_LEVEL_CONFIG_FILE = ".BitBucketCrawler"
         const val APPLICATION_JSON = "application/json"
         const val ACCEPT = "accept"
         const val CONFIG_VALIDATION_REQUEST_HEADER = "X-configValidationRequest"
-        const val APPLICATION_BitBucket_MERCY_PREVIEW_JSON = "application/vnd.BitBucket.mercy-preview+json"
     }
 
     private val internalBitBucketClient: InternalBitBucketClient = Feign.builder()
@@ -86,11 +84,11 @@ class RemoteBitBucketImpl @JvmOverloads constructor(val BitBucketUrl: String, va
     @Throws(NoReachableRepositories::class)
     private fun performFirstCall(organizationName: String, isConfigCall: Boolean = false): Response {
 
-        val reposUrl = "$BitBucketUrl/" + userOrOrg() + "/$organizationName/repos"
+        val reposUrl = "$BitBucketUrl/" + "projects" + "/$organizationName/repos"
 
         val requestBuilder = okhttp3.Request.Builder()
             .url(reposUrl)
-            .header(ACCEPT, APPLICATION_BitBucket_MERCY_PREVIEW_JSON)
+            .header(ACCEPT, APPLICATION_JSON)
 
         addOAuthTokenIfRequired(requestBuilder)
 
@@ -118,13 +116,9 @@ class RemoteBitBucketImpl @JvmOverloads constructor(val BitBucketUrl: String, va
     private fun addOAuthTokenIfRequired(requestBuilder: okhttp3.Request.Builder): Unit {
 
         if (apiKey.isNotBlank()) {
-            requestBuilder.addHeader("Authorization", "token " + apiKey)
+            requestBuilder.addHeader("Authorization", "Bearer " + apiKey)
         }
 
-    }
-
-    private fun userOrOrg(): String {
-        return if (usersReposInsteadOfOrgasRepos) "users" else "orgs"
     }
 
     override fun fetchRepositories(organizationName: String): Set<Repository> {
@@ -146,7 +140,7 @@ class RemoteBitBucketImpl @JvmOverloads constructor(val BitBucketUrl: String, va
 
             val nextPageRequestBuilder = okhttp3.Request.Builder()
                 .url(nextPageLink)
-                .header(ACCEPT, APPLICATION_BitBucket_MERCY_PREVIEW_JSON)
+                .header(ACCEPT, APPLICATION_JSON)
 
             addOAuthTokenIfRequired(nextPageRequestBuilder)
 
@@ -248,7 +242,7 @@ class RemoteBitBucketImpl @JvmOverloads constructor(val BitBucketUrl: String, va
     }
 
     private fun buildQueryString(queryString: String, repositoryFullName: String): String {
-        return "/search/code?q=$queryString repo:${repositoryFullName}"
+        return "/plugins/servlet/search?q=project:${projectName} repo:${repositoryFullName} $queryString"
     }
 
     override fun fetchFileContent(repositoryFullName: String, branchName: String, fileToFetch: String): String {
