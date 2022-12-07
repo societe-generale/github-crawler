@@ -291,7 +291,7 @@ class RemoteBitBucketImpl @JvmOverloads constructor(val BitBucketUrl: String, va
     override fun fetchCommit(repositoryFullName: String, commitSha: String): DetailedCommit {
         val commit = internalBitBucketClient.fetchCommit(repositoryFullName, commitSha)
         // Todo total
-        return DetailedCommit(commit.id, Author(commit.author.id, commit.author.login), CommitStats(0))
+        return DetailedCommit(commit.id, Author(commit.author.id, commit.author.emailAddress), CommitStats(0))
     }
 
     override fun fetchTeams(organizationName: String): Set<Team> {
