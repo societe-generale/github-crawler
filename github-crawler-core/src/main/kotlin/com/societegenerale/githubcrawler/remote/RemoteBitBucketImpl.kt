@@ -10,7 +10,12 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.societegenerale.githubcrawler.RepositoryConfig
 import com.societegenerale.githubcrawler.model.*
+import com.societegenerale.githubcrawler.model.bitbucket.Branches
+import com.societegenerale.githubcrawler.model.bitbucket.Commits
+import com.societegenerale.githubcrawler.model.bitbucket.PullRequests
+import com.societegenerale.githubcrawler.model.bitbucket.Repositories
 import com.societegenerale.githubcrawler.model.commit.Commit
+import com.societegenerale.githubcrawler.model.commit.CommitStats
 import com.societegenerale.githubcrawler.model.commit.DetailedCommit
 import com.societegenerale.githubcrawler.model.team.Team
 import com.societegenerale.githubcrawler.model.team.TeamMember
@@ -35,6 +40,9 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
+import java.util.*
+import java.util.stream.Collectors
+import kotlin.collections.HashSet
 
 /**
  * Couple of methods have special behavior, so can't use purely annotation based Feign impl.
@@ -169,7 +177,17 @@ class RemoteBitBucketImpl @JvmOverloads constructor(val BitBucketUrl: String, va
             val body = response.body
 
             if (body != null) {
-                return objectMapper.readValue(body.string())
+                var repositories = objectMapper.readValue(body.string(), Repositories::class.java)
+                return repositories.values.stream().map { repo -> Repository(
+                    url=repo.links.self.first().href,
+                    name =repo.name,
+                    fullName =repo.fullName,
+                    defaultBranch = repo.defaultBranch,
+                    creationDate = Date(),
+                    lastUpdateDate = Date()
+
+                ) }
+                    .collect(Collectors.toSet())
             } else {
                 log.warn("response is null : {}", response)
                 return emptySet()
@@ -201,12 +219,13 @@ class RemoteBitBucketImpl @JvmOverloads constructor(val BitBucketUrl: String, va
 
     override fun fetchRepoBranches(repositoryFullName: String): Set<Branch> {
 
-        return internalBitBucketClient.fetchRepoBranches(repositoryFullName)
-
+        return internalBitBucketClient.fetchRepoBranches(repositoryFullName).values.stream()
+            .map { Branch(it.displayId)  } .collect(Collectors.toSet())
     }
 
     override fun fetchOpenPRs(repositoryFullName: String): Set<PullRequest> {
-        return internalBitBucketClient.fetchOpenPRs(repositoryFullName)
+        return internalBitBucketClient.fetchOpenPRs(repositoryFullName).values.stream()
+            .map { PullRequest(it.id) }.collect(Collectors.toSet())
     }
 
     /**
@@ -248,34 +267,19 @@ class RemoteBitBucketImpl @JvmOverloads constructor(val BitBucketUrl: String, va
 
     override fun fetchFileContent(repositoryFullName: String, branchName: String, fileToFetch: String): String {
 
-        val fileOnRepository: FileOnRepository
-
         try {
-            fileOnRepository = internalBitBucketClient.fetchFileOnRepo(repositoryFullName, branchName, fileToFetch)
+            return internalBitBucketClient.fetchFileOnRepo(repositoryFullName, branchName, fileToFetch)
         } catch (e: BitBucketResponseDecoder.NoFileFoundFeignException) {
             //translating exception to a non Feign specific one
             throw NoFileFoundException("can't find $fileToFetch in repo $repositoryFullName, in branch $branchName")
         }
-
-        val requestBuilder = okhttp3.Request.Builder()
-            .url(fileOnRepository.downloadUrl)
-            .header(ACCEPT, APPLICATION_JSON)
-
-        addOAuthTokenIfRequired(requestBuilder)
-
-        val request = requestBuilder.build()
-
-        val response = httpClient.newCall(request).execute()
-
-
-        return response.body?.string() ?: ""
-
     }
 
     override fun fetchCommits(repositoryFullName: String, perPage: Int): Set<Commit> {
 
         return try {
-            internalBitBucketClient.fetchCommits(repositoryFullName, perPage)
+            internalBitBucketClient.fetchCommits(repositoryFullName, perPage).values.stream()
+                .map { Commit(it.id)  } .collect(Collectors.toSet())
         }
         catch (e: BitBucketResponseDecoder.BitBucketException) {
             log.warn("not able to fetch commits for repo $repositoryFullName",e)
@@ -285,7 +289,9 @@ class RemoteBitBucketImpl @JvmOverloads constructor(val BitBucketUrl: String, va
     }
 
     override fun fetchCommit(repositoryFullName: String, commitSha: String): DetailedCommit {
-        return internalBitBucketClient.fetchCommit(repositoryFullName, commitSha)
+        val commit = internalBitBucketClient.fetchCommit(repositoryFullName, commitSha)
+        // Todo total
+        return DetailedCommit(commit.id, Author(commit.author.id, commit.author.login), CommitStats(0))
     }
 
     override fun fetchTeams(organizationName: String): Set<Team> {
@@ -298,27 +304,14 @@ class RemoteBitBucketImpl @JvmOverloads constructor(val BitBucketUrl: String, va
 
     override fun fetchRepoConfig(repositoryFullName: String, defaultBranch: String): RepositoryConfig {
 
-        val configFileOnRepository: FileOnRepository
+        val content: String
 
         try {
-            configFileOnRepository = internalBitBucketClient.fetchFileOnRepo(repositoryFullName, defaultBranch, REPO_LEVEL_CONFIG_FILE)
+            content = internalBitBucketClient.fetchFileOnRepo(repositoryFullName, defaultBranch, REPO_LEVEL_CONFIG_FILE)
         } catch (e: BitBucketResponseDecoder.NoFileFoundFeignException) {
             return RepositoryConfig()
         }
-
-        val requestBuilder = okhttp3.Request.Builder()
-            .url(configFileOnRepository.downloadUrl)
-            .header(ACCEPT, APPLICATION_JSON)
-
-        addOAuthTokenIfRequired(requestBuilder)
-
-        val request = requestBuilder.build()
-
-        val response = httpClient.newCall(request).execute()
-
-        val decoder = BitBucketResponseDecoder()
-
-        return decoder.decodeRepoConfig(response)
+        return objectMapper.readValue(content, RepositoryConfig::class.java)
     }
 
 }
@@ -340,21 +333,20 @@ class BitBucketOauthTokenSetter(val oauthToken: String?) : RequestInterceptor {
 private interface InternalBitBucketClient {
 
     @RequestLine("GET /repos/{fullName}/branches")
-    fun fetchRepoBranches(@Param("fullName") fullName: String): Set<Branch>
+    fun fetchRepoBranches(@Param("fullName") fullName: String): Branches
 
     @RequestLine("GET /repos/{repositoryFullName}/raw/{fileToFetch}?at={branchName}")
     fun fetchFileOnRepo(@Param("repositoryFullName") repositoryFullName: String,
                         @Param("branchName") branchName: String,
-                        @Param("fileToFetch") fileToFetch: String): FileOnRepository
+                        @Param("fileToFetch") fileToFetch: String): String
 
     @RequestLine("GET /repos/{repositoryFullName}/commits?limit={limit}")
     fun fetchCommits(@Param("repositoryFullName") repositoryFullName: String,
-                     @Param("limit") limit: Int): Set<Commit>
-
+                     @Param("limit") limit: Int): Commits
 
     @RequestLine("GET /repos/{repositoryFullName}/commits/{commitSha}")
     fun fetchCommit(@Param("repositoryFullName") repositoryFullName: String,
-                    @Param("commitSha") commitSha: String): DetailedCommit
+                    @Param("commitSha") commitSha: String): com.societegenerale.githubcrawler.model.bitbucket.DetailedCommit
 
     @RequestLine("GET /admin/groups")
     fun fetchTeams(@Param("organizationName") organizationName: String): Set<Team>
@@ -363,9 +355,7 @@ private interface InternalBitBucketClient {
     fun fetchTeamsMembers(@Param("teamId") teamId: String): Set<TeamMember>
 
     @RequestLine("GET /repos/{fullName}/pull-requests")
-    fun fetchOpenPRs(@Param("fullName") fullName: String): Set<PullRequest>
-
-
+    fun fetchOpenPRs(@Param("fullName") fullName: String): PullRequests
 }
 
 internal class BitBucketErrorDecoder : ErrorDecoder {
