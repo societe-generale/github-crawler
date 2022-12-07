@@ -1,7 +1,7 @@
-package com.societegenerale.githubcrawler.model
+package com.societegenerale.githubcrawler.model.bitbucket
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Author(val id: String,
-                  val emailAddress: String)
+                  val login: String)
