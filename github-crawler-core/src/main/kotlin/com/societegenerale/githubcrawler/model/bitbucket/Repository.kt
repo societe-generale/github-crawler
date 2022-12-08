@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Repository(
 
-    val defaultBranch: String,
+    val defaultBranch: String = "master",
 
     @JsonProperty("slug")
     val fullName: String,
