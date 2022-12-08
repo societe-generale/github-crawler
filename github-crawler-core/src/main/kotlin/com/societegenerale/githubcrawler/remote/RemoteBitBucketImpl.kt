@@ -84,41 +84,20 @@ class RemoteBitBucketImpl @JvmOverloads constructor(val BitBucketUrl: String, va
         try {
             extractRepositories(response)
         } catch (e: JsonProcessingException) {
-            throw NoReachableRepositories("not able to parse response : ${response.body}", e)
+            throw NoReachableRepositories("not able to parse response for organization : ${organizationName}", e)
         }
 
     }
 
+    // Todo do we need isConfigCall?
     @Throws(NoReachableRepositories::class)
-    private fun performFirstCall(organizationName: String, isConfigCall: Boolean = false): Response {
-
-        val reposUrl = "$BitBucketUrl/" + "projects" + "/$organizationName/repos"
-
-        val requestBuilder = okhttp3.Request.Builder()
-            .url(reposUrl)
-            .header(ACCEPT, APPLICATION_JSON)
-
-        addOAuthTokenIfRequired(requestBuilder)
-
-        if (isConfigCall) {
-            requestBuilder.addHeader(CONFIG_VALIDATION_REQUEST_HEADER, "true")
-        }
-
-        val request = requestBuilder.build()
-
-        val response: Response
-
+    private fun performFirstCall(organizationName: String, isConfigCall: Boolean = false): Repositories {
         try {
-            response = httpClient.newCall(request).execute()
+            return internalBitBucketClient.fetchRepos(organizationName, 0)
 
-            if (!response.isSuccessful) {
-                throw NoReachableRepositories("GET call to ${reposUrl} wasn't successful. Code : ${response.code}, Message : ${response.message}")
-            }
         } catch (e: IOException) {
             throw NoReachableRepositories("Unable to perform the request", e)
         }
-
-        return response
     }
 
     private fun addOAuthTokenIfRequired(requestBuilder: okhttp3.Request.Builder): Unit {
@@ -133,51 +112,22 @@ class RemoteBitBucketImpl @JvmOverloads constructor(val BitBucketUrl: String, va
 
         val repositoriesFromOrga = HashSet<Repository>()
 
-        val response = performFirstCall(organizationName)
+        var response = performFirstCall(organizationName)
 
         repositoriesFromOrga.addAll(extractRepositories(response))
 
-        var nextPageLink = getLinkToNextPageIfAny(response)
+        while (!response.isLastPage) {
+            log.info("total nb of repositories in $organizationName organization so far : {}", response.values.size)
 
-        var pageNb = 1
+            response = getRepoIfAny(organizationName, response.nextPageStart)
 
-        while (nextPageLink != null) {
-
-            pageNb++
-
-
-            val nextPageRequestBuilder = okhttp3.Request.Builder()
-                .url(nextPageLink)
-                .header(ACCEPT, APPLICATION_JSON)
-
-            addOAuthTokenIfRequired(nextPageRequestBuilder)
-
-            val nextPageRequest = nextPageRequestBuilder.build()
-
-            val nextPageResponse = httpClient.newCall(nextPageRequest).execute()
-
-            val nextPageRepositories = extractRepositories(nextPageResponse)
-
-            log.info("nb of repositories in $organizationName organization, page {} : {}", pageNb, nextPageRepositories.size)
-
-            repositoriesFromOrga.addAll(nextPageRepositories)
-            log.info("total nb of repositories in $organizationName organization so far : {}", nextPageRepositories.size)
-
-            nextPageLink = getLinkToNextPageIfAny(nextPageResponse)
-
+            repositoriesFromOrga.addAll(extractRepositories(response))
         }
 
         return repositoriesFromOrga
     }
 
-    private fun extractRepositories(response: Response): Set<Repository> {
-
-        try {
-
-            val body = response.body
-
-            if (body != null) {
-                var repositories = objectMapper.readValue(body.string(), Repositories::class.java)
+    private fun extractRepositories(repositories: Repositories): Set<Repository> {
                 return repositories.values.stream().map { repo -> Repository(
                     url=repo.links.self.first().href,
                     name =repo.name,
@@ -188,34 +138,13 @@ class RemoteBitBucketImpl @JvmOverloads constructor(val BitBucketUrl: String, va
 
                 ) }
                     .collect(Collectors.toSet())
-            } else {
-                log.warn("response is null : {}", response)
-                return emptySet()
-            }
-        } catch (e: JsonProcessingException) {
-            throw NoReachableRepositories("not able to parse response", e)
-        }
     }
 
-    private fun getLinkToNextPageIfAny(response: Response): String? {
+    private fun getRepoIfAny(projectName: String, nextPageStart: Int): Repositories {
 
-        val linksFromHeader = response.header("link")
+            return internalBitBucketClient.fetchRepos(projectName, nextPageStart)
 
-        if (linksFromHeader != null) {
-
-            val links = linksFromHeader.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-
-            for (i in links.indices) {
-                val link = links[i]
-                if (link.contains("rel=\"next\"")) {
-
-                    return link.substring(link.indexOf("<") + 1, link.lastIndexOf(">"))
-                }
-            }
-        }
-        return null
     }
-
 
     override fun fetchRepoBranches(repositoryFullName: String): Set<Branch> {
 
@@ -334,6 +263,9 @@ private interface InternalBitBucketClient {
 
     @RequestLine("GET /repos/{fullName}/branches")
     fun fetchRepoBranches(@Param("fullName") fullName: String): Branches
+
+    @RequestLine("GET projects/{projectName}/repos?start={start}")
+    fun fetchRepos(@Param("projectName") projectName: String, @Param("start") start: Int): Repositories
 
     @RequestLine("GET /repos/{repositoryFullName}/raw/{fileToFetch}?at={branchName}")
     fun fetchFileOnRepo(@Param("repositoryFullName") repositoryFullName: String,
