@@ -1,0 +1,214 @@
+{
+  "values": [
+    {
+      "project": {
+        "description": "The description for my cool project",
+        "namespace": "<string>",
+        "avatar": "<string>",
+        "scope": "PROJECT",
+        "name": "My Cool Project",
+        "key": "PRJ",
+        "id": 2154,
+        "type": "NORMAL",
+        "public": true
+      },
+      "description": "My repo description",
+      "origin": {
+        "project": {
+          "description": "The description for my cool project",
+          "namespace": "<string>",
+          "avatar": "<string>",
+          "scope": "PROJECT",
+          "name": "My Cool Project",
+          "key": "PRJ",
+          "id": 2154,
+          "type": "NORMAL",
+          "public": true
+        },
+        "description": "My repo description",
+        "hierarchyId": "e3c939f9ef4a7fae272e",
+        "statusMessage": "Available",
+        "archived": true,
+        "forkable": true,
+        "partition": 2154,
+        "relatedLinks": {},
+        "defaultBranch": "main",
+        "slug": "my-repo",
+        "scmId": "git",
+        "scope": "REPOSITORY",
+        "name": "My repo",
+        "id": 2154,
+        "state": "AVAILABLE",
+        "public": true
+      },
+      "hierarchyId": "e3c939f9ef4a7fae272e",
+      "statusMessage": "Available",
+      "links": {
+        "self": [
+          {
+            "href": "aHref"
+          }
+        ],
+        "clone": [
+          {
+            "href": "href",
+            "name": "http"
+          }
+        ]
+      },
+      "archived": true,
+      "forkable": true,
+      "partition": 2154,
+      "relatedLinks": {},
+      "defaultBranch": "main",
+      "slug": "my-repo",
+      "scmId": "git",
+      "scope": "REPOSITORY",
+      "name": "My repo",
+      "id": 2154,
+      "state": "AVAILABLE",
+      "public": true
+    },
+    {
+      "project": {
+        "description": "The description for my cool project",
+        "namespace": "<string>",
+        "avatar": "<string>",
+        "scope": "PROJECT",
+        "name": "My Cool Project",
+        "key": "PRJ",
+        "id": 2154,
+        "type": "NORMAL",
+        "public": true
+      },
+      "description": "My repo1 description",
+      "origin": {
+        "project": {
+          "description": "The description for my cool project",
+          "namespace": "<string>",
+          "avatar": "<string>",
+          "scope": "PROJECT",
+          "name": "My Cool Project",
+          "key": "PRJ",
+          "id": 2154,
+          "type": "NORMAL",
+          "public": true
+        },
+        "description": "My repo1 description",
+        "hierarchyId": "e3c939f9ef4a7fae272e",
+        "statusMessage": "Available",
+        "archived": true,
+        "forkable": true,
+        "partition": 2154,
+        "relatedLinks": {},
+        "defaultBranch": "main",
+        "slug": "my-repo1",
+        "scmId": "git",
+        "scope": "REPOSITORY",
+        "name": "My repo1",
+        "id": 2154,
+        "state": "AVAILABLE",
+        "public": true
+      },
+      "hierarchyId": "e3c939f9ef4a7fae272e",
+      "statusMessage": "Available",
+      "links": {
+        "self": [
+          {
+            "href": "aHref"
+          }
+        ],
+        "clone": [
+          {
+            "href": "href",
+            "name": "http"
+          }
+        ]
+      },
+      "archived": true,
+      "forkable": true,
+      "partition": 2154,
+      "relatedLinks": {},
+      "defaultBranch": "main",
+      "slug": "my-repo1",
+      "scmId": "git",
+      "scope": "REPOSITORY",
+      "name": "My repo1",
+      "id": 2154,
+      "state": "AVAILABLE",
+      "public": true
+    },
+    {
+      "project": {
+        "description": "The description for my cool project",
+        "namespace": "<string>",
+        "avatar": "<string>",
+        "scope": "PROJECT",
+        "name": "My Cool Project",
+        "key": "PRJ",
+        "id": 2154,
+        "type": "NORMAL",
+        "public": true
+      },
+      "description": "My repo2 description",
+      "origin": {
+        "project": {
+          "description": "The description for my cool project",
+          "namespace": "<string>",
+          "avatar": "<string>",
+          "scope": "PROJECT",
+          "name": "My Cool Project",
+          "key": "PRJ",
+          "id": 2154,
+          "type": "NORMAL",
+          "public": true
+        },
+        "description": "My repo2 description",
+        "hierarchyId": "e3c939f9ef4a7fae272e",
+        "statusMessage": "Available",
+        "archived": true,
+        "forkable": true,
+        "partition": 2154,
+        "relatedLinks": {},
+        "defaultBranch": "main",
+        "slug": "my-repo",
+        "scmId": "git",
+        "scope": "REPOSITORY",
+        "name": "My repo2",
+        "id": 2154,
+        "state": "AVAILABLE",
+        "public": true
+      },
+      "hierarchyId": "e3c939f9ef4a7fae272e",
+      "statusMessage": "Available",
+      "links": {
+        "self": [
+          {
+            "href": "aHref"
+          }
+        ],
+        "clone": [
+          {
+            "href": "href",
+            "name": "http"
+          }
+        ]
+      },
+      "archived": true,
+      "forkable": true,
+      "partition": 2154,
+      "relatedLinks": {},
+      "defaultBranch": "main",
+      "slug": "my-repo",
+      "scmId": "git",
+      "scope": "REPOSITORY",
+      "name": "My repo2",
+      "id": 2154,
+      "state": "AVAILABLE",
+      "public": true
+    }
+  ],
+  "isLastPage": true,
+  "start": 0,
+  "nextPageStart": 25
+}
