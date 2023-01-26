@@ -1,19 +1,18 @@
 package com.societegenerale.githubcrawler.remote
 
-import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.societegenerale.githubcrawler.RepositoryConfig
 import com.societegenerale.githubcrawler.model.*
-import com.societegenerale.githubcrawler.model.bitbucket.Branches
-import com.societegenerale.githubcrawler.model.bitbucket.Commits
-import com.societegenerale.githubcrawler.model.bitbucket.PullRequests
-import com.societegenerale.githubcrawler.model.bitbucket.Repositories
+import com.societegenerale.githubcrawler.model.Author
+import com.societegenerale.githubcrawler.model.Branch
+import com.societegenerale.githubcrawler.model.PullRequest
+import com.societegenerale.githubcrawler.model.Repository
+import com.societegenerale.githubcrawler.model.bitbucket.*
 import com.societegenerale.githubcrawler.model.commit.Commit
 import com.societegenerale.githubcrawler.model.commit.CommitStats
 import com.societegenerale.githubcrawler.model.commit.DetailedCommit
@@ -26,8 +25,6 @@ import feign.codec.ErrorDecoder
 import feign.gson.GsonEncoder
 import feign.httpclient.ApacheHttpClient
 import feign.slf4j.Slf4jLogger
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import okhttp3.OkHttpClient
 import okhttp3.Response
 import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
@@ -42,20 +39,16 @@ import java.io.StringWriter
 import java.lang.reflect.Type
 import java.util.*
 import java.util.stream.Collectors
-import kotlin.collections.HashSet
 
-/**
- * Couple of methods have special behavior, so can't use purely annotation based Feign impl.
- * Implementation is mainly based on Feign's Builder for standard calls, and OkHttpClient for the others
- */
-@Suppress("TooManyFunctions") // most of methods are one liners, implementing the methods declared in interface
-class RemoteBitBucketImpl @JvmOverloads constructor(val BitBucketUrl: String, val projectName: String = "", val apiKey: String) : RemoteSourceControl {
+@Suppress("TooManyFunctions")
+class RemoteBitBucketImpl @JvmOverloads constructor(
+    val BitBucketUrl: String,
+    val projectName: String = "",
+    val apiKey: String
+) : RemoteSourceControl {
 
     companion object {
         const val REPO_LEVEL_CONFIG_FILE = ".BitBucketCrawler"
-        const val APPLICATION_JSON = "application/json"
-        const val ACCEPT = "accept"
-        const val CONFIG_VALIDATION_REQUEST_HEADER = "X-configValidationRequest"
     }
 
     private val internalBitBucketClient: InternalBitBucketClient = Feign.builder()
@@ -68,8 +61,6 @@ class RemoteBitBucketImpl @JvmOverloads constructor(val BitBucketUrl: String, va
         .logger(Slf4jLogger(RemoteBitBucketImpl::class.java))
         .logLevel(Logger.Level.FULL)
         .target<InternalBitBucketClient>(InternalBitBucketClient::class.java, BitBucketUrl)
-
-    private val httpClient = OkHttpClient()
 
 
     val log = LoggerFactory.getLogger(this.javaClass)
@@ -128,28 +119,30 @@ class RemoteBitBucketImpl @JvmOverloads constructor(val BitBucketUrl: String, va
     }
 
     private fun extractRepositories(repositories: Repositories): Set<Repository> {
-                return repositories.values.stream().map { repo -> Repository(
-                    url=repo.links.self.first().href,
-                    name =repo.name,
-                    fullName =repo.fullName,
-                    defaultBranch = repo.defaultBranch,
-                    creationDate = Date(),
-                    lastUpdateDate = Date()
+        return repositories.values.stream().map { repo ->
+            Repository(
+                url = repo.links.self.first().href,
+                name = repo.name,
+                fullName = repo.fullName,
+                defaultBranch = repo.defaultBranch,
+                creationDate = Date(),
+                lastUpdateDate = Date()
 
-                ) }
-                    .collect(Collectors.toSet())
+            )
+        }
+            .collect(Collectors.toSet())
     }
 
     private fun getRepoIfAny(projectName: String, nextPageStart: Int): Repositories {
 
-            return internalBitBucketClient.fetchRepos(projectName, nextPageStart)
+        return internalBitBucketClient.fetchRepos(projectName, nextPageStart)
 
     }
 
     override fun fetchRepoBranches(repositoryFullName: String): Set<Branch> {
 
         return internalBitBucketClient.fetchRepoBranches(projectName, repositoryFullName).values.stream()
-            .map { Branch(it.displayId)  } .collect(Collectors.toSet())
+            .map { Branch(it.displayId) }.collect(Collectors.toSet())
     }
 
     override fun fetchOpenPRs(repositoryFullName: String): Set<PullRequest> {
@@ -157,41 +150,9 @@ class RemoteBitBucketImpl @JvmOverloads constructor(val BitBucketUrl: String, va
             .map { PullRequest(it.id) }.collect(Collectors.toSet())
     }
 
-    /**
-     * Because the BitBucket API is a bit strange here, with the not very standard filter on repository, we need to build the request manually
-     */
-    // TODO remove comment
     override fun fetchCodeSearchResult(repositoryFullName: String, query: String): SearchResult {
 
-        val searchCodeUrl = (BitBucketUrl +buildQueryString(query,repositoryFullName)).toHttpUrlOrNull()!!.newBuilder().build().toString()
-
-        log.info("fetching code search result from $searchCodeUrl")
-
-        val requestBuilder = okhttp3.Request.Builder()
-            .url(searchCodeUrl)
-            .header(ACCEPT, APPLICATION_JSON)
-
-        addOAuthTokenIfRequired(requestBuilder)
-
-        val request = requestBuilder.build()
-
-        val response = httpClient.newCall(request).execute()
-
-        val responseAsString=response.body?.string()
-        log.info("response : "+responseAsString)
-
-        return try {
-            objectMapper.readValue(responseAsString, SearchResult::class.java)
-        }
-        catch(e : JsonParseException){
-            log.warn("parsing error",e)
-            SearchResult(0, emptyList())
-        }
-    }
-
-    private fun buildQueryString(queryString: String, repositoryFullName: String): String {
-        // Todo can be replaced with organizationName
-        return "/plugins/servlet/search?q=project:${projectName} repo:${repositoryFullName} $queryString"
+        TODO("Currently Bitbucket REST API is not available ")
     }
 
     override fun fetchFileContent(repositoryFullName: String, branchName: String, fileToFetch: String): String {
@@ -208,10 +169,9 @@ class RemoteBitBucketImpl @JvmOverloads constructor(val BitBucketUrl: String, va
 
         return try {
             internalBitBucketClient.fetchCommits(projectName, repositoryFullName, perPage).values.stream()
-                .map { Commit(it.id)  } .collect(Collectors.toSet())
-        }
-        catch (e: BitBucketResponseDecoder.BitBucketException) {
-            log.warn("not able to fetch commits for repo $repositoryFullName",e)
+                .map { Commit(it.id) }.collect(Collectors.toSet())
+        } catch (e: BitBucketResponseDecoder.BitBucketException) {
+            log.warn("not able to fetch commits for repo $repositoryFullName", e)
             emptySet()
         }
 
@@ -224,7 +184,7 @@ class RemoteBitBucketImpl @JvmOverloads constructor(val BitBucketUrl: String, va
     }
 
     override fun fetchTeams(organizationName: String): Set<Team> {
-        return internalBitBucketClient.fetchTeams(organizationName)
+        return internalBitBucketClient.fetchTeams(organizationName).values.map { Team(it.name, it.name) }.toSet()
     }
 
     override fun fetchTeamsMembers(teamId: String): Set<TeamMember> {
@@ -236,7 +196,12 @@ class RemoteBitBucketImpl @JvmOverloads constructor(val BitBucketUrl: String, va
         val content: String
 
         try {
-            content = internalBitBucketClient.fetchFileOnRepo(projectName, repositoryFullName, defaultBranch, REPO_LEVEL_CONFIG_FILE)
+            content = internalBitBucketClient.fetchFileOnRepo(
+                projectName,
+                repositoryFullName,
+                defaultBranch,
+                REPO_LEVEL_CONFIG_FILE
+            )
         } catch (e: BitBucketResponseDecoder.NoFileFoundFeignException) {
             return RepositoryConfig()
         }
@@ -268,23 +233,29 @@ private interface InternalBitBucketClient {
     fun fetchRepos(@Param("projectName") projectName: String, @Param("start") start: Int): Repositories
 
     @RequestLine("GET /projects/{projectName}/repos/{repositoryFullName}/raw/{fileToFetch}?at={branchName}")
-    fun fetchFileOnRepo(@Param("projectName") projectName: String,
-                        @Param("repositoryFullName") repositoryFullName: String,
-                        @Param("branchName") branchName: String,
-                        @Param("fileToFetch") fileToFetch: String): String
+    fun fetchFileOnRepo(
+        @Param("projectName") projectName: String,
+        @Param("repositoryFullName") repositoryFullName: String,
+        @Param("branchName") branchName: String,
+        @Param("fileToFetch") fileToFetch: String
+    ): String
 
     @RequestLine("GET /projects/{projectName}/repos/{repositoryFullName}/commits?limit={limit}")
-    fun fetchCommits(@Param("projectName") projectName: String,
-                     @Param("repositoryFullName") repositoryFullName: String,
-                     @Param("limit") limit: Int): Commits
+    fun fetchCommits(
+        @Param("projectName") projectName: String,
+        @Param("repositoryFullName") repositoryFullName: String,
+        @Param("limit") limit: Int
+    ): Commits
 
     @RequestLine("GET /projects/{projectName}/repos/{repositoryFullName}/commits/{commitSha}")
-    fun fetchCommit(@Param("projectName") projectName: String,
-                    @Param("repositoryFullName") repositoryFullName: String,
-                    @Param("commitSha") commitSha: String): com.societegenerale.githubcrawler.model.bitbucket.DetailedCommit
+    fun fetchCommit(
+        @Param("projectName") projectName: String,
+        @Param("repositoryFullName") repositoryFullName: String,
+        @Param("commitSha") commitSha: String
+    ): com.societegenerale.githubcrawler.model.bitbucket.DetailedCommit
 
     @RequestLine("GET /admin/groups")
-    fun fetchTeams(@Param("organizationName") organizationName: String): Set<Team>
+    fun fetchTeams(@Param("organizationName") organizationName: String): Groups
 
     @RequestLine("GET /admin/groups/{teamId}")
     fun fetchTeamsMembers(@Param("teamId") teamId: String): Set<TeamMember>
@@ -335,8 +306,7 @@ internal class BitBucketResponseDecoder : Decoder {
             } else {
                 throw NoFileFoundFeignException("problem while fetching content, of unknown type ${type.typeName}")
             }
-        }
-        else {
+        } else {
 
             log.debug("Decoding a successful response...")
 
@@ -349,7 +319,8 @@ internal class BitBucketResponseDecoder : Decoder {
 
             log.debug("\t ... as a " + type.typeName)
 
-            val jacksonConverter = MappingJackson2HttpMessageConverter(ObjectMapper().registerModule(KotlinModule.Builder().build()))
+            val jacksonConverter =
+                MappingJackson2HttpMessageConverter(ObjectMapper().registerModule(KotlinModule.Builder().build()))
             val objectFactory = { HttpMessageConverters(jacksonConverter) }
             return ResponseEntityDecoder(SpringDecoder(objectFactory)).decode(response, type)
 
@@ -364,13 +335,17 @@ internal class BitBucketResponseDecoder : Decoder {
         try {
             return repoConfigMapper.readValue(responseAsString, RepositoryConfig::class.java)
         } catch (e: IOException) {
-            throw Repository.RepoConfigException(HttpStatus.BAD_REQUEST,"unable to parse config for repo - content : \"" + response.body + "\"", e)
+            throw Repository.RepoConfigException(
+                HttpStatus.BAD_REQUEST,
+                "unable to parse config for repo - content : \"" + response.body + "\"",
+                e
+            )
         }
     }
 
-    class NoFileFoundFeignException(message: String) : FeignException(HttpStatus.NOT_FOUND.value(),message)
+    class NoFileFoundFeignException(message: String) : FeignException(HttpStatus.NOT_FOUND.value(), message)
 
-    class BitBucketException(message: String) : FeignException(HttpStatus.INTERNAL_SERVER_ERROR.value(),message)
+    class BitBucketException(message: String) : FeignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), message)
 
 }
 
