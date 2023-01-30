@@ -67,22 +67,12 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
 
     private val objectMapper = jacksonObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
-    @Throws(NoReachableRepositories::class)
     override fun validateRemoteConfig(organizationName: String) {
-
-        val response = performFirstCall(organizationName, isConfigCall = true)
-
-        try {
-            extractRepositories(response)
-        } catch (e: JsonProcessingException) {
-            throw NoReachableRepositories("not able to parse response for organization : ${organizationName}", e)
-        }
-
+        //TODO("Not yet implemented")
     }
 
-    // Todo do we need isConfigCall? need to remove this for bitbucket and validate
     @Throws(NoReachableRepositories::class)
-    private fun performFirstCall(organizationName: String, isConfigCall: Boolean = false): Repositories {
+    private fun performFirstCall(organizationName: String): Repositories {
         try {
             return internalBitBucketClient.fetchRepos(organizationName, 0)
 
