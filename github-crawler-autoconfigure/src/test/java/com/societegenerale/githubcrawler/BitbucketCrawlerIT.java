@@ -216,8 +216,7 @@ public class BitbucketCrawlerIT {
     }
   }
 
-  @Disabled
-  // Todo enable
+  @Test
   void shouldParseFile_withRedirection_WhenItExists() throws IOException {
 
     String redirection = "moduleWhereDockerFileIs/Dockerfile";
