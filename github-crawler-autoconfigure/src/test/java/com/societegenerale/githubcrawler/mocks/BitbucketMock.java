@@ -93,8 +93,8 @@ public class BitbucketMock implements RemoteServiceMock {
 
                     //for other resources than pom.xml..
                     //hack for resources that are not at the root of the repository, so that we don't have to hardcode too many things
-                    routes.get("/raw/myProject/:repo/:branchName/:aSubDirectory/:resource",
-                            (context, repo, branchName, aSubDirectory, resource) -> getResource(repo, branchName, aSubDirectory, resource));
+                    routes.get("/projects/myProject/repos/:repo/raw/:aSubDirectory/:resource?at=:branchName",
+                            (context, repo, aSubDirectory, resource, branchName) -> getResource(repo, aSubDirectory, resource, branchName));
 
                     routes.get("/projects/myProject/repos/:repo/contents/:resource?ref=:branchName",
                             (context, repo, resource, branchName) -> getResourceFileOnRepo(repo, resource, null, branchName));
@@ -186,7 +186,7 @@ public class BitbucketMock implements RemoteServiceMock {
         if (repoConfigPerRepo.containsKey(repo)) {
             log.info("\t returning something..");
 
-            return "excluded: true";
+            return repoConfigPerRepo.get(repo);
 
         } else {
             log.info("\t .bitbucketCrawler NOT FOUND");
@@ -225,7 +225,7 @@ public class BitbucketMock implements RemoteServiceMock {
         return new Payload("application/json", FileUtils.readFileToString(ResourceUtils.getFile("classpath:teams.json"), "UTF-8"));
     }
 
-    private Object getResource(String repo, String branchName, String aSubDirectory, String resource) throws IOException {
+    private Object getResource(String repo, String aSubDirectory, String resource, String branchName) throws IOException {
 
         String pathToResource = aSubDirectory != null ? aSubDirectory + "/" + resource : resource;
 
