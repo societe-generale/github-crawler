@@ -1,6 +1,7 @@
 package com.societegenerale.githubcrawler.config;
 
 import com.societegenerale.githubcrawler.GitHubCrawlerProperties;
+import com.societegenerale.githubcrawler.mocks.BitbucketMock;
 import com.societegenerale.githubcrawler.mocks.GitHubMock;
 import com.societegenerale.githubcrawler.model.Repository;
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput;
@@ -18,6 +19,12 @@ public class TestConfig {
     public GitHubMock gitHubMock() {
 
         return new GitHubMock();
+    }
+
+    @Bean
+    public BitbucketMock bitbucketMock() {
+
+        return new BitbucketMock();
     }
 
     @Bean
