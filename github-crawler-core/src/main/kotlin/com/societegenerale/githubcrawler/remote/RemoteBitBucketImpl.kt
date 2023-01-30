@@ -80,7 +80,7 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
 
     }
 
-    // Todo do we need isConfigCall?
+    // Todo do we need isConfigCall? need to remove this for bitbucket and validate
     @Throws(NoReachableRepositories::class)
     private fun performFirstCall(organizationName: String, isConfigCall: Boolean = false): Repositories {
         try {
@@ -205,6 +205,9 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
         } catch (e: BitBucketResponseDecoder.NoFileFoundFeignException) {
             return RepositoryConfig()
         }
+        val decoder = BitBucketResponseDecoder()
+
+        return decoder.decodeRepoConfig(content)
         return objectMapper.readValue(content, RepositoryConfig::class.java)
     }
 
@@ -286,13 +289,9 @@ internal class BitBucketResponseDecoder : Decoder {
         repoConfigMapper.registerModule(KotlinModule.Builder().build())
     }
 
-    fun decodeRepoConfig(response: Response): RepositoryConfig {
+    fun decodeRepoConfig(response: String): RepositoryConfig {
 
-        val writer = StringWriter()
-        IOUtils.copy(response.body?.byteStream(), writer, "UTF-8")
-        val responseAsString = writer.toString()
-
-        return parseRepositoryConfigResponse(responseAsString, response)
+        return parseRepositoryConfigResponse(response)
     }
 
 
@@ -327,7 +326,7 @@ internal class BitBucketResponseDecoder : Decoder {
         }
     }
 
-    private fun parseRepositoryConfigResponse(responseAsString: String, response: Response): RepositoryConfig {
+    private fun parseRepositoryConfigResponse(responseAsString: String): RepositoryConfig {
         if (responseAsString.isEmpty()) {
             return RepositoryConfig()
         }
@@ -337,7 +336,7 @@ internal class BitBucketResponseDecoder : Decoder {
         } catch (e: IOException) {
             throw Repository.RepoConfigException(
                 HttpStatus.BAD_REQUEST,
-                "unable to parse config for repo - content : \"" + response.body + "\"",
+                "unable to parse config for repo - content : \"" + responseAsString + "\"",
                 e
             )
         }

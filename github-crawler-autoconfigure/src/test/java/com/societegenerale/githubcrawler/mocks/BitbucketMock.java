@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.*;
 
-import static com.societegenerale.githubcrawler.remote.RemoteGitHubImpl.CONFIG_VALIDATION_REQUEST_HEADER;
 
 @Component
 public class BitbucketMock implements RemoteServiceMock {
@@ -29,6 +28,7 @@ public class BitbucketMock implements RemoteServiceMock {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(BitbucketMock.class);
 
     private String organisationResponse = "bitbucket/organisation.json";
+    private String organisationSecondResponse = "bitbucket/organisation_second.json";
 
     public final static String REPO_EXCLUDED_CONFIG = "excluded: true";
 
@@ -87,36 +87,26 @@ public class BitbucketMock implements RemoteServiceMock {
         bitbucketWebServer = new WebServer();
         bitbucketWebServer.configure(
                 routes -> {
-                    routes.get("/projects/myProject/repos/:repo/raw/.bitbucketCrawler?at=master", (context, repo) -> getRepoConfigFileOnRepo(repo));
-                    routes.get("/projects/myProject/repos/:repo/raw/.bitbucketCrawler?at=master", (context, repo) -> getActualRepoConfig(repo));
-                    routes.get("/projects/myProject/repos?start=0", context -> getOrganisationContent(context));
-                    routes.get("/api/v3/organizations/1114/repos", context -> getOrganisationContentForNextPage());
-
-                    routes.get("/api/v3/users/someUser/repos", context -> geUserReposContent());
-
-                    routes.get("/projects/myProject/repos/:repo/pom.xml?at=master", (context, repo) -> getPomXmlFileOnRepo(repo));
-                    routes.get("/raw/MyOrganization/:repo/:branchName/pom.xml", (context, repo, branchName) -> getActualPomXML(repo, branchName));
+                    routes.get("/projects/myProject/repos/:repo/raw/.BitBucketCrawler?at=master", (context, repo) -> getRepoConfigFileOnRepo(repo));
+                    routes.get("/projects/myProject/repos/:repo/raw/pom.xml?at=master", (context, repo) -> getPomXmlFileOnRepo(repo));
+                    routes.get("/projects/myProject/repos?start=:start", (context, start) -> getOrganisationContent(Integer.parseInt(start)));
 
                     //for other resources than pom.xml..
                     //hack for resources that are not at the root of the repository, so that we don't have to hardcode too many things
-                    routes.get("/api/v3/repos/MyOrganization/:repo/contents/:aSubDirectory/:resource?ref=:branchName",
-                            (context, repo, aSubDirectory, resource, branchName) -> getResourceFileOnRepo(repo, resource, aSubDirectory, branchName));
-                    routes.get("/raw/MyOrganization/:repo/:branchName/:aSubDirectory/:resource",
+                    routes.get("/raw/myProject/:repo/:branchName/:aSubDirectory/:resource",
                             (context, repo, branchName, aSubDirectory, resource) -> getResource(repo, branchName, aSubDirectory, resource));
 
-                    routes.get("/api/v3/repos/MyOrganization/:repo/contents/:resource?ref=:branchName",
+                    routes.get("/projects/myProject/repos/:repo/contents/:resource?ref=:branchName",
                             (context, repo, resource, branchName) -> getResourceFileOnRepo(repo, resource, null, branchName));
-                    routes.get("/raw/MyOrganization/:repo/:branchName/:resource",
+                    routes.get("/raw/myProject/:repo/:branchName/:resource",
                             (context, repo, branchName, resource) -> getResource(repo, branchName, null, resource));
 
-                    routes.get("/api/v3/repos/MyOrganization/:repo/branches", (context, repo) -> getBranches(repo));
+                    routes.get("/projects/myProject/repos/:repo/branches", (context, repo) -> getBranches(repo));
 
-                    routes.get("/api/v3/search/code?q=:searchQuery", (context, searchQuery) -> getSearchResult(searchQuery));
-
-                    routes.get("/api/v3/orgs/MyOrganization/teams", this::getTeams);
+                    routes.get("/admin/groups", this::getTeams);
                     routes.get("/api/v3/teams/:team/members", (context, team) -> getTeamsMembers(team));
 
-                    routes.get("/projects/myProject/repos/:repo/commits?per_page=150", (context, repo) -> getCommits(repo));
+                    routes.get("/projects/myProject/repos/:repo/commits?limit=1", (context, repo) -> getCommits(repo));
                     routes.get("/projects/myProject/repos/:repo/commits/:commit", (context, repo, commit) -> getCommit(repo, commit));
 
                 }
@@ -135,11 +125,10 @@ public class BitbucketMock implements RemoteServiceMock {
     private Payload geUserReposContent() throws IOException {
         nbHitsOnUserRepos++;
 
-        return buildListOfRepositories();
+        return buildListOfRepositories(organisationSecondResponse);
     }
 
-    private Payload buildListOfRepositories() throws IOException {
-
+    private Payload buildListOfRepositories(String organisationResponse) throws IOException {
         InputStream is = getClass().getClassLoader().getResourceAsStream(organisationResponse);
         String jsonString = StreamUtils.copyToString(is, Charset.forName("UTF-8"));
 
@@ -177,10 +166,9 @@ public class BitbucketMock implements RemoteServiceMock {
         pomXmlHits.add(repo);
 
         if (reposWithPomXml.contains(repo)) {
+            String fileToString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:sample_pom.xml"), "UTF-8");
 
-            String pomXMlTemplate = FileUtils.readFileToString(ResourceUtils.getFile("classpath:github/pomXmlFileOnRepo.json"), "UTF-8");
-
-            return new Payload("application/json", pomXMlTemplate.replaceFirst("\\$\\{REPO}", repo));
+            return new Payload("application/json", fileToString);
         } else {
             log.debug("... not found");
 
@@ -198,10 +186,10 @@ public class BitbucketMock implements RemoteServiceMock {
         if (repoConfigPerRepo.containsKey(repo)) {
             log.info("\t returning something..");
 
-            return "content";
+            return "excluded: true";
 
         } else {
-            log.info("\t .githubCrawler NOT FOUND");
+            log.info("\t .bitbucketCrawler NOT FOUND");
             throw new NotFoundException();
         }
 
@@ -235,16 +223,6 @@ public class BitbucketMock implements RemoteServiceMock {
     private Payload getTeams() throws IOException {
         log.debug("Getting Github teams...");
         return new Payload("application/json", FileUtils.readFileToString(ResourceUtils.getFile("classpath:teams.json"), "UTF-8"));
-    }
-
-    private Payload getSearchResult(String searchQuery) throws IOException {
-
-        log.debug("received a search query {}", searchQuery);
-
-        searchHitsCount++;
-
-        return new Payload("application/json", FileUtils.readFileToString(ResourceUtils.getFile("classpath:github/searchResult.json"), "UTF-8"));
-
     }
 
     private Object getResource(String repo, String branchName, String aSubDirectory, String resource) throws IOException {
@@ -290,19 +268,6 @@ public class BitbucketMock implements RemoteServiceMock {
         }
     }
 
-    private String getActualPomXML(String repo, String branchName) throws IOException {
-
-        log.info("received a request to get pom.xml for rep {} on branch {} ..", repo, branchName);
-
-        if (reposWithPomXml.contains(repo)) {
-            log.info("\t returning something..");
-            return FileUtils.readFileToString(ResourceUtils.getFile("classpath:sample_pom.xml"), "UTF-8");
-        } else {
-            log.info("\t pom.xml NOT FOUND");
-            throw new NotFoundException();
-        }
-    }
-
     @NotNull
     private String buildResourceKey(String repo, String pathToResource) {
         return repo + "-" + pathToResource;
@@ -312,17 +277,19 @@ public class BitbucketMock implements RemoteServiceMock {
 
         log.debug("received a branches request for repo {}..", repoName);
 
-        InputStream is = getClass().getClassLoader().getResourceAsStream("github/branches.json");
+        InputStream is = getClass().getClassLoader().getResourceAsStream("bitbucket/branches.json");
         String jsonString = StreamUtils.copyToString(is, Charset.forName("UTF-8"));
 
         return new Payload("application/json", jsonString);
     }
 
-    private Payload getOrganisationContentForNextPage() throws IOException {
+    private Payload getOrganisationContentForNextPage(String organisationResponse) throws IOException {
 
         hasCalledNextPage = true;
+        InputStream is = getClass().getClassLoader().getResourceAsStream(organisationResponse);
+        String jsonString = StreamUtils.copyToString(is, Charset.forName("UTF-8"));
 
-        return getOrganisationContent(null);
+        return new Payload("application/json", jsonString);
     }
 
     private String getActualRepoConfig(String repoName) {
@@ -346,31 +313,11 @@ public class BitbucketMock implements RemoteServiceMock {
 
     }
 
-    private Payload getOrganisationContent(Context context) throws IOException {
-
-        boolean isAconfigValidationCall = isConfigValidationHeaderPresent(context);
+    private Payload getOrganisationContent(int start) throws IOException {
 
         log.info("fetching content of organisation...");
-
-        Payload response = buildListOfRepositories();
-
-        if (currentPage < nbPages) {
-            Map headers = response.headers();
-            headers.put("link", "<http://localhost:" + GITHUB_MOCK_PORT + "/api/v3/organizations/1114/repos?page=" + currentPage + 1 +
-                    ">; rel=\"next\", <http://localhost:" + GITHUB_MOCK_PORT + "/api/v3/organizations/1114/repos?page=8>; rel=\"last\"");
-
-            if (!isAconfigValidationCall) {
-                currentPage++;
-            }
-        }
-
+        Payload response = start == 0 ? buildListOfRepositories(organisationResponse) : getOrganisationContentForNextPage(organisationSecondResponse);
         return response;
-    }
-
-    private boolean isConfigValidationHeaderPresent(Context context) {
-
-        return context != null && context.header(CONFIG_VALIDATION_REQUEST_HEADER) != null;
-
     }
 
     @Override

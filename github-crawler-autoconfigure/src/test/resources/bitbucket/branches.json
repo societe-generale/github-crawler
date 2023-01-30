@@ -1,0 +1,19 @@
+{
+  "values": [
+    {
+      "displayId": "debug"
+    },
+    {
+      "displayId": "hom"
+    },
+    {
+      "displayId": "int"
+    },
+    {
+      "displayId": "production"
+    },
+    {
+      "displayId": "uat"
+    }
+  ]
+}

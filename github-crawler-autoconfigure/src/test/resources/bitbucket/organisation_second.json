@@ -12,7 +12,7 @@
         "type": "NORMAL",
         "public": true
       },
-      "description": "My repo1 description",
+      "description": "My Repo description",
       "origin": {
         "project": {
           "description": "The description for my cool project",
@@ -25,7 +25,7 @@
           "type": "NORMAL",
           "public": true
         },
-        "description": "My repo1 description",
+        "description": "My repo description",
         "hierarchyId": "e3c939f9ef4a7fae272e",
         "statusMessage": "Available",
         "archived": true,
@@ -33,10 +33,10 @@
         "partition": 2154,
         "relatedLinks": {},
         "defaultBranch": "master",
-        "slug": "my-repo1",
+        "slug": "my-repo",
         "scmId": "git",
         "scope": "REPOSITORY",
-        "name": "My repo1",
+        "name": "my-repo",
         "id": 2154,
         "state": "AVAILABLE",
         "public": true
@@ -61,10 +61,10 @@
       "partition": 2154,
       "relatedLinks": {},
       "defaultBranch": "master",
-      "slug": "my-repo1",
+      "slug": "my-repo",
       "scmId": "git",
       "scope": "REPOSITORY",
-      "name": "My repo1",
+      "name": "my-repo",
       "id": 2154,
       "state": "AVAILABLE",
       "public": true
@@ -81,7 +81,7 @@
         "type": "NORMAL",
         "public": true
       },
-      "description": "My repo2 description",
+      "description": "My api-gateway description",
       "origin": {
         "project": {
           "description": "The description for my cool project",
@@ -94,7 +94,7 @@
           "type": "NORMAL",
           "public": true
         },
-        "description": "My repo2 description",
+        "description": "My api-gateway description",
         "hierarchyId": "e3c939f9ef4a7fae272e",
         "statusMessage": "Available",
         "archived": true,
@@ -102,10 +102,10 @@
         "partition": 2154,
         "relatedLinks": {},
         "defaultBranch": "master",
-        "slug": "my-repo2",
+        "slug": "api-gateway",
         "scmId": "git",
         "scope": "REPOSITORY",
-        "name": "My repo2",
+        "name": "api-gateway",
         "id": 2154,
         "state": "AVAILABLE",
         "public": true
@@ -130,16 +130,14 @@
       "partition": 2154,
       "relatedLinks": {},
       "defaultBranch": "master",
-      "slug": "my-repo2",
+      "slug": "api-gateway",
       "scmId": "git",
       "scope": "REPOSITORY",
-      "name": "My repo2",
+      "name": "api-gateway",
       "id": 2154,
       "state": "AVAILABLE",
       "public": true
     }
   ],
-  "isLastPage": false,
-  "start": 0,
-  "nextPageStart": 2
+  "isLastPage": true
 }
