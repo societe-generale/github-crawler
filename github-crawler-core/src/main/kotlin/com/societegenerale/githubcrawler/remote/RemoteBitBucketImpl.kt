@@ -1,6 +1,5 @@
 package com.societegenerale.githubcrawler.remote
 
-import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
@@ -25,8 +24,6 @@ import feign.codec.ErrorDecoder
 import feign.gson.GsonEncoder
 import feign.httpclient.ApacheHttpClient
 import feign.slf4j.Slf4jLogger
-import okhttp3.Response
-import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters
 import org.springframework.cloud.openfeign.support.ResponseEntityDecoder
@@ -35,16 +32,15 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import java.io.IOException
-import java.io.StringWriter
 import java.lang.reflect.Type
 import java.util.*
 import java.util.stream.Collectors
 
 @Suppress("TooManyFunctions")
 class RemoteBitBucketImpl @JvmOverloads constructor(
-    val BitBucketUrl: String,
-    val projectName: String = "",
-    val apiKey: String
+    bitBucketUrl: String,
+    private val projectName: String = "",
+    private val apiKey: String
 ) : RemoteSourceControl {
 
     companion object {
@@ -60,7 +56,7 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
         .requestInterceptor(BitBucketOauthTokenSetter(apiKey))
         .logger(Slf4jLogger(RemoteBitBucketImpl::class.java))
         .logLevel(Logger.Level.FULL)
-        .target<InternalBitBucketClient>(InternalBitBucketClient::class.java, BitBucketUrl)
+        .target<InternalBitBucketClient>(InternalBitBucketClient::class.java, bitBucketUrl)
 
 
     val log = LoggerFactory.getLogger(this.javaClass)
@@ -79,14 +75,6 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
         } catch (e: IOException) {
             throw NoReachableRepositories("Unable to perform the request", e)
         }
-    }
-
-    private fun addOAuthTokenIfRequired(requestBuilder: okhttp3.Request.Builder): Unit {
-
-        if (apiKey.isNotBlank()) {
-            requestBuilder.addHeader("Authorization", "Bearer " + apiKey)
-        }
-
     }
 
     override fun fetchRepositories(organizationName: String): Set<Repository> {
@@ -124,13 +112,10 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
     }
 
     private fun getRepoIfAny(projectName: String, nextPageStart: Int): Repositories {
-
         return internalBitBucketClient.fetchRepos(projectName, nextPageStart)
-
     }
 
     override fun fetchRepoBranches(repositoryFullName: String): Set<Branch> {
-
         return internalBitBucketClient.fetchRepoBranches(projectName, repositoryFullName).values.stream()
             .map { Branch(it.displayId) }.collect(Collectors.toSet())
     }
@@ -141,8 +126,7 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
     }
 
     override fun fetchCodeSearchResult(repositoryFullName: String, query: String): SearchResult {
-
-        TODO("Currently Bitbucket REST API is not available ")
+        throw NotImplementedError("Bitbucket REST API is not available for code search")
     }
 
     override fun fetchFileContent(repositoryFullName: String, branchName: String, fileToFetch: String): String {
@@ -169,7 +153,7 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
 
     override fun fetchCommit(repositoryFullName: String, commitSha: String): DetailedCommit {
         val commit = internalBitBucketClient.fetchCommit(projectName, repositoryFullName, commitSha)
-        // Todo total
+        //TODO total
         return DetailedCommit(commit.id, Author(commit.author.id, commit.author.emailAddress), CommitStats(0))
     }
 
@@ -203,14 +187,10 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
 
 }
 
-class BitBucketOauthTokenSetter(val oauthToken: String?) : RequestInterceptor {
+class BitBucketOauthTokenSetter(private val oauthToken: String) : RequestInterceptor {
 
     override fun apply(requestTemplate: RequestTemplate?) {
-
-        if (requestTemplate != null && oauthToken != null) {
-            requestTemplate.header("Authorization", "Bearer " + oauthToken)
-        }
-
+        requestTemplate?.header("Authorization", "Bearer " + oauthToken)
     }
 
 }
@@ -286,7 +266,7 @@ internal class BitBucketResponseDecoder : Decoder {
 
 
     @Throws(IOException::class)
-    override fun decode(response: feign.Response, type: Type): Any {
+    override fun decode(response: Response, type: Type): Any {
 
         if (response.status() == HttpStatus.NOT_FOUND.value()) {
 
