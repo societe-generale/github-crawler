@@ -61,7 +61,7 @@
         <java.version>11</java.version>
 
 
-        <kotlin.version>1.7.21</kotlin.version>
+        <kotlin.version>1.8.10</kotlin.version>
         <gson.version>2.10</gson.version>
         <jacoco.version>0.8.8</jacoco.version>
 
