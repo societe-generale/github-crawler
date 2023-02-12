@@ -28,8 +28,8 @@ import java.util.*
 import java.util.stream.Collectors.toSet
 
 
-class RemoteAzureDevopsImpl @JvmOverloads constructor(val azureDevopsUrl: String = AZURE_DEVOPS_URL,
-                                                      val azureDevopsSearchUrl: String = AZURE_DEVOPS_SEARCH_URL,
+class RemoteAzureDevopsImpl @JvmOverloads constructor(private val azureDevopsUrl: String = AZURE_DEVOPS_URL,
+                                                      private val azureDevopsSearchUrl: String = AZURE_DEVOPS_SEARCH_URL,
                                                       organization: String,
                                                       personalAccessToken: String) : RemoteSourceControl {
 

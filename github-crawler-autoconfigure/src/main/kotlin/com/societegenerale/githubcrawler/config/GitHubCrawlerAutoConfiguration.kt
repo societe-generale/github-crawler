@@ -39,7 +39,7 @@ open class GitHubCrawlerAutoConfiguration {
                      repoTasksBuilders: List<RepoTaskBuilder>
                      ): GitHubCrawler {
 
-        var availableParsersAndTasks = AvailableParsersAndTasks(fileContentParsers,repoTasksBuilders)
+        val availableParsersAndTasks = AvailableParsersAndTasks(fileContentParsers,repoTasksBuilders)
 
         val repositoryEnricher = RepositoryEnricher(remoteSourceControl,availableParsersAndTasks)
 

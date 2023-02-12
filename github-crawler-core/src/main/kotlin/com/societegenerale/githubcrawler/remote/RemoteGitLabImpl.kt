@@ -42,7 +42,9 @@ import java.util.stream.Collectors.toSet
  *
  */
 @Suppress("TooManyFunctions") // most of methods are one liners, implementing the methods declared in interface
-class RemoteGitLabImpl constructor(val gitLabUrl: String, val privateToken: String) : RemoteSourceControl {
+class RemoteGitLabImpl constructor(
+    private val gitLabUrl: String,
+    private val privateToken: String) : RemoteSourceControl {
 
     companion object {
         const val REPO_LEVEL_CONFIG_FILE = ".gitlabCrawler"

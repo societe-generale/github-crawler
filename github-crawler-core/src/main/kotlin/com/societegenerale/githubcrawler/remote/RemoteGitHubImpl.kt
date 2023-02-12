@@ -42,7 +42,10 @@ import java.lang.reflect.Type
  * Implementation is mainly based on Feign's Builder for standard calls, and OkHttpClient for the others
  */
 @Suppress("TooManyFunctions") // most of methods are one liners, implementing the methods declared in interface
-class RemoteGitHubImpl @JvmOverloads constructor(val gitHubUrl: String, val usersReposInsteadOfOrgasRepos: Boolean = false, val apiKey: String) : RemoteSourceControl {
+class RemoteGitHubImpl @JvmOverloads constructor(
+    private val gitHubUrl: String,
+    private val usersReposInsteadOfOrgasRepos: Boolean = false,
+    private val apiKey: String) : RemoteSourceControl {
 
     companion object {
         const val GITHUB_URL= "https://api.github.com"
