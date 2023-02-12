@@ -15,22 +15,14 @@ import org.springframework.context.annotation.Configuration;
 public class TestConfig {
 
     @Bean
-    public GitHubMock gitHubMock() {
-
-        return new GitHubMock();
-    }
-
-    @Bean
     public GitHubCrawlerOutput output() {
 
-        InMemoryGitHubCrawlerOutput output = new InMemoryGitHubCrawlerOutput();
-
-        return output;
+        return new InMemoryGitHubCrawlerOutput();
     }
 
-    public class InMemoryGitHubCrawlerOutput implements GitHubCrawlerOutput {
+    public static class InMemoryGitHubCrawlerOutput implements GitHubCrawlerOutput {
 
-        private Map<String, Repository> analyzedRepositories = new HashMap<>();
+        private final Map<String, Repository> analyzedRepositories = new HashMap<>();
 
         public Map<String, Repository> getAnalyzedRepositories() {
             return analyzedRepositories;

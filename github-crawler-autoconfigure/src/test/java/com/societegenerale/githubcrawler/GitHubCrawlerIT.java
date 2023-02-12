@@ -46,9 +46,6 @@ public class GitHubCrawlerIT {
   private static GitHubMock githubMockServer;
 
   @Autowired
-  private GitHubMock tmpGithubMockServer;
-
-  @Autowired
   private TestConfig.InMemoryGitHubCrawlerOutput output;
 
   private static boolean hasGitHubMockServerStarted = false;
@@ -58,14 +55,8 @@ public class GitHubCrawlerIT {
   @BeforeEach
   public void mockSetUp() {
 
-    //we need a githubMockServer to be static, so that we can stop it once at the end in the @AfterClass method
-    //but at the same time, we need a version of it that is configured by Spring, so can't be static
-
-    //therefore we have small hack below, where we take the reference of the GitHubMock configured and injected by Spring,
-    //and assign it to the static variable the first time, when the static reference is null
-
     if (githubMockServer == null) {
-      githubMockServer = tmpGithubMockServer;
+      githubMockServer = new GitHubMock();
     }
 
     if (!hasGitHubMockServerStarted) {
