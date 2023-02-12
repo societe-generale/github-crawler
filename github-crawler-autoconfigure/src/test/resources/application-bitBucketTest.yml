@@ -27,19 +27,6 @@ crawler:
           params:
             pattern: "FROM\\s.*\\/(.*)\\s?.*"
 
-#  misc-repository-tasks:
-#      - name: "nbOfMetricsInPomXml"
-#        type: "countHitsOnRepoSearch"
-#        params:
-#          queryString: "q=metrics+extension:xml"
-
-
-
-#
-#debug: true
-#
-#logging.level:
-#  com.societegenerale.githubcrawler: DEBUG
 
 
 

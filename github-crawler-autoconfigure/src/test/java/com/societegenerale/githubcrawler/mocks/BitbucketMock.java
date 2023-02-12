@@ -1,6 +1,5 @@
 package com.societegenerale.githubcrawler.mocks;
 
-import net.codestory.http.Context;
 import net.codestory.http.WebServer;
 import net.codestory.http.constants.HttpStatus;
 import net.codestory.http.errors.HttpException;
@@ -27,8 +26,8 @@ public class BitbucketMock implements RemoteServiceMock {
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(BitbucketMock.class);
 
-    private String organisationResponse = "bitbucket/organisation.json";
-    private String organisationSecondResponse = "bitbucket/organisation_second.json";
+    private static final String organisationResponse = "bitbucket/organisation.json";
+    private static final String organisationSecondResponse = "bitbucket/organisation_second.json";
 
     public final static String REPO_EXCLUDED_CONFIG = "excluded: true";
 
@@ -122,12 +121,6 @@ public class BitbucketMock implements RemoteServiceMock {
         bitbucketWebServer.stop();
     }
 
-    private Payload geUserReposContent() throws IOException {
-        nbHitsOnUserRepos++;
-
-        return buildListOfRepositories(organisationSecondResponse);
-    }
-
     private Payload buildListOfRepositories(String organisationResponse) throws IOException {
         InputStream is = getClass().getClassLoader().getResourceAsStream(organisationResponse);
         String jsonString = StreamUtils.copyToString(is, Charset.forName("UTF-8"));
@@ -135,9 +128,6 @@ public class BitbucketMock implements RemoteServiceMock {
         return new Payload("application/json", jsonString);
     }
 
-    public int getNbHitsOnUserRepos() {
-        return nbHitsOnUserRepos;
-    }
 
     private Object getResourceFileOnRepo(String repo, String resource, String aSubDirectory, String branchName) throws IOException {
 
@@ -177,7 +167,7 @@ public class BitbucketMock implements RemoteServiceMock {
 
     }
 
-    private Object getRepoConfigFileOnRepo(String repo) throws IOException {
+    private Object getRepoConfigFileOnRepo(String repo){
 
         repoConfigHits.add(repo);
 
@@ -196,13 +186,13 @@ public class BitbucketMock implements RemoteServiceMock {
     }
 
     private Object getCommit(String repo, String commit) throws IOException {
-        log.debug("Getting Github commit {} on repo {}...", commit, repo);
+        log.debug("Getting BitBucket commit {} on repo {}...", commit, repo);
         return new Payload("application/json", FileUtils.readFileToString(ResourceUtils.getFile("classpath:bitbucket/commit.json"), "UTF-8"));
 
     }
 
     private Payload getCommits(String repo) throws IOException {
-        log.debug("Getting Github commits on repo {}...", repo);
+        log.debug("Getting BitBucket commits on repo {}...", repo);
 
         if(shouldReturnError409OnFetchCommits){
             throw new ConflictException();
@@ -212,7 +202,7 @@ public class BitbucketMock implements RemoteServiceMock {
     }
 
     private Payload getTeamsMembers(String team) throws IOException {
-        log.debug("Getting Github team members...");
+        log.debug("Getting BitBucket team members...");
 
         String teamFileName = String.format("team_members_%s.json", team.hashCode() % 2 == 0 ? "A" : "B");
 
@@ -221,7 +211,7 @@ public class BitbucketMock implements RemoteServiceMock {
     }
 
     private Payload getTeams() throws IOException {
-        log.debug("Getting Github teams...");
+        log.debug("Getting BitBucket teams...");
         return new Payload("application/json", FileUtils.readFileToString(ResourceUtils.getFile("classpath:teams.json"), "UTF-8"));
     }
 
@@ -292,27 +282,6 @@ public class BitbucketMock implements RemoteServiceMock {
         return new Payload("application/json", jsonString);
     }
 
-    private String getActualRepoConfig(String repoName) {
-
-        log.debug("received a repoConfig request for repo {}..", repoName);
-
-        repoConfigHits.add(repoName);
-
-        if (reposWithNoConfig.contains(repoName)) {
-            log.debug("\t repoConfig NOT FOUND");
-            throw new NotFoundException();
-        }
-
-        if (repoConfigPerRepo.keySet().contains(repoName)) {
-            log.debug("\t repoConfig found and not empty");
-            return repoConfigPerRepo.get(repoName);
-        } else {
-            log.debug("\t repoConfig found and empty");
-            return "";
-        }
-
-    }
-
     private Payload getOrganisationContent(int start) throws IOException {
 
         log.info("fetching content of organisation...");
@@ -352,17 +321,10 @@ public class BitbucketMock implements RemoteServiceMock {
         this.reposWithPomXml.addAll(reposWithPomXMl);
     }
 
-    public void setReturnError409OnFetchCommits(boolean shouldReturnError) {
-        this.shouldReturnError409OnFetchCommits=shouldReturnError;
-    }
-
     public void setNbPages(int nbPages) {
         this.nbPages=nbPages;
     }
 
-    public int getSearchHitsCount() {
-        return searchHitsCount;
-    }
 
     private class ConflictException extends HttpException {
         ConflictException() {

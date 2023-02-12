@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static com.jayway.awaitility.Awaitility.await;
+import static java.util.Map.entry;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -130,7 +131,8 @@ public class BitbucketCrawlerIT {
 
     FileToParse pomXmlFile = new FileToParse("pom.xml", null);
 
-    assertThat(crawler.getGitHubCrawlerProperties().getIndicatorsToFetchByFile()).containsKeys(pomXmlFile, new FileToParse("pom.xml", null),
+    assertThat(crawler.getGitHubCrawlerProperties().getIndicatorsToFetchByFile())
+            .containsKeys(pomXmlFile, new FileToParse("pom.xml", null),
         new FileToParse("Jenkinsfile", null), new FileToParse("Dockerfile", null));
 
     IndicatorDefinition pomXmlIndicatorDefinition1 = crawler.getGitHubCrawlerProperties().getIndicatorsToFetchByFile().get(pomXmlFile).get(0);
@@ -138,9 +140,8 @@ public class BitbucketCrawlerIT {
     assertThat(pomXmlIndicatorDefinition1.getName()).isEqualTo("spring_boot_starter_parent_version");
     assertThat(pomXmlIndicatorDefinition1.getType()).isEqualTo("findDependencyVersionInXml");
 
-    Map params = pomXmlIndicatorDefinition1.getParams();
-    assertThat(params).hasSize(1);
-    assertThat(params).containsEntry("artifactId","spring-boot-starter-parent");
+    assertThat(pomXmlIndicatorDefinition1.getParams())
+            .containsOnly(entry("artifactId","spring-boot-starter-parent"));
 
   }
 
