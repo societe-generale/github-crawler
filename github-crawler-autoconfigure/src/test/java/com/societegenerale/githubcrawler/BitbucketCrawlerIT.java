@@ -7,7 +7,6 @@ import com.societegenerale.githubcrawler.model.Repository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +41,6 @@ public class BitbucketCrawlerIT {
   private static BitbucketMock bitbucketMockServer;
 
   @Autowired
-  private BitbucketMock tmpBitbucketMockServer;
-
-  @Autowired
   private TestConfig.InMemoryGitHubCrawlerOutput output;
 
   private static boolean hasBitbucketMockServerStarted = false;
@@ -54,14 +50,8 @@ public class BitbucketCrawlerIT {
   @BeforeEach
   public void mockSetUp() {
 
-    //we need a bitbucketMockServer to be static, so that we can stop it once at the end in the @AfterClass method
-    //but at the same time, we need a version of it that is configured by Spring, so can't be static
-
-    //therefore we have small hack below, where we take the reference of the BitBucketMock configured and injected by Spring,
-    //and assign it to the static variable the first time, when the static reference is null
-
     if (bitbucketMockServer == null) {
-      bitbucketMockServer = tmpBitbucketMockServer;
+      bitbucketMockServer = new BitbucketMock();
     }
 
     if (!hasBitbucketMockServerStarted) {

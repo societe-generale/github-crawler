@@ -51,7 +51,6 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
         .client(ApacheHttpClient())
         .encoder(GsonEncoder())
         .decoder(BitBucketResponseDecoder())
-        .errorDecoder(BitBucketErrorDecoder())
         .decode404()
         .requestInterceptor(BitBucketOauthTokenSetter(apiKey))
         .logger(Slf4jLogger(RemoteBitBucketImpl::class.java))
@@ -158,11 +157,11 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
     }
 
     override fun fetchTeams(organizationName: String): Set<Team> {
-        return internalBitBucketClient.fetchTeams(organizationName).values.map { Team(it.name, it.name) }.toSet()
+        TODO("Not yet implemented")
     }
 
     override fun fetchTeamsMembers(teamId: String): Set<TeamMember> {
-        return internalBitBucketClient.fetchTeamsMembers(teamId)
+        TODO("Not yet implemented")
     }
 
     override fun fetchRepoConfig(repositoryFullName: String, defaultBranch: String): RepositoryConfig {
@@ -235,18 +234,6 @@ private interface InternalBitBucketClient {
 
     @RequestLine("GET /projects/{projectName}/repos/{fullName}/pull-requests")
     fun fetchOpenPRs(@Param("projectName") projectName: String, @Param("fullName") fullName: String): PullRequests
-}
-
-internal class BitBucketErrorDecoder : ErrorDecoder {
-
-    override fun decode(methodKey: String?, response: feign.Response?): java.lang.Exception {
-
-        if (response?.status() == HttpStatus.CONFLICT.value()) {
-            throw BitBucketResponseDecoder.BitBucketException("problem while fetching content... conflict state as per HTTP 409 code")
-        }
-
-        return errorStatus(methodKey, response)
-    }
 }
 
 internal class BitBucketResponseDecoder : Decoder {

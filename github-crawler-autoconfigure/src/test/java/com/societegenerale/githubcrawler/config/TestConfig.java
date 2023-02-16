@@ -1,7 +1,6 @@
 package com.societegenerale.githubcrawler.config;
 
 import com.societegenerale.githubcrawler.GitHubCrawlerProperties;
-import com.societegenerale.githubcrawler.mocks.GitHubMock;
 import com.societegenerale.githubcrawler.model.Repository;
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput;
 import java.util.HashMap;
