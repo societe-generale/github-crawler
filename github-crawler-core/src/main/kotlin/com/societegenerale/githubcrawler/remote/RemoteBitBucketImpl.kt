@@ -18,9 +18,7 @@ import com.societegenerale.githubcrawler.model.commit.DetailedCommit
 import com.societegenerale.githubcrawler.model.team.Team
 import com.societegenerale.githubcrawler.model.team.TeamMember
 import feign.*
-import feign.FeignException.errorStatus
 import feign.codec.Decoder
-import feign.codec.ErrorDecoder
 import feign.gson.GsonEncoder
 import feign.httpclient.ApacheHttpClient
 import feign.slf4j.Slf4jLogger
@@ -63,7 +61,7 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
     private val objectMapper = jacksonObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
     override fun validateRemoteConfig(organizationName: String) {
-        //TODO("Not yet implemented")
+        throw NotImplementedError()
     }
 
     @Throws(NoReachableRepositories::class)
@@ -157,11 +155,11 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
     }
 
     override fun fetchTeams(organizationName: String): Set<Team> {
-        TODO("Not yet implemented")
+        throw NotImplementedError()
     }
 
     override fun fetchTeamsMembers(teamId: String): Set<TeamMember> {
-        TODO("Not yet implemented")
+        throw NotImplementedError()
     }
 
     override fun fetchRepoConfig(repositoryFullName: String, defaultBranch: String): RepositoryConfig {
@@ -181,7 +179,6 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
         val decoder = BitBucketResponseDecoder()
 
         return decoder.decodeRepoConfig(content)
-        return objectMapper.readValue(content, RepositoryConfig::class.java)
     }
 
 }
