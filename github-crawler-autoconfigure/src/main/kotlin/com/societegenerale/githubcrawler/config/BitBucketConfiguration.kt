@@ -19,7 +19,7 @@ open class BitBucketConfiguration {
     open fun remoteBitBucket(gitHubCrawlerProperties: GitHubCrawlerProperties): RemoteSourceControl {
 
         return RemoteBitBucketImpl(gitHubCrawlerProperties.sourceControl.url,
-                                gitHubCrawlerProperties.sourceControl.projectName,
+                                gitHubCrawlerProperties.sourceControl.organizationName,
                                 gitHubCrawlerProperties.sourceControl.apiToken)
     }
 

@@ -6,7 +6,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 @ConfigurationProperties("crawler.source-control")
 class SourceControlConfig(var type: SourceControlType = SourceControlType.GITHUB,
                           var url: String="",
-                          var projectName: String="",
                           var apiToken: String="",
                           var organizationName: String="",
                           var crawlUsersRepoInsteadOfOrgasRepos: Boolean=false)

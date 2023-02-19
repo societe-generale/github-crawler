@@ -37,7 +37,7 @@ import java.util.stream.Collectors
 @Suppress("TooManyFunctions")
 class RemoteBitBucketImpl @JvmOverloads constructor(
     bitBucketUrl: String,
-    private val projectName: String = "",
+    private val organizationName: String = "",
     private val apiKey: String
 ) : RemoteSourceControl {
 
@@ -113,12 +113,12 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
     }
 
     override fun fetchRepoBranches(repositoryFullName: String): Set<Branch> {
-        return internalBitBucketClient.fetchRepoBranches(projectName, repositoryFullName).values.stream()
+        return internalBitBucketClient.fetchRepoBranches(organizationName, repositoryFullName).values.stream()
             .map { Branch(it.displayId) }.collect(Collectors.toSet())
     }
 
     override fun fetchOpenPRs(repositoryFullName: String): Set<PullRequest> {
-        return internalBitBucketClient.fetchOpenPRs(projectName, repositoryFullName).values.stream()
+        return internalBitBucketClient.fetchOpenPRs(organizationName, repositoryFullName).values.stream()
             .map { PullRequest(it.id) }.collect(Collectors.toSet())
     }
 
@@ -129,7 +129,7 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
     override fun fetchFileContent(repositoryFullName: String, branchName: String, fileToFetch: String): String {
 
         try {
-            return internalBitBucketClient.fetchFileOnRepo(projectName, repositoryFullName, branchName, fileToFetch)
+            return internalBitBucketClient.fetchFileOnRepo(organizationName, repositoryFullName, branchName, fileToFetch)
         } catch (e: BitBucketResponseDecoder.NoFileFoundFeignException) {
             //translating exception to a non Feign specific one
             throw NoFileFoundException("can't find $fileToFetch in repo $repositoryFullName, in branch $branchName")
@@ -139,7 +139,7 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
     override fun fetchCommits(repositoryFullName: String, perPage: Int): Set<Commit> {
 
         return try {
-            internalBitBucketClient.fetchCommits(projectName, repositoryFullName, perPage).values.stream()
+            internalBitBucketClient.fetchCommits(organizationName, repositoryFullName, perPage).values.stream()
                 .map { Commit(it.id) }.collect(Collectors.toSet())
         } catch (e: BitBucketResponseDecoder.BitBucketException) {
             log.warn("not able to fetch commits for repo $repositoryFullName", e)
@@ -149,7 +149,7 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
     }
 
     override fun fetchCommit(repositoryFullName: String, commitSha: String): DetailedCommit {
-        val commit = internalBitBucketClient.fetchCommit(projectName, repositoryFullName, commitSha)
+        val commit = internalBitBucketClient.fetchCommit(organizationName, repositoryFullName, commitSha)
         //TODO total
         return DetailedCommit(commit.id, Author(commit.author.id, commit.author.emailAddress), CommitStats(0))
     }
@@ -168,7 +168,7 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
 
         try {
             content = internalBitBucketClient.fetchFileOnRepo(
-                projectName,
+                organizationName,
                 repositoryFullName,
                 defaultBranch,
                 REPO_LEVEL_CONFIG_FILE
