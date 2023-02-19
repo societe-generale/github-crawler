@@ -61,7 +61,7 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
     private val objectMapper = jacksonObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
     override fun validateRemoteConfig(organizationName: String) {
-        throw NotImplementedError()
+        //TODO("Not yet implemented")
     }
 
     @Throws(NoReachableRepositories::class)
