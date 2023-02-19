@@ -1,0 +1,32 @@
+crawler:
+
+  source-control:
+    type: "BITBUCKET"
+    url: http://localhost:7700
+    organizationName: myProject
+    project-name: myProject
+
+  publishExcludedRepositories: false
+
+  crawlAllBranches: false
+
+  indicatorsToFetchByFile:
+    "[pom.xml]":
+        - name: spring_boot_starter_parent_version
+          type: findDependencyVersionInXml
+          params:
+            artifactId: spring-boot-starter-parent
+    Jenkinsfile:
+        - name: build_helper_package
+          type: findFirstValueWithRegexpCapture
+          params:
+            pattern: "(?s).*com\\.a\\.given\\.package\\BuildHelpers.*"
+    Dockerfile:
+        - name: docker_image_used
+          type: findFirstValueWithRegexpCapture
+          params:
+            pattern: "FROM\\s.*\\/(.*)\\s?.*"
+
+
+
+
