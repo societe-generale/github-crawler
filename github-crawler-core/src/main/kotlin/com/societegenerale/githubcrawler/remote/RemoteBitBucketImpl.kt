@@ -37,7 +37,7 @@ import java.util.stream.Collectors
 @Suppress("TooManyFunctions")
 class RemoteBitBucketImpl @JvmOverloads constructor(
     bitBucketUrl: String,
-    private val projectName: String = "",
+    private val organizationName: String = "",
     private val apiKey: String
 ) : RemoteSourceControl {
 
@@ -108,17 +108,17 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
             .collect(Collectors.toSet())
     }
 
-    private fun getRepoIfAny(projectName: String, nextPageStart: Int): Repositories {
-        return internalBitBucketClient.fetchRepos(projectName, nextPageStart)
+    private fun getRepoIfAny(organizationName: String, nextPageStart: Int): Repositories {
+        return internalBitBucketClient.fetchRepos(organizationName, nextPageStart)
     }
 
     override fun fetchRepoBranches(repositoryFullName: String): Set<Branch> {
-        return internalBitBucketClient.fetchRepoBranches(projectName, repositoryFullName).values.stream()
+        return internalBitBucketClient.fetchRepoBranches(organizationName, repositoryFullName).values.stream()
             .map { Branch(it.displayId) }.collect(Collectors.toSet())
     }
 
     override fun fetchOpenPRs(repositoryFullName: String): Set<PullRequest> {
-        return internalBitBucketClient.fetchOpenPRs(projectName, repositoryFullName).values.stream()
+        return internalBitBucketClient.fetchOpenPRs(organizationName, repositoryFullName).values.stream()
             .map { PullRequest(it.id) }.collect(Collectors.toSet())
     }
 
@@ -129,7 +129,7 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
     override fun fetchFileContent(repositoryFullName: String, branchName: String, fileToFetch: String): String {
 
         try {
-            return internalBitBucketClient.fetchFileOnRepo(projectName, repositoryFullName, branchName, fileToFetch)
+            return internalBitBucketClient.fetchFileOnRepo(organizationName, repositoryFullName, branchName, fileToFetch)
         } catch (e: BitBucketResponseDecoder.NoFileFoundFeignException) {
             //translating exception to a non Feign specific one
             throw NoFileFoundException("can't find $fileToFetch in repo $repositoryFullName, in branch $branchName")
@@ -139,7 +139,7 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
     override fun fetchCommits(repositoryFullName: String, perPage: Int): Set<Commit> {
 
         return try {
-            internalBitBucketClient.fetchCommits(projectName, repositoryFullName, perPage).values.stream()
+            internalBitBucketClient.fetchCommits(organizationName, repositoryFullName, perPage).values.stream()
                 .map { Commit(it.id) }.collect(Collectors.toSet())
         } catch (e: BitBucketResponseDecoder.BitBucketException) {
             log.warn("not able to fetch commits for repo $repositoryFullName", e)
@@ -149,7 +149,7 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
     }
 
     override fun fetchCommit(repositoryFullName: String, commitSha: String): DetailedCommit {
-        val commit = internalBitBucketClient.fetchCommit(projectName, repositoryFullName, commitSha)
+        val commit = internalBitBucketClient.fetchCommit(organizationName, repositoryFullName, commitSha)
         //TODO total
         return DetailedCommit(commit.id, Author(commit.author.id, commit.author.emailAddress), CommitStats(0))
     }
@@ -168,7 +168,7 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
 
         try {
             content = internalBitBucketClient.fetchFileOnRepo(
-                projectName,
+                organizationName,
                 repositoryFullName,
                 defaultBranch,
                 REPO_LEVEL_CONFIG_FILE
@@ -195,30 +195,30 @@ class BitBucketOauthTokenSetter(private val oauthToken: String) : RequestInterce
 @Headers("Accept: application/json")
 private interface InternalBitBucketClient {
 
-    @RequestLine("GET /projects/{projectName}/repos/{fullName}/branches")
-    fun fetchRepoBranches(@Param("projectName") projectName: String, @Param("fullName") fullName: String): Branches
+    @RequestLine("GET /projects/{organizationName}/repos/{fullName}/branches")
+    fun fetchRepoBranches(@Param("organizationName") organizationName: String, @Param("fullName") fullName: String): Branches
 
-    @RequestLine("GET /projects/{projectName}/repos?start={start}")
-    fun fetchRepos(@Param("projectName") projectName: String, @Param("start") start: Int): Repositories
+    @RequestLine("GET /projects/{organizationName}/repos?start={start}")
+    fun fetchRepos(@Param("organizationName") organizationName: String, @Param("start") start: Int): Repositories
 
-    @RequestLine("GET /projects/{projectName}/repos/{repositoryFullName}/raw/{fileToFetch}?at={branchName}")
+    @RequestLine("GET /projects/{organizationName}/repos/{repositoryFullName}/raw/{fileToFetch}?at={branchName}")
     fun fetchFileOnRepo(
-        @Param("projectName") projectName: String,
+        @Param("organizationName") organizationName: String,
         @Param("repositoryFullName") repositoryFullName: String,
         @Param("branchName") branchName: String,
         @Param("fileToFetch") fileToFetch: String
     ): String
 
-    @RequestLine("GET /projects/{projectName}/repos/{repositoryFullName}/commits?limit={limit}")
+    @RequestLine("GET /projects/{organizationName}/repos/{repositoryFullName}/commits?limit={limit}")
     fun fetchCommits(
-        @Param("projectName") projectName: String,
+        @Param("organizationName") organizationName: String,
         @Param("repositoryFullName") repositoryFullName: String,
         @Param("limit") limit: Int
     ): Commits
 
-    @RequestLine("GET /projects/{projectName}/repos/{repositoryFullName}/commits/{commitSha}")
+    @RequestLine("GET /projects/{organizationName}/repos/{repositoryFullName}/commits/{commitSha}")
     fun fetchCommit(
-        @Param("projectName") projectName: String,
+        @Param("organizationName") organizationName: String,
         @Param("repositoryFullName") repositoryFullName: String,
         @Param("commitSha") commitSha: String
     ): com.societegenerale.githubcrawler.model.bitbucket.DetailedCommit
@@ -229,8 +229,8 @@ private interface InternalBitBucketClient {
     @RequestLine("GET /admin/groups/{teamId}")
     fun fetchTeamsMembers(@Param("teamId") teamId: String): Set<TeamMember>
 
-    @RequestLine("GET /projects/{projectName}/repos/{fullName}/pull-requests")
-    fun fetchOpenPRs(@Param("projectName") projectName: String, @Param("fullName") fullName: String): PullRequests
+    @RequestLine("GET /projects/{organizationName}/repos/{fullName}/pull-requests")
+    fun fetchOpenPRs(@Param("organizationName") organizationName: String, @Param("fullName") fullName: String): PullRequests
 }
 
 internal class BitBucketResponseDecoder : Decoder {

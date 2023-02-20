@@ -4,7 +4,6 @@ crawler:
     type: "BITBUCKET"
     url: http://localhost:7700
     organizationName: myProject
-    project-name: myProject
 
   publishExcludedRepositories: false
 
