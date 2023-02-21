@@ -12,7 +12,7 @@
 
 ### Fixed
 
-##  [2.2.0] - 2023-02-XX
+##  [2.2.0] - 2023-02-21
 
 ### Changed
 - upgraded to Kotlin 1.8.10
