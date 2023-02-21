@@ -12,6 +12,17 @@
 
 ### Fixed
 
+##  [2.2.0] - 2023-02-XX
+
+### Changed
+- upgraded to Kotlin 1.8.10
+
+### Added 
+- PR #116 : Bitbucket support
+
+### Fixed
+- PR #115 : better parsing in JsonPathParser  
+
 ##  [2.1.0] - 2022-11-14
 
 ### Changed

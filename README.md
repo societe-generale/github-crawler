@@ -230,6 +230,19 @@ Just like for GitLab, there's basic support for Azure Devops !
         organization-name: "myOrg#myProject"
 ```
 
+## BitBucket support
+
+since v2.2.0, there's also support for BitBucket !
+
+```
+    crawler:
+      source-control:
+        type: "BITBUCKET"
+        url: YOUR_BITBUCKET_URL
+        organizationName: myProject
+        apiToken: "abcedfr6rwqwzslqhvfmdpuo5amfyv25a"
+```
+
  
 ## File content parsers
 
