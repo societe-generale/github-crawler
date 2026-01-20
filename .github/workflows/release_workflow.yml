@@ -22,11 +22,11 @@ jobs:
           version=$(echo "$raw_tag_name" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+$')
           echo "VERSION=$version" >> $GITHUB_ENV
 
-      - name: Set up JDK 25 with GPG
+      - name: Set up JDK 11 with GPG
         uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: 25
+          java-version: 11
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
           server-id: central
