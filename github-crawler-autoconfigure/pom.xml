@@ -1,58 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>github-crawler-autoconfigure</artifactId>
+  <packaging>jar</packaging>
+  <name>github-crawler-autoconfigure</name>
+  <parent>
     <groupId>com.societegenerale.github-crawler</groupId>
-    <artifactId>github-crawler-autoconfigure</artifactId>
+    <artifactId>github-crawler-parent</artifactId>
     <version>2.2.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
-
-    <name>github-crawler-autoconfigure</name>
-
-    <parent>
-        <groupId>com.societegenerale.github-crawler</groupId>
-        <artifactId>github-crawler-parent</artifactId>
-        <version>2.2.1-SNAPSHOT</version>
-    </parent>
-
-    <dependencies>
-
-        <dependency>
-            <groupId>com.societegenerale.github-crawler</groupId>
-            <artifactId>github-crawler-core</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>net.code-story</groupId>
-            <artifactId>http</artifactId>
-            <version>2.104</version>
-            <scope>test</scope>
-
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.tomakehurst</groupId>
-            <artifactId>wiremock-jre8</artifactId>
-            <version>2.32.0</version>
-            <scope>test</scope>
-        </dependency>
-
-
-        <dependency>
-            <groupId>com.jayway.awaitility</groupId>
-            <artifactId>awaitility</artifactId>
-            <version>1.7.0</version>
-            <scope>test</scope>
-        </dependency>
-
-    </dependencies>
-
-
+  </parent>
+  <dependencies>
+    <dependency>
+      <groupId>com.societegenerale.github-crawler</groupId>
+      <artifactId>github-crawler-core</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.code-story</groupId>
+      <artifactId>http</artifactId>
+      <version>2.104</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-simple</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.github.tomakehurst</groupId>
+      <artifactId>wiremock-jre8</artifactId>
+      <version>2.32.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.jayway.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+      <version>1.7.0</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>
