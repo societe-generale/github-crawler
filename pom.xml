@@ -1,429 +1,367 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <groupId>com.societegenerale.github-crawler</groupId>
-    <artifactId>github-crawler-parent</artifactId>
-    <version>2.2.1-SNAPSHOT</version>
-    <packaging>pom</packaging>
-
-    <name>github-crawler</name>
-
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.5</version>
-        <relativePath /> <!-- lookup parent from repository -->
-    </parent>
-
-    <modules>
-        <module>github-crawler-core</module>
-        <module>github-crawler-autoconfigure</module>
-        <module>github-crawler-starter</module>
-    </modules>
-
-
-    <licenses>
-        <license>
-            <name>Apache 2</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <issueManagement>
-        <url>https://github.com/societe-generale/github-crawler/issues</url>
-        <system>GitHub</system>
-    </issueManagement>
-
-    <scm>
-        <url>https://github.com/societe-generale/github-crawler</url>
-        <connection>scm:git:git@github.com:societe-generale/github-crawler.git</connection>
-        <developerConnection>scm:git:git@github.com:societe-generale/github-crawler.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>11</java.version>
-
-
-        <kotlin.version>1.8.10</kotlin.version>
-        <gson.version>2.10</gson.version>
-        <jacoco.version>0.8.8</jacoco.version>
-
-
-    </properties>
-
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>jcenter</id>
-            <name>JCenter</name>
-            <url>https://jcenter.bintray.com/</url>
-        </pluginRepository>
-    </pluginRepositories>
-
-    <dependencyManagement>
-        <dependencies>
-
-            <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-openfeign-dependencies</artifactId>
-            <version>3.1.5</version>
-            <type>pom</type>
-            <scope>import</scope>
-            </dependency>
-
-        </dependencies>
-
-    </dependencyManagement>
-
-
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.societegenerale.github-crawler</groupId>
+  <artifactId>github-crawler-parent</artifactId>
+  <version>2.2.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>github-crawler</name>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.7.5</version>
+    <relativePath/> <!-- lookup parent from repository -->
+  </parent>
+  <modules>
+    <module>github-crawler-core</module>
+    <module>github-crawler-autoconfigure</module>
+    <module>github-crawler-starter</module>
+  </modules>
+  <licenses>
+    <license>
+      <name>Apache 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <issueManagement>
+    <url>https://github.com/societe-generale/github-crawler/issues</url>
+    <system>GitHub</system>
+  </issueManagement>
+  <scm>
+    <url>https://github.com/societe-generale/github-crawler</url>
+    <connection>scm:git:git@github.com:societe-generale/github-crawler.git</connection>
+    <developerConnection>scm:git:git@github.com:societe-generale/github-crawler.git
+    </developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <java.version>11</java.version>
+    <kotlin.version>1.8.10</kotlin.version>
+    <gson.version>2.10</gson.version>
+    <jacoco.version>0.8.8</jacoco.version>
+  </properties>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>jcenter</id>
+      <name>JCenter</name>
+      <url>https://jcenter.bintray.com/</url>
+    </pluginRepository>
+  </pluginRepositories>
+  <dependencyManagement>
     <dependencies>
-
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>31.1-jre</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.vaadin.external.google</groupId>
-                    <artifactId>android-json</artifactId>
-                </exclusion>
-
-                <exclusion>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
-                </exclusion>
-
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-jdk8</artifactId>
-            <version>${kotlin.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-reflect</artifactId>
-            <version>${kotlin.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-annotations-jvm</artifactId>
-            <version>${kotlin.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-test</artifactId>
-            <version>${kotlin.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.dom4j</groupId>
-            <artifactId>dom4j</artifactId>
-            <version>2.1.3</version>
-        </dependency>
-
-        <!-- see https://github.com/dom4j/dom4j/issues/24
-
-        Jaxen is declared as an optional dependency in dom4j 2.1.1, as a workaround.
-        Once this is fixed, we shouldn't have to declare jaxen ourselves, it should be pulled transitively.
-
-        -->
-        <dependency>
-            <groupId>jaxen</groupId>
-            <artifactId>jaxen</artifactId>
-            <version>1.1.6</version>
-        </dependency>
-
-
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-openfeign-dependencies</artifactId>
+        <version>3.1.5</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
     </dependencies>
-
-    <build>
-
-        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
-
+  </dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>31.1-jre</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.vaadin.external.google</groupId>
+          <artifactId>android-json</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-classic</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-stdlib-jdk8</artifactId>
+      <version>${kotlin.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-reflect</artifactId>
+      <version>${kotlin.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-annotations-jvm</artifactId>
+      <version>${kotlin.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-test</artifactId>
+      <version>${kotlin.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+      <version>2.1.3</version>
+    </dependency><!-- see https://github.com/dom4j/dom4j/issues/24 Jaxen is declared as an optional dependency in dom4j 2.1.1, as a workaround. Once this is fixed, we shouldn't have to declare jaxen ourselves, it should be pulled transitively. -->
+    <dependency>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
+      <version>1.1.6</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+    <plugins>
+      <plugin>
+        <artifactId>kotlin-maven-plugin</artifactId>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <version>${kotlin.version}</version>
+        <executions>
+          <execution>
+            <id>compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <configuration>
+              <sourceDirs>
+                <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
+              </sourceDirs>
+            </configuration>
+          </execution>
+          <execution>
+            <id>test-compile</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>test-compile</goal>
+            </goals>
+            <configuration>
+              <sourceDirs>
+                <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
+                <sourceDir>${project.basedir}/src/test/java</sourceDir>
+              </sourceDirs>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+          <jvmTarget>1.8</jvmTarget>
+          <args>
+            <arg>-Xjvm-default=all-compatibility</arg>
+          </args>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.10.1</version>
+        <executions><!-- Replacing default-compile as it is treated specially by maven -->
+          <execution>
+            <id>default-compile</id>
+            <phase>none</phase>
+          </execution><!-- Replacing default-testCompile as it is treated specially by maven -->
+          <execution>
+            <id>default-testCompile</id>
+            <phase>none</phase>
+          </execution>
+          <execution>
+            <id>java-compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>java-test-compile</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5.3</version>
+        <configuration>
+          <stagingRepository>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2
+          </stagingRepository>
+          <tagNameFormat>github_crawler_@{project.version}</tagNameFormat>
+          <localCheckout>true</localCheckout>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
+          <pushChanges>false</pushChanges>
+          <useReleaseProfile>false</useReleaseProfile>
+          <releaseProfiles>makeRelease</releaseProfiles>
+          <mavenExecutorId>forked-path</mavenExecutorId>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration><!-- Sets the VM argument line used when unit tests are run. -->
+          <argLine>${surefireArgLine}</argLine>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <configuration>
+              <argLine>${failsafeArgLine}</argLine>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <executions>
+          <execution>
+            <id>pre-unit-tests</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+            <configuration>
+              <propertyName>surefireArgLine</propertyName>
+            </configuration>
+          </execution>
+          <execution>
+            <id>pre-integration-tests</id>
+            <goals>
+              <goal>prepare-agent-integration</goal>
+            </goals>
+            <configuration>
+              <propertyName>failsafeArgLine</propertyName>
+            </configuration>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.eluder.coveralls</groupId>
+        <artifactId>coveralls-maven-plugin</artifactId>
+        <version>4.3.0</version>
+        <dependencies>
+          <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.8</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>ossrh</serverId>
+          <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.8.2</version>
+      </plugin>
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>makeRelease</id>
+      <build>
         <plugins>
-
-            <plugin>
-                <artifactId>kotlin-maven-plugin</artifactId>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <version>${kotlin.version}</version>
-                <executions>
-                    <execution>
-                        <id>compile</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
-                            </sourceDirs>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>test-compile</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>test-compile</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
-                                <sourceDir>${project.basedir}/src/test/java</sourceDir>
-                            </sourceDirs>
-                        </configuration>
-                    </execution>
-                </executions>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>3.0.0</version>
+            <executions>
+              <execution>
+                <phase>generate-sources</phase>
+                <goals>
+                  <goal>add-source</goal>
+                </goals>
                 <configuration>
-                    <jvmTarget>1.8</jvmTarget>
-                    <args>
-                        <arg>-Xjvm-default=all-compatibility</arg>
-                    </args>
+                  <sources>
+                    <source>${project.basedir}/src/main/kotlin</source>
+                  </sources>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
-                <executions>
-                    <!-- Replacing default-compile as it is treated specially by maven -->
-                    <execution>
-                        <id>default-compile</id>
-                        <phase>none</phase>
-                    </execution>
-                    <!-- Replacing default-testCompile as it is treated specially by maven -->
-                    <execution>
-                        <id>default-testCompile</id>
-                        <phase>none</phase>
-                    </execution>
-                    <execution>
-                        <id>java-compile</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>java-test-compile</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.3</version>
-                <configuration>
-                    <stagingRepository>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2</stagingRepository>
-                    <tagNameFormat>github_crawler_@{project.version}</tagNameFormat>
-                    <localCheckout>true</localCheckout>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <pushChanges>false</pushChanges>
-                    <useReleaseProfile>false</useReleaseProfile>
-                    <releaseProfiles>makeRelease</releaseProfiles>
-                    <mavenExecutorId>forked-path</mavenExecutorId>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-
-                <configuration>
-                    <!-- Sets the VM argument line used when unit tests are run. -->
-                    <argLine>${surefireArgLine}</argLine>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                        <configuration>
-                            <argLine>${failsafeArgLine}</argLine>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco.version}</version>
-                <executions>
-                    <execution>
-                        <id>pre-unit-tests</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <configuration>
-                            <propertyName>surefireArgLine</propertyName>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>pre-integration-tests</id>
-                        <goals>
-                            <goal>prepare-agent-integration</goal>
-                        </goals>
-                        <configuration>
-                            <propertyName>failsafeArgLine</propertyName>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.eluder.coveralls</groupId>
-                <artifactId>coveralls-maven-plugin</artifactId>
-                <version>4.3.0</version>
-              <dependencies>
-                <dependency>
-                  <groupId>javax.xml.bind</groupId>
-                  <artifactId>jaxb-api</artifactId>
-                  <version>2.3.1</version>
-                </dependency>
-              </dependencies>
-            </plugin>
-
-
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.8</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.2</version>
-            </plugin>
-
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>3.0.1</version>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.jetbrains.dokka</groupId>
+            <artifactId>dokka-maven-plugin</artifactId>
+            <version>1.6.10</version>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>javadocJar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>3.0.1</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
-    </build>
-
-    <profiles>
-        <profile>
-            <id>makeRelease</id>
-
-            <build>
-                <plugins>
-
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>build-helper-maven-plugin</artifactId>
-                        <version>3.0.0</version>
-
-                        <executions>
-                            <execution>
-                                <phase>generate-sources</phase>
-                                <goals>
-                                    <goal>add-source</goal>
-                                </goals>
-                                <configuration>
-                                    <sources>
-                                        <source>${project.basedir}/src/main/kotlin</source>
-                                    </sources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <version>3.0.1</version>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar-no-fork</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.jetbrains.dokka</groupId>
-                        <artifactId>dokka-maven-plugin</artifactId>
-                        <version>1.6.10</version>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>javadocJar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.0.1</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
+      </build>
+    </profile>
+  </profiles>
 </project>
