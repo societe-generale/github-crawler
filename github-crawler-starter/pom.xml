@@ -1,49 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>github-crawler-starter</artifactId>
+  <packaging>jar</packaging>
+  <name>github-crawler-starter</name>
+  <parent>
     <groupId>com.societegenerale.github-crawler</groupId>
-    <artifactId>github-crawler-starter</artifactId>
+    <artifactId>github-crawler-parent</artifactId>
     <version>2.2.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
-
-    <name>github-crawler-starter</name>
-
-    <parent>
-        <groupId>com.societegenerale.github-crawler</groupId>
-        <artifactId>github-crawler-parent</artifactId>
-        <version>2.2.1-SNAPSHOT</version>
-    </parent>
-
-    <dependencies>
-
-        <dependency>
-            <groupId>com.societegenerale.github-crawler</groupId>
-            <artifactId>github-crawler-autoconfigure</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-
-                <!-- This is required so that we have more flexibility :
-
-                - the -exec jar can be used directly from command line
-                - the regular jar can be used as a dependency in projects that need it
-
-                -->
-
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>com.societegenerale.githubcrawler.GitHubCrawlerApplication</mainClass>
-                    <classifier>exec</classifier>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
+  </parent>
+  <dependencies>
+    <dependency>
+      <groupId>com.societegenerale.github-crawler</groupId>
+      <artifactId>github-crawler-autoconfigure</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <!-- This is required so that we have more flexibility :
+        - the -exec jar can be used directly from command line
+        - the regular jar can be used as a dependency in projects that need it
+        -->
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <mainClass>com.societegenerale.githubcrawler.GitHubCrawlerApplication</mainClass>
+          <classifier>exec</classifier>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
