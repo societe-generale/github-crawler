@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 @Component
@@ -53,9 +54,9 @@ public class BitbucketMock implements RemoteServiceMock {
         return hasCalledNextPage;
     }
 
-    private List<String> repoConfigHits = new ArrayList<>();
+    private List<String> repoConfigHits = new CopyOnWriteArrayList<>();
 
-    private List<String> pomXmlHits = new ArrayList<>();
+    private List<String> pomXmlHits = new CopyOnWriteArrayList<>();
 
     private int nbPages = 1;
 
