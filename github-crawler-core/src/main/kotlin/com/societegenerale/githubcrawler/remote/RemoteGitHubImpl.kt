@@ -56,7 +56,7 @@ class RemoteGitHubImpl @JvmOverloads constructor(
         .encoder(GsonEncoder())
         .decoder(GitHubResponseDecoder())
         .errorDecoder(GiHubErrorDecoder())
-        .decode404()
+        .dismiss404()
         .requestInterceptor(GitHubOauthTokenSetter(apiKey))
         .logger(Slf4jLogger(RemoteGitHubImpl::class.java))
         .logLevel(Logger.Level.FULL)
@@ -170,15 +170,7 @@ class RemoteGitHubImpl @JvmOverloads constructor(
     private fun extractRepositories(response: Response): Set<Repository> {
 
         try {
-
-            val body = response.body
-
-            if (body != null) {
-                return objectMapper.readValue(body.string())
-            } else {
-                log.warn("response is null : {}", response)
-                return emptySet()
-            }
+            return objectMapper.readValue(response.body.string())
         } catch (e: JacksonException) {
             throw NoReachableRepositories("not able to parse response", e)
         }
@@ -233,7 +225,7 @@ class RemoteGitHubImpl @JvmOverloads constructor(
 
         val response = httpClient.newCall(request).execute()
 
-        val responseAsString=response.body?.string()
+        val responseAsString=response.body.string()
         log.info("response : "+responseAsString)
 
         return try {
@@ -271,7 +263,7 @@ class RemoteGitHubImpl @JvmOverloads constructor(
         val response = httpClient.newCall(request).execute()
 
 
-        return response.body?.string() ?: ""
+        return response.body.string()
 
     }
 
@@ -393,7 +385,7 @@ internal class GitHubResponseDecoder : Decoder {
     fun decodeRepoConfig(response: Response): RepositoryConfig {
 
         val writer = StringWriter()
-        IOUtils.copy(response.body?.byteStream(), writer, "UTF-8")
+        IOUtils.copy(response.body.byteStream(), writer, "UTF-8")
         val responseAsString = writer.toString()
 
         return parseRepositoryConfigResponse(responseAsString, response)

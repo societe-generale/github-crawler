@@ -2,7 +2,6 @@ package com.societegenerale.githubcrawler
 
 import org.springframework.core.convert.ConversionService
 import org.springframework.core.convert.TypeDescriptor
-import org.springframework.lang.Nullable
 
 
 data class FileToParse(val name: String,
@@ -10,11 +9,11 @@ data class FileToParse(val name: String,
 
 class FileToParseConversionService : ConversionService {
 
-    override fun canConvert(@Nullable aClass: Class<*>?, aClass1: Class<*>): Boolean {
+    override fun canConvert(aClass: Class<*>?, aClass1: Class<*>): Boolean {
         return false
     }
 
-    override fun canConvert(@Nullable sourcetype: TypeDescriptor?, targetType: TypeDescriptor): Boolean {
+    override fun canConvert(sourcetype: TypeDescriptor?, targetType: TypeDescriptor): Boolean {
         return targetType.name == FileToParse::class.java.name
     }
 
@@ -22,7 +21,7 @@ class FileToParseConversionService : ConversionService {
         return null
     }
 
-    override fun convert(@Nullable value: Any?, @Nullable sourceType: TypeDescriptor?, targetType: TypeDescriptor): Any? {
+    override fun convert(value: Any?, sourceType: TypeDescriptor?, targetType: TypeDescriptor): Any? {
 
         return if (targetType.name == FileToParse::class.java.name) {
             FileToParse(value as String, null)

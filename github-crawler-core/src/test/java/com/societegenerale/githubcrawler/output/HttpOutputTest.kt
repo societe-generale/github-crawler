@@ -37,6 +37,7 @@ class HttpOutputTest {
   inline fun <reified T : Any> argumentCaptor() = ArgumentCaptor.forClass(T::class.java)
 
   @Test
+  @Suppress("UNCHECKED_CAST")
   fun shouldLogResponseBodyWhenErrorDuringPost() {
     //Mock logging infra
     val root = LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME) as ch.qos.logback.classic.Logger

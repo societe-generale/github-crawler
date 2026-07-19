@@ -45,7 +45,7 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
         .client(ApacheHttpClient())
         .encoder(GsonEncoder())
         .decoder(BitBucketResponseDecoder())
-        .decode404()
+        .dismiss404()
         .requestInterceptor(BitBucketOauthTokenSetter(apiKey))
         .logger(Slf4jLogger(RemoteBitBucketImpl::class.java))
         .logLevel(Logger.Level.FULL)

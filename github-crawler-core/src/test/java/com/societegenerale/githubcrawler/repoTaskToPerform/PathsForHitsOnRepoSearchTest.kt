@@ -49,6 +49,7 @@ class PathsForHitsOnRepoSearchTest {
 
 
     @Test
+    @Suppress("UNCHECKED_CAST")
     fun shouldYield_NotFound_WhenNoMatch() {
 
         `when`(mockRemoteGithub.fetchCodeSearchResult(repoToSearch.fullName, "someSearch"))
