@@ -50,13 +50,17 @@
     <commons-io.version>2.22.0</commons-io.version>
     <json-path.version>3.0.0</json-path.version>
     <!-- plugins -->
-    <jacoco.version>0.8.15</jacoco.version>
+    <jacoco-plugin.version>0.8.15</jacoco-plugin.version>
     <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
-    <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+    <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
     <spring-boot-maven-plugin.version>4.1.0</spring-boot-maven-plugin.version>
     <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
     <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
     <central-publishing-maven-plugin.version>0.9.0</central-publishing-maven-plugin.version>
+    <maven-failsafe-plugin.version>3.5.6</maven-failsafe-plugin.version>
+    <maven-dependency-plugin.version>3.11.0</maven-dependency-plugin.version>
+    <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
+    <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
   </properties>
   <pluginRepositories>
     <pluginRepository>
@@ -251,23 +255,10 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <version>2.5.3</version>
-        <configuration>
-          <tagNameFormat>github_crawler_@{project.version}</tagNameFormat>
-          <localCheckout>true</localCheckout>
-          <autoVersionSubmodules>true</autoVersionSubmodules>
-          <pushChanges>false</pushChanges>
-          <useReleaseProfile>false</useReleaseProfile>
-          <releaseProfiles>makeRelease</releaseProfiles>
-          <mavenExecutorId>forked-path</mavenExecutorId>
-        </configuration>
-      </plugin>
       <plugin><!-- Exposes the mockito-core jar path as ${org.mockito:mockito-core:jar}, so it can be loaded as a -javaagent (Mockito no longer self-attaches on recent JDKs). -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
+        <version>${maven-dependency-plugin.version}</version>
         <executions>
           <execution>
             <id>get-mockito-agent-path</id>
@@ -282,13 +273,18 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven-surefire-plugin.version}</version>
         <configuration><!-- Sets the VM argument line used when unit tests are run. -->
-          <argLine>-javaagent:${org.mockito:mockito-core:jar} ${surefireArgLine} --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/jdk.internal.misc=ALL-UNNAMED --add-opens java.base/jdk.internal.reflect=ALL-UNNAMED -Dnet.bytebuddy.experimental=true --sun-misc-unsafe-memory-access=allow</argLine>
+          <argLine>-javaagent:${org.mockito:mockito-core:jar} ${surefireArgLine} --add-opens
+            java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED
+            --add-opens java.base/jdk.internal.misc=ALL-UNNAMED --add-opens
+            java.base/jdk.internal.reflect=ALL-UNNAMED -Dnet.bytebuddy.experimental=true
+            --sun-misc-unsafe-memory-access=allow
+          </argLine>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>${maven-surefire-plugin.version}</version>
+        <version>${maven-failsafe-plugin.version}</version>
         <executions>
           <execution>
             <goals>
@@ -296,18 +292,28 @@
               <goal>verify</goal>
             </goals>
             <configuration>
-              <argLine>-javaagent:${org.mockito:mockito-core:jar} ${failsafeArgLine} --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/jdk.internal.misc=ALL-UNNAMED --add-opens java.base/jdk.internal.reflect=ALL-UNNAMED -Dnet.bytebuddy.experimental=true --sun-misc-unsafe-memory-access=allow</argLine>
+              <argLine>-javaagent:${org.mockito:mockito-core:jar} ${failsafeArgLine} --add-opens
+                java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED
+                --add-opens java.base/jdk.internal.misc=ALL-UNNAMED --add-opens
+                java.base/jdk.internal.reflect=ALL-UNNAMED -Dnet.bytebuddy.experimental=true
+                --sun-misc-unsafe-memory-access=allow
+              </argLine>
             </configuration>
           </execution>
         </executions>
         <configuration>
-          <argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/jdk.internal.misc=ALL-UNNAMED --add-opens java.base/jdk.internal.reflect=ALL-UNNAMED -Dnet.bytebuddy.experimental=true --sun-misc-unsafe-memory-access=allow</argLine>
+          <argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens
+            java.base/java.lang.reflect=ALL-UNNAMED --add-opens
+            java.base/jdk.internal.misc=ALL-UNNAMED --add-opens
+            java.base/jdk.internal.reflect=ALL-UNNAMED -Dnet.bytebuddy.experimental=true
+            --sun-misc-unsafe-memory-access=allow
+          </argLine>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>${jacoco.version}</version>
+        <version>${jacoco-plugin.version}</version>
         <executions>
           <execution>
             <id>pre-unit-tests</id>
@@ -339,14 +345,7 @@
       <plugin>
         <groupId>org.eluder.coveralls</groupId>
         <artifactId>coveralls-maven-plugin</artifactId>
-        <version>4.3.0</version>
-        <dependencies>
-          <dependency>
-            <groupId>jakarta.xml.bind</groupId>
-            <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>4.0.5</version>
-          </dependency>
-        </dependencies>
+        <version>${coveralls-maven-plugin.version}</version>
       </plugin>
     </plugins>
   </build>
@@ -358,7 +357,7 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>build-helper-maven-plugin</artifactId>
-            <version>3.0.0</version>
+            <version>${build-helper-maven-plugin.version}</version>
             <executions>
               <execution>
                 <phase>generate-sources</phase>
@@ -420,7 +419,6 @@
               </gpgArguments>
             </configuration>
           </plugin>
-
           <!-- ✨ NEW Sonatype Central Publishing Plugin -->
           <plugin>
             <groupId>org.sonatype.central</groupId>
