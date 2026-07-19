@@ -12,6 +12,27 @@
 
 ### Fixed
 
+## [3.0.0] - 2026-07-19
+
+### Added
+- release and build GitHub Actions workflows, with git user configuration for release
+- publishing to Maven Central (Sonatype) via `central-publishing-maven-plugin`
+
+### Changed
+- BREAKING CHANGE : upgraded to JDK 25, Kotlin 2.4.10 and Spring Boot 4.1.0, along with all dependency versions
+- replaced the Spring Boot parent with BOM imports (`dependencyManagement`)
+- build configuration : added `spring-boot-maven-plugin` with `repackage` execution, updated plugin versions, moved `spring-boot-configuration-processor` to `annotationProcessorPath`
+- updated JVM arguments for compatibility (`--sun-misc-unsafe-memory-access=allow`, `--add-opens`) and added the Mockito agent path for test execution
+
+### Deprecated
+
+### Removed
+
+### Fixed
+- replaced deprecated code
+- replaced `ArrayList` with `CopyOnWriteArrayList` for thread safety
+- corrected flaky test assertions
+
 ##  [2.2.0] - 2023-02-21
 
 ### Changed
