@@ -307,22 +307,21 @@ public class GitHubCrawlerIT {
     assertThat(output.getAnalyzedRepositories()).isEmpty();
     assertThat(githubMockServer.getSearchHitsCount()).isEqualTo(0);
 
-
     crawler.crawl();
 
-    Collection<Repository> actualRepositories = output.getAnalyzedRepositories().values();
     await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
-        .untilAsserted(() -> assertThat(actualRepositories).hasSize(nbRepositoriesInOrga));
+        .untilAsserted(() -> {
+          assertThat(output.getAnalyzedRepositories().values()).hasSize(nbRepositoriesInOrga);
+          assertThat(githubMockServer.getSearchHitsCount()).isEqualTo(nbRepositoriesInOrga);
+        });
 
-    assertThat(githubMockServer.getSearchHitsCount()).isEqualTo(nbRepositoriesInOrga);
+    Collection<Repository> actualRepositories = new ArrayList<>(output.getAnalyzedRepositories().values());
 
     actualRepositories.forEach(repo -> {
-
       assertThat(repo.getMiscTasksResults()).hasSize(1);
 
-			Map masterMiscTaskResults=repo.getMiscTasksResults().get(new Branch("master"));
-      assertThat(masterMiscTaskResults).containsEntry("nbOfMetricsInPomXml","2");
-
+      Map<String, Object> masterMiscTaskResults = repo.getMiscTasksResults().get(new Branch("master"));
+      assertThat(masterMiscTaskResults).containsEntry("nbOfMetricsInPomXml", "2");
     });
   }
 
