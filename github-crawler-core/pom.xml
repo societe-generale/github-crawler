@@ -66,11 +66,6 @@
       <artifactId>json-path</artifactId>
       <version>${json-path.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-configuration-processor</artifactId>
-      <optional>true</optional>
-    </dependency>
     <!-- Test dependencies -->
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -104,6 +99,11 @@
                   <groupId>com.google.dagger</groupId>
                   <artifactId>dagger-compiler</artifactId>
                   <version>2.60.1</version>
+                </annotationProcessorPath>
+                <annotationProcessorPath>
+                  <groupId>org.springframework.boot</groupId>
+                  <artifactId>spring-boot-configuration-processor</artifactId>
+                  <version>${spring-boot-dependencies.version}</version>
                 </annotationProcessorPath>
               </annotationProcessorPaths>
             </configuration>
