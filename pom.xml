@@ -279,7 +279,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven-surefire-plugin.version}</version>
         <configuration><!-- Sets the VM argument line used when unit tests are run. -->
-          <argLine>${surefireArgLine} --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/jdk.internal.misc=ALL-UNNAMED --add-opens java.base/jdk.internal.reflect=ALL-UNNAMED -Dnet.bytebuddy.experimental=true</argLine>
+          <argLine>${surefireArgLine} --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/jdk.internal.misc=ALL-UNNAMED --add-opens java.base/jdk.internal.reflect=ALL-UNNAMED -Dnet.bytebuddy.experimental=true --sun-misc-unsafe-memory-access=allow</argLine>
         </configuration>
       </plugin>
       <plugin>
@@ -293,12 +293,12 @@
               <goal>verify</goal>
             </goals>
             <configuration>
-              <argLine>${failsafeArgLine}</argLine>
+              <argLine>${failsafeArgLine} --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/jdk.internal.misc=ALL-UNNAMED --add-opens java.base/jdk.internal.reflect=ALL-UNNAMED -Dnet.bytebuddy.experimental=true --sun-misc-unsafe-memory-access=allow</argLine>
             </configuration>
           </execution>
         </executions>
         <configuration>
-          <argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/jdk.internal.misc=ALL-UNNAMED --add-opens java.base/jdk.internal.reflect=ALL-UNNAMED -Dnet.bytebuddy.experimental=true</argLine>
+          <argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/jdk.internal.misc=ALL-UNNAMED --add-opens java.base/jdk.internal.reflect=ALL-UNNAMED -Dnet.bytebuddy.experimental=true --sun-misc-unsafe-memory-access=allow</argLine>
         </configuration>
       </plugin>
       <plugin>
