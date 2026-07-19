@@ -61,6 +61,7 @@
     <maven-dependency-plugin.version>3.11.0</maven-dependency-plugin.version>
     <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
     <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
+    <dokka-maven-plugin.version>2.2.0</dokka-maven-plugin.version>
   </properties>
   <pluginRepositories>
     <pluginRepository>
@@ -388,7 +389,7 @@
           <plugin>
             <groupId>org.jetbrains.dokka</groupId>
             <artifactId>dokka-maven-plugin</artifactId>
-            <version>1.6.10</version>
+            <version>${dokka-maven-plugin.version}</version>
             <executions>
               <execution>
                 <id>attach-javadocs</id>
