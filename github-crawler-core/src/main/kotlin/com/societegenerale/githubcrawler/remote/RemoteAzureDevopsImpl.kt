@@ -146,7 +146,7 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(private val azureDevopsUrl
 
         val responseBody= httpClient.newCall(request).execute().body
 
-        val repoSearchResult = objectMapper.readValue(responseBody?.string(), CodeSearchResult::class.java)
+        val repoSearchResult = objectMapper.readValue(responseBody.string(), CodeSearchResult::class.java)
 
         return repoSearchResult.toStandardSearchResult()
 
@@ -164,7 +164,7 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(private val azureDevopsUrl
         val response=httpClient.newCall(request).execute()
 
         if(response.isSuccessful){
-            return response.body?.string() ?: ""
+            return response.body.string()
         }
         else{
             throw NoFileFoundException("can't find $fileToFetch in repo $repositoryFullName, in branch $branchName")
@@ -245,7 +245,7 @@ internal class AzureDevopsResponseDecoder {
         }
 
         val writer = StringWriter()
-        IOUtils.copy(response.body?.byteStream(), writer, "UTF-8")
+        IOUtils.copy(response.body.byteStream(), writer, "UTF-8")
         val responseAsString = writer.toString()
 
         return parseRepositoryConfigResponse(responseAsString, response)
