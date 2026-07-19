@@ -22,7 +22,7 @@ jobs:
           version=$(echo "$raw_tag_name" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+$')
           echo "VERSION=$version" >> $GITHUB_ENV
 
-      - name: Set up JDK 11 with GPG
+      - name: Set up JDK 25 with GPG
         uses: actions/setup-java@v5
         with:
           distribution: temurin
@@ -32,6 +32,11 @@ jobs:
           server-id: central
           server-username: CENTRAL_USERNAME
           server-password: CENTRAL_PASSWORD
+
+      - name: Configure git user for release
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
 
       - name: Build & Deploy to Staging
         env:
