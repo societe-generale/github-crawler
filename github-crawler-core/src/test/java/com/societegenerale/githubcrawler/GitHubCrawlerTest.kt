@@ -1,13 +1,13 @@
 package com.societegenerale.githubcrawler
 
 import com.google.common.collect.ImmutableList
-import com.jayway.awaitility.Awaitility.await
 import com.societegenerale.githubcrawler.model.Repository
 import com.societegenerale.githubcrawler.output.GitHubCrawlerOutput
 import com.societegenerale.githubcrawler.parsers.SimpleFilePathParser
 import com.societegenerale.githubcrawler.remote.RemoteSourceControl
 
 import org.assertj.core.api.Assertions.assertThat
+import org.awaitility.Awaitility
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -142,8 +142,8 @@ class GitHubCrawlerTest {
 
         gitHubCrawler.crawl()
 
-        await().atMost(2, java.util.concurrent.TimeUnit.SECONDS)
-                .until({ assertThat(output.analyzedRepositories.values).hasSize(nbExpectedRecords) })
+        Awaitility.await().atMost(2, java.util.concurrent.TimeUnit.SECONDS)
+                .untilAsserted { assertThat(output.analyzedRepositories.values).hasSize(nbExpectedRecords) }
 
         return output.analyzedRepositories
 

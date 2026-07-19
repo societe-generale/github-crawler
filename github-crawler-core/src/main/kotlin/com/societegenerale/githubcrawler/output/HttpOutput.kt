@@ -41,10 +41,10 @@ class HttpOutput(targetUrl: String,
                 response = restTemplate.postForEntity(internalTargetUrl, output, String::class.java)
 
                 if (!response.statusCode.is2xxSuccessful) {
-                    logHttpError(analyzedRepository.name, response.statusCodeValue,response.body)
+                    logHttpError(analyzedRepository.name, response.statusCode.value(),response.body)
                 }
             } catch (e : HttpClientErrorException) {
-                logHttpError(analyzedRepository.name, e.rawStatusCode,e.message ?: "no additional message provided")
+                logHttpError(analyzedRepository.name, e.statusCode.value(),e.message ?: "no additional message provided")
             }
         }
     }

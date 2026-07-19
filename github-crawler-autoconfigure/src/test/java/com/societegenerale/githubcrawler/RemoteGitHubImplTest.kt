@@ -1,9 +1,10 @@
 package com.societegenerale.githubcrawler
 
-import com.jayway.awaitility.Awaitility.await
+
 import com.societegenerale.githubcrawler.mocks.GitHubMock
 import com.societegenerale.githubcrawler.remote.RemoteGitHubImpl
 import org.assertj.core.api.Assertions.assertThat
+import org.awaitility.Awaitility
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -30,8 +31,8 @@ class RemoteGitHubImplTest {
 
             githubMockServer.start()
 
-            await().atMost(5, SECONDS)
-                    .until{ assertThat(GitHubMock.hasStarted()) }
+            Awaitility.await().atMost(5, SECONDS)
+                .untilAsserted { assertThat(GitHubMock.hasStarted()).isTrue() }
         }
 
         @AfterAll

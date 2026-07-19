@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
-import java.nio.file.Paths
+import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -27,7 +27,7 @@ class FileOutput (filenamePrefix: String) : GitHubCrawlerOutput {
 
         finalOutputFileName = filenamePrefix + "_" + now.format(formatter) + ".txt"
 
-        Files.newBufferedWriter(Paths.get(finalOutputFileName),
+        Files.newBufferedWriter(Path.of(finalOutputFileName),
                 StandardCharsets.UTF_8,
                 StandardOpenOption.CREATE_NEW).use{
 
@@ -40,7 +40,7 @@ class FileOutput (filenamePrefix: String) : GitHubCrawlerOutput {
     @Throws(IOException::class)
     override fun output(analyzedRepository: Repository) {
 
-        Files.newBufferedWriter(Paths.get(finalOutputFileName),
+        Files.newBufferedWriter(Path.of(finalOutputFileName),
                 StandardCharsets.UTF_8,
                 StandardOpenOption.WRITE, StandardOpenOption.APPEND).use{
 

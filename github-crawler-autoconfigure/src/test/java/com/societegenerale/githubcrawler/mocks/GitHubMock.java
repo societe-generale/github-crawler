@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import net.codestory.http.Context;
 import net.codestory.http.WebServer;
 import net.codestory.http.constants.HttpStatus;
@@ -57,9 +58,9 @@ public class GitHubMock implements RemoteServiceMock {
         return hasCalledNextPage;
     }
 
-    private List<String> repoConfigHits = new ArrayList<>();
+    private List<String> repoConfigHits = new CopyOnWriteArrayList<>();
 
-    private List<String> pomXmlHits = new ArrayList<>();
+    private List<String> pomXmlHits = new CopyOnWriteArrayList<>();
 
     private int nbPages = 1;
 
@@ -91,38 +92,38 @@ public class GitHubMock implements RemoteServiceMock {
         gitHubWebServer.configure(
                 routes -> {
 
-                    routes.get("/api/v3/repos/MyOrganization/:repo/contents/.githubCrawler", (context, repo) -> getRepoConfigFileOnRepo(repo));
-                    routes.get("/raw/MyOrganization/:repo/master/.githubCrawler", (context, repo) -> getActualRepoConfig(repo));
+                    routes.get("/api/v3/repos/MyOrganization/:repo/contents/.githubCrawler", (_, repo) -> getRepoConfigFileOnRepo(repo));
+                    routes.get("/raw/MyOrganization/:repo/master/.githubCrawler", (_, repo) -> getActualRepoConfig(repo));
 
                     routes.get("/api/v3/orgs/MyOrganization/repos", context -> getOrganisationContent(context));
-                    routes.get("/api/v3/organizations/1114/repos", context -> getOrganisationContentForNextPage());
+                    routes.get("/api/v3/organizations/1114/repos", _ -> getOrganisationContentForNextPage());
 
-                    routes.get("/api/v3/users/someUser/repos", context -> geUserReposContent());
+                    routes.get("/api/v3/users/someUser/repos", _ -> geUserReposContent());
 
-                    routes.get("/api/v3/repos/MyOrganization/:repo/contents/pom.xml?ref=master", (context, repo) -> getPomXmlFileOnRepo(repo));
-                    routes.get("/raw/MyOrganization/:repo/:branchName/pom.xml", (context, repo, branchName) -> getActualPomXML(repo, branchName));
+                    routes.get("/api/v3/repos/MyOrganization/:repo/contents/pom.xml?ref=master", (_, repo) -> getPomXmlFileOnRepo(repo));
+                    routes.get("/raw/MyOrganization/:repo/:branchName/pom.xml", (_, repo, branchName) -> getActualPomXML(repo, branchName));
 
                     //for other resources than pom.xml..
                     //hack for resources that are not at the root of the repository, so that we don't have to hardcode too many things
                     routes.get("/api/v3/repos/MyOrganization/:repo/contents/:aSubDirectory/:resource?ref=:branchName",
-                            (context, repo, aSubDirectory, resource, branchName) -> getResourceFileOnRepo(repo, resource, aSubDirectory, branchName));
+                            (_, repo, aSubDirectory, resource, branchName) -> getResourceFileOnRepo(repo, resource, aSubDirectory, branchName));
                     routes.get("/raw/MyOrganization/:repo/:branchName/:aSubDirectory/:resource",
-                            (context, repo, branchName, aSubDirectory, resource) -> getResource(repo, branchName, aSubDirectory, resource));
+                            (_, repo, branchName, aSubDirectory, resource) -> getResource(repo, branchName, aSubDirectory, resource));
 
                     routes.get("/api/v3/repos/MyOrganization/:repo/contents/:resource?ref=:branchName",
-                            (context, repo, resource, branchName) -> getResourceFileOnRepo(repo, resource, null, branchName));
+                            (_, repo, resource, branchName) -> getResourceFileOnRepo(repo, resource, null, branchName));
                     routes.get("/raw/MyOrganization/:repo/:branchName/:resource",
-                            (context, repo, branchName, resource) -> getResource(repo, branchName, null, resource));
+                            (_, repo, branchName, resource) -> getResource(repo, branchName, null, resource));
 
-                    routes.get("/api/v3/repos/MyOrganization/:repo/branches", (context, repo) -> getBranches(repo));
+                    routes.get("/api/v3/repos/MyOrganization/:repo/branches", (_, repo) -> getBranches(repo));
 
-                    routes.get("/api/v3/search/code?q=:searchQuery", (context, searchQuery) -> getSearchResult(searchQuery));
+                    routes.get("/api/v3/search/code?q=:searchQuery", (_, searchQuery) -> getSearchResult(searchQuery));
 
                     routes.get("/api/v3/orgs/MyOrganization/teams", this::getTeams);
-                    routes.get("/api/v3/teams/:team/members", (context, team) -> getTeamsMembers(team));
+                    routes.get("/api/v3/teams/:team/members", (_, team) -> getTeamsMembers(team));
 
-                    routes.get("/api/v3/repos/MyOrganization/:repo/commits?per_page=150", (context, repo) -> getCommits(repo));
-                    routes.get("/api/v3/repos/MyOrganization/:repo/commits/:commit", (context, repo, commit) -> getCommit(repo, commit));
+                    routes.get("/api/v3/repos/MyOrganization/:repo/commits?per_page=150", (_, repo) -> getCommits(repo));
+                    routes.get("/api/v3/repos/MyOrganization/:repo/commits/:commit", (_, repo, commit) -> getCommit(repo, commit));
 
                 }
         ).start(GITHUB_MOCK_PORT);

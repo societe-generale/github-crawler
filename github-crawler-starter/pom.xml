@@ -15,7 +15,6 @@
     <dependency>
       <groupId>com.societegenerale.github-crawler</groupId>
       <artifactId>github-crawler-autoconfigure</artifactId>
-      <version>${project.parent.version}</version>
     </dependency>
   </dependencies>
   <build>

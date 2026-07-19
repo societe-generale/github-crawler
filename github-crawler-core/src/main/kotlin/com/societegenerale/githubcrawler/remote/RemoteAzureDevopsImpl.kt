@@ -1,11 +1,8 @@
 package com.societegenerale.githubcrawler.remote
 
-import com.fasterxml.jackson.core.JsonParseException
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+
+import tools.jackson.module.kotlin.KotlinModule
+import tools.jackson.module.kotlin.jacksonObjectMapper
 import com.societegenerale.githubcrawler.RepositoryConfig
 import com.societegenerale.githubcrawler.model.*
 import com.societegenerale.githubcrawler.model.azuredevops.Repositories
@@ -22,7 +19,10 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
-import java.io.IOException
+import tools.jackson.core.JacksonException
+import tools.jackson.core.exc.StreamReadException
+import tools.jackson.dataformat.yaml.YAMLMapper
+
 import java.io.StringWriter
 import java.util.*
 import java.util.stream.Collectors.toSet
@@ -51,7 +51,7 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(private val azureDevopsUrl
     private var azureOrg=splitedOrgName.get(0)
     private var azureProject=splitedOrgName.get(1)
 
-    private val objectMapper = jacksonObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    private val objectMapper = jacksonObjectMapper()
 
     private val basicAuthentCredentials: String = Credentials.basic("", personalAccessToken)
 
@@ -103,7 +103,7 @@ class RemoteAzureDevopsImpl @JvmOverloads constructor(private val azureDevopsUrl
 
             return objectMapper.readValue(bodyAsString, Repositories::class.java)
         }
-        catch( e : JsonParseException){
+        catch( e : StreamReadException){
 
             throw IllegalArgumentException("unable to read the repositories to crawl from the response we got $bodyAsString",e)
         }
@@ -234,12 +234,9 @@ internal class CodeSearchResultItem(val path : String)
 internal class AzureDevopsResponseDecoder {
     val log = LoggerFactory.getLogger(this.javaClass)
 
-    val repoConfigMapper = ObjectMapper(YAMLFactory())
-
-    init {
-        repoConfigMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        repoConfigMapper.registerModule(KotlinModule.Builder().build())
-    }
+    val repoConfigMapper: YAMLMapper = YAMLMapper.builder()
+        .addModule(KotlinModule.Builder().build())
+        .build()
 
     fun decodeRepoConfig(response: okhttp3.Response): RepositoryConfig {
 
@@ -261,7 +258,7 @@ internal class AzureDevopsResponseDecoder {
 
         try {
             return repoConfigMapper.readValue(responseAsString, RepositoryConfig::class.java)
-        } catch (e: IOException) {
+        } catch (e: JacksonException) {
             throw Repository.RepoConfigException(HttpStatus.BAD_REQUEST,"unable to parse config for repo - content : \"" + response.body + "\"", e)
         }
     }

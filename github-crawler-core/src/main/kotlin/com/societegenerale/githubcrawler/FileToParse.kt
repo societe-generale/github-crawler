@@ -18,7 +18,7 @@ class FileToParseConversionService : ConversionService {
         return targetType.name == FileToParse::class.java.name
     }
 
-    override fun <T : Any?> convert(@Nullable o: Any?, targetType: Class<T>): T? {
+    override fun <T : Any> convert(source: Any?, targetType: Class<T>): T? {
         return null
     }
 

@@ -8,7 +8,7 @@ import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.OpenOption
-import java.nio.file.Paths
+import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -113,7 +113,7 @@ class CIdroidReadyJsonFileOutput (val indicatorsToOutput: List<String>, val with
     @Suppress("SpreadOperator") //no performance impact given the number of values (a couple, max)..
     private fun openFileWithOptions(vararg options : OpenOption) : BufferedWriter {
 
-        return Files.newBufferedWriter(Paths.get(finalOutputFileName),
+        return Files.newBufferedWriter(Path.of(finalOutputFileName),
                 StandardCharsets.UTF_8,
                 *options)
     }

@@ -1,10 +1,11 @@
 package com.societegenerale.githubcrawler
 
-import com.jayway.awaitility.Awaitility.await
+
 import com.societegenerale.githubcrawler.mocks.GitLabMock
 import com.societegenerale.githubcrawler.mocks.RemoteServiceMock.GITLAB_MOCK_PORT
 import com.societegenerale.githubcrawler.remote.RemoteGitLabImpl
 import org.assertj.core.api.Assertions.assertThat
+import org.awaitility.Awaitility
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -24,7 +25,7 @@ class RemoteGitLabImplTest {
 
     companion object {
 
-        val gitlabMockServer: GitLabMock = GitLabMock();
+        val gitlabMockServer: GitLabMock = GitLabMock()
 
         @BeforeAll
         @JvmStatic
@@ -32,8 +33,8 @@ class RemoteGitLabImplTest {
 
             gitlabMockServer.start()
 
-            await().atMost(5, SECONDS)
-                    .until{ assertThat(GitLabMock.hasStarted()) }
+            Awaitility.await().atMost(5, SECONDS)
+                    .untilAsserted { assertThat(GitLabMock.hasStarted()).isTrue() }
         }
 
         @AfterAll
@@ -49,7 +50,7 @@ class RemoteGitLabImplTest {
         gitlabMockServer.reset()
     }
 
-    val remoteGitLab = RemoteGitLabImpl("http://localhost:"+GITLAB_MOCK_PORT+"/api/v4",  "someToken");
+    val remoteGitLab = RemoteGitLabImpl("http://localhost:"+GITLAB_MOCK_PORT+"/api/v4",  "someToken")
 
     @Test
     fun shouldGetRepositoriesForAgroup() {
@@ -90,7 +91,7 @@ class RemoteGitLabImplTest {
 
         val searchResults=remoteGitLab.fetchCodeSearchResult("h5bp/html5-boilerplate","blabla")
 
-        assertThat(searchResults.totalCount).isEqualTo(2);
+        assertThat(searchResults.totalCount).isEqualTo(2)
     }
 
 

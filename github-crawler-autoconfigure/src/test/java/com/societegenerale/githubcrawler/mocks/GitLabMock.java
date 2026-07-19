@@ -36,12 +36,12 @@ public class GitLabMock implements RemoteServiceMock {
         gitLabWebServer.configure(
                 routes -> {
 
-                    routes.get("/api/v4/groups?search=:groupName", (context,groupName) -> getGroups(groupName));
+                    routes.get("/api/v4/groups?search=:groupName", (_,groupName) -> getGroups(groupName));
 
-                    routes.get("/api/v4/groups/:groupId/projects", (context, groupId) -> getRepositories(groupId));
-                    routes.get("/api/v4/projects/:repoId/repository/files/:filePath/raw?ref=:branchName", (context, repoId, filePath,branchName) -> getFileContent(repoId, filePath, branchName));
+                    routes.get("/api/v4/groups/:groupId/projects", (_, groupId) -> getRepositories(groupId));
+                    routes.get("/api/v4/projects/:repoId/repository/files/:filePath/raw?ref=:branchName", (_, repoId, filePath,branchName) -> getFileContent(repoId, filePath, branchName));
 
-                    routes.get("/api/v4/projects/:repoId/search?scope=blobs&:searchString", (context, repoId, searchString) -> getRepoSearchResults(repoId, searchString));
+                    routes.get("/api/v4/projects/:repoId/search?scope=blobs&:searchString", (_, repoId, searchString) -> getRepoSearchResults(repoId, searchString));
 
 
                 }
