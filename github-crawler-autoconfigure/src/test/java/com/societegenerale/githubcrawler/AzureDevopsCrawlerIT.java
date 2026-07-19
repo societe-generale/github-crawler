@@ -102,7 +102,7 @@ class AzureDevopsCrawlerIT {
       assertThat(branchWhereResultWasFound.getName()).isEqualTo("refs/heads/main");
 
       List<String> valueForIndicator=(ArrayList)firstTaskResult.getValue().get("pipelineTemplateLocation");
-      assertThat(valueForIndicator.get(0)).isEqualTo("azure-pipelines.yml");
+      assertThat(valueForIndicator.getFirst()).isEqualTo("azure-pipelines.yml");
   }
 
 

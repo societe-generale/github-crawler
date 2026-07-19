@@ -24,7 +24,7 @@ boolean.property: true
 
 ---
 spring:
-  profiles: aProfile
+  config.activate.on-profile: aProfile
 server:
   ssl:
     key-store: hello

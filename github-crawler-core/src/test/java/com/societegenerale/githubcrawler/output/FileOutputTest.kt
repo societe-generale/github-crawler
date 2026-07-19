@@ -8,7 +8,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import java.nio.file.Files
-import java.nio.file.Paths
+import java.nio.file.Path
 import java.util.*
 
 
@@ -22,7 +22,7 @@ class FileOutputTest{
         val resources = resolver.getResources("file:target/somePrfix*.txt")
 
         for(existingFile in resources){
-            val fileToDeletePath = Paths.get(existingFile.uri)
+            val fileToDeletePath = Path.of(existingFile.uri)
             Files.delete(fileToDeletePath)
         }
 
@@ -61,7 +61,7 @@ class FileOutputTest{
 
         assertThat(resources).hasSize(1)
 
-        val lines=Files.readAllLines(Paths.get(resources[0].uri))
+        val lines=Files.readAllLines(Path.of(resources[0].uri))
 
         assertThat(lines).hasSize(3)
 

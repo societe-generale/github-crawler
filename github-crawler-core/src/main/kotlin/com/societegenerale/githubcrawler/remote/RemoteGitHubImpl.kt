@@ -1,13 +1,10 @@
 package com.societegenerale.githubcrawler.remote
 
-import com.fasterxml.jackson.core.JsonParseException
-import com.fasterxml.jackson.core.JsonProcessingException
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.dataformat.yaml.YAMLMapper
+import tools.jackson.module.kotlin.KotlinModule
+import tools.jackson.module.kotlin.jacksonObjectMapper
+import tools.jackson.module.kotlin.readValue
 import com.societegenerale.githubcrawler.RepositoryConfig
 import com.societegenerale.githubcrawler.model.*
 import com.societegenerale.githubcrawler.model.commit.Commit
@@ -26,12 +23,10 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters
-import org.springframework.cloud.openfeign.support.ResponseEntityDecoder
-import org.springframework.cloud.openfeign.support.SpringDecoder
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import tools.jackson.core.JacksonException
+import tools.jackson.core.exc.StreamReadException
+
 import java.io.IOException
 import java.io.StringWriter
 import java.lang.reflect.Type
@@ -72,7 +67,7 @@ class RemoteGitHubImpl @JvmOverloads constructor(
 
     val log = LoggerFactory.getLogger(this.javaClass)
 
-    private val objectMapper = jacksonObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    private val objectMapper = jacksonObjectMapper()
 
     @Throws(NoReachableRepositories::class)
     override fun validateRemoteConfig(organizationName: String) {
@@ -81,7 +76,7 @@ class RemoteGitHubImpl @JvmOverloads constructor(
 
         try {
             extractRepositories(response)
-        } catch (e: JsonProcessingException) {
+        } catch (e: JacksonException) {
             throw NoReachableRepositories("not able to parse response : ${response.body}", e)
         }
 
@@ -184,7 +179,7 @@ class RemoteGitHubImpl @JvmOverloads constructor(
                 log.warn("response is null : {}", response)
                 return emptySet()
             }
-        } catch (e: JsonProcessingException) {
+        } catch (e: JacksonException) {
             throw NoReachableRepositories("not able to parse response", e)
         }
     }
@@ -244,7 +239,7 @@ class RemoteGitHubImpl @JvmOverloads constructor(
         return try {
             objectMapper.readValue(responseAsString, SearchResult::class.java)
         }
-        catch(e : JsonParseException){
+        catch(e : StreamReadException){
             log.warn("parsing error",e)
             SearchResult(0, emptyList())
         }
@@ -391,12 +386,9 @@ internal class GiHubErrorDecoder : ErrorDecoder {
 internal class GitHubResponseDecoder : Decoder {
     val log = LoggerFactory.getLogger(this.javaClass)
 
-    val repoConfigMapper = ObjectMapper(YAMLFactory())
-
-    init {
-        repoConfigMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        repoConfigMapper.registerModule(KotlinModule.Builder().build())
-    }
+    val repoConfigMapper: YAMLMapper = YAMLMapper.builder()
+        .addModule(KotlinModule.Builder().build())
+        .build()
 
     fun decodeRepoConfig(response: Response): RepositoryConfig {
 
@@ -423,18 +415,22 @@ internal class GitHubResponseDecoder : Decoder {
 
             log.debug("Decoding a successful response...")
 
-            if (type.typeName == MediaType.TEXT_PLAIN_VALUE) {
+            if (type == String::class.java) {
 
                 log.debug("\t ... as a String")
 
-                return response.body().toString()
+                return response.body().asReader(Charsets.UTF_8).use { it.readText() }
             }
 
             log.debug("\t ... as a " + type.typeName)
 
-            val jacksonConverter = MappingJackson2HttpMessageConverter(ObjectMapper().registerModule(KotlinModule.Builder().build()))
-            val objectFactory = { HttpMessageConverters(jacksonConverter) }
-            return ResponseEntityDecoder(SpringDecoder(objectFactory)).decode(response, type)
+            val jsonMapper = JsonMapper.builder()
+                .addModule(KotlinModule.Builder().build())
+                .build()
+
+            response.body().asInputStream().use { input ->
+                return jsonMapper.readValue(input, jsonMapper.constructType(type))
+            }
 
         }
     }
@@ -446,7 +442,7 @@ internal class GitHubResponseDecoder : Decoder {
 
         try {
             return repoConfigMapper.readValue(responseAsString, RepositoryConfig::class.java)
-        } catch (e: IOException) {
+        } catch (e: JacksonException) {
             throw Repository.RepoConfigException(HttpStatus.BAD_REQUEST,"unable to parse config for repo - content : \"" + response.body + "\"", e)
         }
     }

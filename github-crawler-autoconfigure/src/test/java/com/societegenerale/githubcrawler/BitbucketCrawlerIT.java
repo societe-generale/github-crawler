@@ -5,21 +5,20 @@ import com.societegenerale.githubcrawler.config.TestConfig;
 import com.societegenerale.githubcrawler.mocks.BitbucketMock;
 import com.societegenerale.githubcrawler.model.Repository;
 import org.assertj.core.api.SoftAssertions;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.util.*;
 
-import static com.jayway.awaitility.Awaitility.await;
+
 import static java.util.Map.entry;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
@@ -27,7 +26,6 @@ import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {TestConfig.class, GitHubCrawlerAutoConfiguration.class})
 @ActiveProfiles(profiles = {"bitBucketTest"})
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
@@ -58,8 +56,8 @@ public class BitbucketCrawlerIT {
 
       bitbucketMockServer.start();
 
-      await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
-          .until(() -> assertThat(BitbucketMock.hasStarted()));
+      Awaitility.await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
+          .untilAsserted(() -> assertThat(BitbucketMock.hasStarted()).isTrue());
 
       hasBitbucketMockServerStarted = true;
     }
@@ -94,8 +92,8 @@ public class BitbucketCrawlerIT {
 
     Collection<Repository> processedRepositories = output.getAnalyzedRepositories().values();
 
-    await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
-        .until(() -> assertThat(processedRepositories).hasSize(nbRepositoriesInOrga));
+    Awaitility.await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
+        .untilAsserted(() -> assertThat(processedRepositories).hasSize(nbRepositoriesInOrga));
 
     assertThat(bitbucketMockServer.isHasCalledNextPage()).as("next page wasn't called").isTrue();
 
@@ -125,7 +123,7 @@ public class BitbucketCrawlerIT {
             .containsKeys(pomXmlFile, new FileToParse("pom.xml", null),
         new FileToParse("Jenkinsfile", null), new FileToParse("Dockerfile", null));
 
-    IndicatorDefinition pomXmlIndicatorDefinition1 = crawler.getGitHubCrawlerProperties().getIndicatorsToFetchByFile().get(pomXmlFile).get(0);
+    IndicatorDefinition pomXmlIndicatorDefinition1 = crawler.getGitHubCrawlerProperties().getIndicatorsToFetchByFile().get(pomXmlFile).getFirst();
     assertThat(pomXmlIndicatorDefinition1).isNotNull();
     assertThat(pomXmlIndicatorDefinition1.getName()).isEqualTo("spring_boot_starter_parent_version");
     assertThat(pomXmlIndicatorDefinition1.getType()).isEqualTo("findDependencyVersionInXml");
@@ -140,8 +138,8 @@ public class BitbucketCrawlerIT {
 
     crawler.crawl();
 
-    await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
-        .until(() -> assertThat(bitbucketMockServer.getPomXmlHits()).hasSize(nbRepositoriesInOrga));
+    Awaitility.await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
+        .untilAsserted(() -> assertThat(bitbucketMockServer.getPomXmlHits()).hasSize(nbRepositoriesInOrga));
 
   }
 
@@ -152,10 +150,10 @@ public class BitbucketCrawlerIT {
 
     Collection<Repository> processedRepositories = output.getAnalyzedRepositories().values();
 
-    await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
-        .until(() -> assertThat(processedRepositories).hasSize(nbRepositoriesInOrga));
+    Awaitility.await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
+        .untilAsserted(() -> assertThat(processedRepositories).hasSize(nbRepositoriesInOrga));
 
-    processedRepositories.stream().forEach(repo -> {
+    processedRepositories.forEach(repo -> {
       assertThat(repo.getGroups()).containsExactlyInAnyOrder("bitBucketTest");
     });
 
@@ -182,8 +180,8 @@ public class BitbucketCrawlerIT {
 
     crawler.crawl();
 
-    await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
-        .until(() -> assertThat(output.getAnalyzedRepositories().values()).hasSize(nbRepositoriesInOrga));
+    Awaitility.await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
+        .untilAsserted(() -> assertThat(output.getAnalyzedRepositories().values()).hasSize(nbRepositoriesInOrga));
 
     Collection<Repository> processedRepositories = output.getAnalyzedRepositories().values();
 
@@ -252,8 +250,8 @@ public class BitbucketCrawlerIT {
 
     Collection<Repository> processedRepositories = output.getAnalyzedRepositories().values();
 
-    await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
-        .until(() -> assertThat(processedRepositories).hasSize(nbRepositoriesInOrga));
+    Awaitility.await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
+        .untilAsserted(() -> assertThat(processedRepositories).hasSize(nbRepositoriesInOrga));
 
     for (Repository processedRepository : processedRepositories) {
 
@@ -284,8 +282,8 @@ public class BitbucketCrawlerIT {
     crawler.crawl();
 
     Collection<Repository> actualRepositories = output.getAnalyzedRepositories().values();
-    await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
-        .until(() -> assertThat(actualRepositories).hasSize(nbRepositoriesInOrga));
+    Awaitility.await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
+        .untilAsserted(() -> assertThat(actualRepositories).hasSize(nbRepositoriesInOrga));
 
     assertThat(bitbucketMockServer.getRepoConfigHits()).hasSize(nbRepositoriesInOrga);
 
@@ -303,8 +301,8 @@ public class BitbucketCrawlerIT {
     crawler.crawl();
 
     Collection<Repository> actualRepositories = output.getAnalyzedRepositories().values();
-    await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
-        .until(() -> assertThat(actualRepositories).hasSize(nbRepositoriesInOrga));
+    Awaitility.await().atMost(MAX_TIMEOUT_FOR_CRAWLER, SECONDS)
+        .untilAsserted(() -> assertThat(actualRepositories).hasSize(nbRepositoriesInOrga));
 
     assertThat(actualRepositories.stream().filter(r -> !r.getCrawlerRunId().equals(GitHubCrawler.NO_CRAWLER_RUN_ID_DEFINED))
         .count())

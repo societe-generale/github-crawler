@@ -3,7 +3,6 @@ package com.societegenerale.githubcrawler.parsers
 import com.jayway.jsonpath.JsonPath.read
 import com.jayway.jsonpath.PathNotFoundException
 import com.societegenerale.githubcrawler.IndicatorDefinition
-import net.minidev.json.JSONArray
 import org.slf4j.LoggerFactory
 
 /**
@@ -50,12 +49,12 @@ class JsonPathParser : FileContentParser {
 
             if (result is String) {
                 result
-            } else if (result is JSONArray && !result.isEmpty()) {
+            } else if (result is List<*> && result.isNotEmpty()) {
                 result[0] as String
             } else {
                 NOT_FOUND
             }
-        } catch (e: PathNotFoundException) {
+        } catch (_: PathNotFoundException) {
             NOT_FOUND
         }
 

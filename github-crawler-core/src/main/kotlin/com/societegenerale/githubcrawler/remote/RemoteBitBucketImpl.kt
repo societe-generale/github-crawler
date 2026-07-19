@@ -1,10 +1,9 @@
 package com.societegenerale.githubcrawler.remote
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.dataformat.yaml.YAMLMapper
+import tools.jackson.module.kotlin.KotlinModule
+import tools.jackson.module.kotlin.jacksonObjectMapper
 import com.societegenerale.githubcrawler.RepositoryConfig
 import com.societegenerale.githubcrawler.model.*
 import com.societegenerale.githubcrawler.model.Author
@@ -23,12 +22,9 @@ import feign.gson.GsonEncoder
 import feign.httpclient.ApacheHttpClient
 import feign.slf4j.Slf4jLogger
 import org.slf4j.LoggerFactory
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters
-import org.springframework.cloud.openfeign.support.ResponseEntityDecoder
-import org.springframework.cloud.openfeign.support.SpringDecoder
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import tools.jackson.core.JacksonException
+
 import java.io.IOException
 import java.lang.reflect.Type
 import java.util.*
@@ -57,8 +53,6 @@ class RemoteBitBucketImpl @JvmOverloads constructor(
 
 
     val log = LoggerFactory.getLogger(this.javaClass)
-
-    private val objectMapper = jacksonObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
     override fun validateRemoteConfig(organizationName: String) {
         //TODO("Not yet implemented")
@@ -236,12 +230,9 @@ private interface InternalBitBucketClient {
 internal class BitBucketResponseDecoder : Decoder {
     val log = LoggerFactory.getLogger(this.javaClass)
 
-    val repoConfigMapper = ObjectMapper(YAMLFactory())
-
-    init {
-        repoConfigMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        repoConfigMapper.registerModule(KotlinModule.Builder().build())
-    }
+    val repoConfigMapper: YAMLMapper = YAMLMapper.builder()
+        .addModule(KotlinModule.Builder().build())
+        .build()
 
     fun decodeRepoConfig(response: String): RepositoryConfig {
 
@@ -263,19 +254,22 @@ internal class BitBucketResponseDecoder : Decoder {
 
             log.debug("Decoding a successful response...")
 
-            if (type.typeName == MediaType.TEXT_PLAIN_VALUE) {
+            if (type == String::class.java) {
 
                 log.debug("\t ... as a String")
 
-                return response.body().toString()
+                return response.body().asReader(Charsets.UTF_8).use { it.readText() }
             }
 
             log.debug("\t ... as a " + type.typeName)
 
-            val jacksonConverter =
-                MappingJackson2HttpMessageConverter(ObjectMapper().registerModule(KotlinModule.Builder().build()))
-            val objectFactory = { HttpMessageConverters(jacksonConverter) }
-            return ResponseEntityDecoder(SpringDecoder(objectFactory)).decode(response, type)
+            val jsonMapper = JsonMapper.builder()
+                .addModule(KotlinModule.Builder().build())
+                .build()
+
+            response.body().asInputStream().use { input ->
+                return jsonMapper.readValue(input, jsonMapper.constructType(type))
+            }
 
         }
     }
@@ -287,7 +281,7 @@ internal class BitBucketResponseDecoder : Decoder {
 
         try {
             return repoConfigMapper.readValue(responseAsString, RepositoryConfig::class.java)
-        } catch (e: IOException) {
+        } catch (e: JacksonException) {
             throw Repository.RepoConfigException(
                 HttpStatus.BAD_REQUEST,
                 "unable to parse config for repo - content : \"" + responseAsString + "\"",

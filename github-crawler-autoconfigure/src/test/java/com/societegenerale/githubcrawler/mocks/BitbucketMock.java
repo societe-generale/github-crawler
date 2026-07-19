@@ -86,27 +86,27 @@ public class BitbucketMock implements RemoteServiceMock {
         bitbucketWebServer = new WebServer();
         bitbucketWebServer.configure(
                 routes -> {
-                    routes.get("/projects/myProject/repos/:repo/raw/.BitBucketCrawler?at=master", (context, repo) -> getRepoConfigFileOnRepo(repo));
-                    routes.get("/projects/myProject/repos/:repo/raw/pom.xml?at=master", (context, repo) -> getPomXmlFileOnRepo(repo));
-                    routes.get("/projects/myProject/repos?start=:start", (context, start) -> getOrganisationContent(Integer.parseInt(start)));
+                    routes.get("/projects/myProject/repos/:repo/raw/.BitBucketCrawler?at=master", (_, repo) -> getRepoConfigFileOnRepo(repo));
+                    routes.get("/projects/myProject/repos/:repo/raw/pom.xml?at=master", (_, repo) -> getPomXmlFileOnRepo(repo));
+                    routes.get("/projects/myProject/repos?start=:start", (_, start) -> getOrganisationContent(Integer.parseInt(start)));
 
                     //for other resources than pom.xml..
                     //hack for resources that are not at the root of the repository, so that we don't have to hardcode too many things
                     routes.get("/projects/myProject/repos/:repo/raw/:aSubDirectory/:resource?at=:branchName",
-                            (context, repo, aSubDirectory, resource, branchName) -> getResource(repo, aSubDirectory, resource, branchName));
+                            (_, repo, aSubDirectory, resource, branchName) -> getResource(repo, aSubDirectory, resource, branchName));
 
                     routes.get("/projects/myProject/repos/:repo/contents/:resource?ref=:branchName",
-                            (context, repo, resource, branchName) -> getResourceFileOnRepo(repo, resource, null, branchName));
+                            (_, repo, resource, branchName) -> getResourceFileOnRepo(repo, resource, null, branchName));
                     routes.get("/raw/myProject/:repo/:branchName/:resource",
-                            (context, repo, branchName, resource) -> getResource(repo, branchName, null, resource));
+                            (_, repo, branchName, resource) -> getResource(repo, branchName, null, resource));
 
-                    routes.get("/projects/myProject/repos/:repo/branches", (context, repo) -> getBranches(repo));
+                    routes.get("/projects/myProject/repos/:repo/branches", (_, repo) -> getBranches(repo));
 
                     routes.get("/admin/groups", this::getTeams);
-                    routes.get("/api/v3/teams/:team/members", (context, team) -> getTeamsMembers(team));
+                    routes.get("/api/v3/teams/:team/members", (_, team) -> getTeamsMembers(team));
 
-                    routes.get("/projects/myProject/repos/:repo/commits?limit=1", (context, repo) -> getCommits(repo));
-                    routes.get("/projects/myProject/repos/:repo/commits/:commit", (context, repo, commit) -> getCommit(repo, commit));
+                    routes.get("/projects/myProject/repos/:repo/commits?limit=1", (_, repo) -> getCommits(repo));
+                    routes.get("/projects/myProject/repos/:repo/commits/:commit", (_, repo, commit) -> getCommit(repo, commit));
 
                 }
         ).start(BITBUCKET_MOCK_PORT);

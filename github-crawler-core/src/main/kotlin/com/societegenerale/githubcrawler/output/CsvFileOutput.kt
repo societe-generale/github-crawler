@@ -5,7 +5,7 @@ import org.slf4j.Logger
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
-import java.nio.file.Paths
+import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -34,7 +34,7 @@ abstract class CsvFileOutput(initParam : Any) : GitHubCrawlerOutput{
 
         finalOutputFileName = getPrefix() + now.format(formatter) + ".csv"
 
-        val writer = Files.newBufferedWriter(Paths.get(finalOutputFileName),
+        val writer = Files.newBufferedWriter(Path.of(finalOutputFileName),
                 StandardCharsets.UTF_8,
                 StandardOpenOption.CREATE_NEW)
 
@@ -46,7 +46,7 @@ abstract class CsvFileOutput(initParam : Any) : GitHubCrawlerOutput{
     @Throws(IOException::class)
     override fun output(analyzedRepository: Repository) {
 
-        val writer = Files.newBufferedWriter(Paths.get(finalOutputFileName),
+        val writer = Files.newBufferedWriter(Path.of(finalOutputFileName),
                 StandardCharsets.UTF_8,
                 StandardOpenOption.WRITE, StandardOpenOption.APPEND)
 
