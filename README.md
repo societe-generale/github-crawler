@@ -362,3 +362,14 @@ public class PersonalGitHubCrawlerApplication implements CommandLineRunner {
 see [here](https://github.com/vincent-fuchs/my-custom-github-crawler/blob/0e48dd7961b6b625802a2e1eb6b2fc4f8c4d5cdb/src/main/java/com/github/vincent_fuchs/output/CustomOutput.java) or [here](https://github.com/vincent-fuchs/my-custom-github-crawler/blob/ec7ed9a74f91b31794b8a0afb1196553434b1567/src/main/java/com/github/vincent_fuchs/parsers/MyOwnParser.java) for examples
 
 - see the javadoc in [FileContentParser](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/parsers/FileContentParser.kt) , [RepoTaskToPerform](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/repoTaskToPerform/RepoTaskToPerform.kt), [GitHubCrawlerOutput](./github-crawler-core/src/main/kotlin/com/societegenerale/githubcrawler/output/GitHubCrawlerOutput.kt) which are the main extension points.
+
+## Versions
+
+-   v3.x is using JDK25
+-   v2.x is using JDK11
+
+## Official maintainers
+
+- [Paul Williams](https://github.com/paul58914080)
+- [Vincent Fuchs](https://github.com/vincent-fuchs)
+
