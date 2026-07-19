@@ -8,6 +8,10 @@
   <version>${revision}</version>
   <packaging>pom</packaging>
   <name>github-crawler</name>
+  <description>GitHub crawler automates information gathering across an organization's repositories
+    by crawling them through the API, helping teams keep configuration and dependencies
+    consistent at scale.</description>
+  <url>https://github.com/societe-generale/github-crawler</url>
   <modules>
     <module>github-crawler-core</module>
     <module>github-crawler-autoconfigure</module>
@@ -31,6 +35,25 @@
     </developerConnection>
     <tag>HEAD</tag>
   </scm>
+  <developers>
+    <developer>
+      <id>societe-generale</id>
+      <name>Societe Generale</name>
+      <organization>Societe Generale</organization>
+      <organizationUrl>https://github.com/societe-generale</organizationUrl>
+    </developer>
+    <developer>
+      <id>vincent-fuchs</id>
+      <name>Vincent Fuchs</name>
+      <email>vincent.fuchs@gmail.com</email>
+    </developer>
+    <developer>
+      <id>paul58914080</id>
+      <name>Paul Williams</name>
+      <email>paul58914080@gmail.com</email>
+      <url>https://github.com/paul58914080</url>
+    </developer>
+  </developers>
   <properties>
     <revision>3.0.1-SNAPSHOT</revision>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
