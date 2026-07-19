@@ -63,6 +63,7 @@
     <jacoco.version>0.8.15</jacoco.version>
     <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
     <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+    <spring-boot-maven-plugin.version>4.0.7</spring-boot-maven-plugin.version>
   </properties>
   <pluginRepositories>
     <pluginRepository>
