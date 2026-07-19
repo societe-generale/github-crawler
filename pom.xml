@@ -212,7 +212,7 @@
         <configuration>
           <jvmTarget>${java.version}</jvmTarget>
           <args>
-            <arg>-Xjvm-default=all-compatibility</arg>
+            <arg>-jvm-default=enable</arg>
           </args>
           <compilerPlugins>
             <plugin>spring</plugin>
