@@ -86,7 +86,7 @@
     <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
     <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
     <dokka-maven-plugin.version>2.2.0</dokka-maven-plugin.version>
-    <flatten-maven-plugin.version>1.7.0</flatten-maven-plugin.version>
+    <flatten-maven-plugin.version>1.8.0</flatten-maven-plugin.version>
   </properties>
   <pluginRepositories>
     <pluginRepository>
