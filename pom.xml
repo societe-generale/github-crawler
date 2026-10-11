@@ -59,34 +59,34 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>25</java.version>
-    <kotlin.version>2.4.10</kotlin.version>
+    <kotlin.version>2.4.20</kotlin.version>
     <!-- dependencies -->
-    <spring-boot-dependencies.version>4.1.0</spring-boot-dependencies.version>
-    <spring-cloud-openfeign-dependencies.version>5.0.2</spring-cloud-openfeign-dependencies.version>
+    <spring-boot-dependencies.version>4.1.1</spring-boot-dependencies.version>
+    <spring-cloud-openfeign-dependencies.version>5.0.3</spring-cloud-openfeign-dependencies.version>
     <guava-bom.version>31.1-jre</guava-bom.version>
-    <dom4j.version>2.1.3</dom4j.version>
-    <gson.version>2.10</gson.version>
+    <dom4j.version>2.2.0</dom4j.version>
+    <gson.version>2.14.0</gson.version>
     <jaxen.version>1.1.6</jaxen.version>
     <http.version>2.105</http.version>
     <wiremock-standalone.version>3.13.2</wiremock-standalone.version>
     <awaitility.version>4.3.0</awaitility.version>
-    <okhttp-bom.version>5.4.0</okhttp-bom.version>
+    <okhttp-bom.version>5.5.0</okhttp-bom.version>
     <commons-io.version>2.22.0</commons-io.version>
     <json-path.version>3.0.0</json-path.version>
     <!-- plugins -->
     <jacoco-plugin.version>0.8.15</jacoco-plugin.version>
-    <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
-    <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
-    <spring-boot-maven-plugin.version>4.1.0</spring-boot-maven-plugin.version>
+    <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
+    <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
+    <spring-boot-maven-plugin.version>4.1.1</spring-boot-maven-plugin.version>
     <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
     <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
-    <central-publishing-maven-plugin.version>0.9.0</central-publishing-maven-plugin.version>
-    <maven-failsafe-plugin.version>3.5.6</maven-failsafe-plugin.version>
+    <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
+    <maven-failsafe-plugin.version>3.6.0</maven-failsafe-plugin.version>
     <maven-dependency-plugin.version>3.11.0</maven-dependency-plugin.version>
     <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
-    <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
+    <build-helper-maven-plugin.version>3.6.2</build-helper-maven-plugin.version>
     <dokka-maven-plugin.version>2.2.0</dokka-maven-plugin.version>
-    <flatten-maven-plugin.version>1.7.0</flatten-maven-plugin.version>
+    <flatten-maven-plugin.version>1.8.0</flatten-maven-plugin.version>
   </properties>
   <pluginRepositories>
     <pluginRepository>
@@ -251,7 +251,7 @@
             <path>
               <groupId>org.projectlombok</groupId>
               <artifactId>lombok</artifactId>
-              <version>1.18.46</version>
+              <version>1.18.48</version>
             </path>
           </annotationProcessorPaths>
           <release>${java.version}</release>
