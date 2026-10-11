@@ -10,6 +10,8 @@ updates:
       - automated
     commit-message:
       prefix: "build: "
+    assignees:
+      - paul58914080
   - package-ecosystem: github-actions
     directory: "/.github/"
     schedule:
@@ -20,3 +22,5 @@ updates:
       - automated
     commit-message:
       prefix: "ci: "
+    assignees:
+      - paul58914080
