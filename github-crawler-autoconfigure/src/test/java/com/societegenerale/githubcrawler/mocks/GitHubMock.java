@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 import net.codestory.http.Context;
 import net.codestory.http.WebServer;
 import net.codestory.http.constants.HttpStatus;
@@ -75,7 +76,7 @@ public class GitHubMock implements RemoteServiceMock {
 
     private List<String> reposWithPomXml = new ArrayList<>();
 
-    private int searchHitsCount = 0;
+    private final AtomicInteger searchHitsCount = new AtomicInteger();
 
     private boolean shouldReturnError409OnFetchCommits = false;
 
@@ -249,7 +250,7 @@ public class GitHubMock implements RemoteServiceMock {
 
         log.debug("received a search query {}", searchQuery);
 
-        searchHitsCount++;
+        searchHitsCount.incrementAndGet();
 
         return new Payload("application/json", FileUtils.readFileToString(ResourceUtils.getFile("classpath:github/searchResult.json"), "UTF-8"));
 
@@ -392,7 +393,7 @@ public class GitHubMock implements RemoteServiceMock {
         nbPages = 1;
         hasCalledNextPage = false;
         existingResources.clear();
-        searchHitsCount = 0;
+        searchHitsCount.set(0);
         nbHitsOnUserRepos = 0;
         shouldReturnError409OnFetchCommits=false;
     }
@@ -422,7 +423,7 @@ public class GitHubMock implements RemoteServiceMock {
     }
 
     public int getSearchHitsCount() {
-        return searchHitsCount;
+        return searchHitsCount.get();
     }
 
     private class ConflictException extends HttpException {
