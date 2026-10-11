@@ -5,6 +5,13 @@ updates:
     schedule:
       interval: daily
     open-pull-requests-limit: 10
+    groups:
+      maven-minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
     labels:
       - dependencies
       - automated
@@ -17,6 +24,10 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns:
+          - "*"
     labels:
       - ci
       - automated
