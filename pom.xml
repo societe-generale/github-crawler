@@ -61,27 +61,27 @@
     <java.version>25</java.version>
     <kotlin.version>2.4.21</kotlin.version>
     <!-- dependencies -->
-    <spring-boot-dependencies.version>4.1.1</spring-boot-dependencies.version>
-    <spring-cloud-openfeign-dependencies.version>5.0.3</spring-cloud-openfeign-dependencies.version>
+    <spring-boot-dependencies.version>4.1.2</spring-boot-dependencies.version>
+    <spring-cloud-openfeign-dependencies.version>5.0.4</spring-cloud-openfeign-dependencies.version>
     <guava-bom.version>33.7.2-jre</guava-bom.version>
     <dom4j.version>2.2.0</dom4j.version>
-    <gson.version>2.14.0</gson.version>
+    <gson.version>2.15.0</gson.version>
     <jaxen.version>2.0.6</jaxen.version>
     <http.version>2.105</http.version>
     <wiremock-standalone.version>3.13.2</wiremock-standalone.version>
     <awaitility.version>4.3.0</awaitility.version>
-    <okhttp-bom.version>5.5.0</okhttp-bom.version>
+    <okhttp-bom.version>5.5.1</okhttp-bom.version>
     <commons-io.version>2.22.0</commons-io.version>
     <json-path.version>3.0.0</json-path.version>
     <!-- plugins -->
-    <jacoco-plugin.version>0.8.15</jacoco-plugin.version>
+    <jacoco-plugin.version>0.8.16</jacoco-plugin.version>
     <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
-    <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
-    <spring-boot-maven-plugin.version>4.1.1</spring-boot-maven-plugin.version>
+    <maven-surefire-plugin.version>3.6.1</maven-surefire-plugin.version>
+    <spring-boot-maven-plugin.version>4.1.2</spring-boot-maven-plugin.version>
     <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
     <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
-    <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
-    <maven-failsafe-plugin.version>3.6.0</maven-failsafe-plugin.version>
+    <central-publishing-maven-plugin.version>0.12.0</central-publishing-maven-plugin.version>
+    <maven-failsafe-plugin.version>3.6.1</maven-failsafe-plugin.version>
     <maven-dependency-plugin.version>3.11.0</maven-dependency-plugin.version>
     <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
     <build-helper-maven-plugin.version>3.6.2</build-helper-maven-plugin.version>
